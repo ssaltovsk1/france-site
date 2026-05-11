@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Французская революция: сайт мастеров</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a href="./tools.html">Расчеты</a>
+      <a href="./characters.html">Персонажи</a>
+      <a href="./docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="section-label">Мастерский пакет для игры</p>
+        <h1>Французская революция: расчеты, персонажи, правила</h1>
+        <p class="lead">Один статический сайт для GitHub Pages: интерактивные карты и симуляторы, 60 актуальных загрузов в читаемом HTML, основные правила экономики и рабочие документы ближайшего теста.</p>
+        <div class="action-row">
+          <a class="button primary" href="./tools.html">Открыть расчеты</a>
+          <a class="button" href="./characters.html">Каталог персонажей</a>
+          <a class="button" href="./downloads/kventas_all.zip" download>Скачать все загрузы</a>
+        </div>
+      </div>
+      <figure class="hero-visual">
+        <img src="./maps/story_connections_map.png" alt="Карта сюжетных связей персонажей">
+      </figure>
+    </section>
+
+    <section class="stats-band" aria-label="Состав сайта">
+      <div>
+        <strong>8</strong>
+        <span>HTML-инструментов</span>
+      </div>
+      <div>
+        <strong>60</strong>
+        <span>загрузов персонажей</span>
+      </div>
+      <div>
+        <strong>20+</strong>
+        <span>ключевых документов</span>
+      </div>
+      <div>
+        <strong>4 МБ</strong>
+        <span>без сырого архива и аудио</span>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <h2>Быстрый вход</h2>
+        <p>Самые нужные двери для прогона, балансировки и раздачи материалов.</p>
+      </div>
+      <div class="card-grid three">
+        <a class="feature-card accent-teal" href="./tools/revolution_economy_simulator.html">
+          <span class="card-kicker">Симулятор</span>
+          <h3>Экономический стенд Парижа 1789</h3>
+          <p>Сухой прогон, сценарная матрица, Monte Carlo, чувствительность параметров и карточки ролей.</p>
+        </a>
+        <a class="feature-card accent-red" href="./characters.html">
+          <span class="card-kicker">Загрузы</span>
+          <h3>Персонажи и читаемые страницы</h3>
+          <p>Каталог всех исторических персонажей, горожан и роялистов с поиском, HTML-страницами и исходными Markdown-файлами.</p>
+        </a>
+        <a class="feature-card accent-blue" href="./docs/economy/gm_first_test_rules_2026-05-11.md">
+          <span class="card-kicker">Правила</span>
+          <h3>Рабочие правила первого теста</h3>
+          <p>Карта, зерно, хлеб, налоги, войска, аресты, тюрьма и порядок такта.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="content-section split">
+      <div>
+        <h2>Что входит</h2>
+        <div class="stack-list">
+          <a href="./tools.html">
+            <strong>Расчеты и карты</strong>
+            <span>Карта управляемости, цепочки, матрица, экономика, ветки, влияние, связи персонажей.</span>
+          </a>
+          <a href="./maps/story_connections_map.html">
+            <strong>Карта сюжетных связей</strong>
+            <span>Интерактивная карта новых сюжетов, связей игроков и осевого графа отношений.</span>
+          </a>
+          <a href="./docs.html">
+            <strong>Основные документы</strong>
+            <span>Описание игры, механики актов, экономика, параметры, декреты, открытые вопросы мастеров.</span>
+          </a>
+        </div>
+      </div>
+      <aside class="publish-panel">
+        <h2>Как выложить на GitHub</h2>
+        <ol>
+          <li>Открой репозиторий <code>ssaltovsk1/france-site</code>.</li>
+          <li>Загрузи содержимое папки <code>france-site</code>, не саму папку.</li>
+          <li>Включи Pages: <code>Settings</code> -> <code>Pages</code> -> <code>Deploy from a branch</code> -> <code>main</code> / <code>/root</code>.</li>
+          <li>Через минуту сайт будет доступен как <code>https://ssaltovsk1.github.io/france-site/</code>.</li>
+        </ol>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Рабочая публикационная сборка: 2026-05-11</span>
+    <a href="./README.md">README для публикации</a>
+  </footer>
+</body>
+</html>

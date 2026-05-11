@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Расчеты и карты - Revolution France</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="is-active" href="./tools.html">Расчеты</a>
+      <a href="./characters.html">Персонажи</a>
+      <a href="./docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title">
+      <p class="section-label">Интерактивные HTML</p>
+      <h1>Расчеты, карты и стенды</h1>
+      <p>Все страницы работают как статические файлы: можно открыть на GitHub Pages без сервера и базы данных.</p>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <h2>Игровые инструменты</h2>
+        <p>Главные рабочие поверхности для мастеров и балансировки.</p>
+      </div>
+      <div class="card-grid two">
+        <a class="feature-card accent-teal" href="./tools/revolution_economy_simulator.html">
+          <span class="card-kicker">Экономика</span>
+          <h3>Экономический стенд Парижа 1789</h3>
+          <p>Сценарии, прогон параметров, Monte Carlo и чувствительность.</p>
+        </a>
+        <a class="feature-card accent-green" href="./calculations/resource_projection_lab/index.html">
+          <span class="card-kicker">Модель ресурсов</span>
+          <h3>Проекция хлеба, денег и напряжения</h3>
+          <p>Отдельная модель ресурсных сценариев с графиками и таблицей ходов.</p>
+        </a>
+        <a class="feature-card accent-blue" href="./tools/revolution_control_map.html">
+          <span class="card-kicker">Карта</span>
+          <h3>Карта управляемости</h3>
+          <p>Причины революции как набор контролируемых и неконтролируемых узлов.</p>
+        </a>
+        <a class="feature-card accent-blue" href="./tools/revolution_control_board.html">
+          <span class="card-kicker">Доска</span>
+          <h3>Доска управляемости</h3>
+          <p>Компактный вид для обсуждения узлов, рисков и мастерских действий.</p>
+        </a>
+        <a class="feature-card accent-blue" href="./tools/revolution_control_matrix.html">
+          <span class="card-kicker">Матрица</span>
+          <h3>Матрица контроля</h3>
+          <p>Сравнение факторов по управляемости и влиянию на игру.</p>
+        </a>
+        <a class="feature-card accent-blue" href="./tools/revolution_control_chains.html">
+          <span class="card-kicker">Цепочки</span>
+          <h3>Причинные цепочки</h3>
+          <p>Как решения проходят через хлеб, налоги, войну, улицу и легитимность.</p>
+        </a>
+        <a class="feature-card accent-red" href="./tools/revolution_character_relations.html">
+          <span class="card-kicker">Персонажи</span>
+          <h3>Механические взаимосвязи</h3>
+          <p>Кто может получить, отдать, заблокировать или запустить ресурс для другого.</p>
+        </a>
+        <a class="feature-card accent-ink" href="./maps/story_connections_map.html">
+          <span class="card-kicker">Сюжеты</span>
+          <h3>Карта сюжетных связей</h3>
+          <p>Интерактивная карта связей игроков и новых сюжетных линий.</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <h2>Справочные карты и выгрузки</h2>
+        <p>Офлайн-HTML и файлы результатов симуляции.</p>
+      </div>
+      <div class="link-grid">
+        <a href="./tools/revolution_influence_map_offline.html">Карта влияния причин революции</a>
+        <a href="./tools/revolution_branches_map_offline.html">Карта ветвлений революции</a>
+        <a href="./calculations/sim/full.png">График полного прогона PNG</a>
+        <a href="./calculations/sim/trajectory.png">График траектории PNG</a>
+        <a href="./calculations/sim/full.csv">Полный прогон CSV</a>
+        <a href="./calculations/sim/trajectory.csv">Траектория CSV</a>
+        <a href="./calculations/sim/README.md">Описание Python-симулятора</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="./index.html">На главную</a>
+    <a href="./characters.html">Персонажи</a>
+    <a href="./docs.html">Правила и доки</a>
+  </footer>
+</body>
+</html>

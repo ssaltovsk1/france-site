@@ -1,0 +1,1495 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Карта развилок открытой игры</title>
+  <style>
+    :root {
+      --paper: #f4efe5;
+      --ink: #24262b;
+      --muted: #60656f;
+      --panel: #fffdf8;
+      --line: #d8d0c2;
+      --red: #a93f3f;
+      --blue: #2f5f8f;
+      --green: #4e7258;
+      --gold: #a97622;
+      --gray: #eef0f3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 40px 28px 30px;
+      background: linear-gradient(90deg, #fff8ed, #eef5fb);
+      border-bottom: 1px solid var(--line);
+    }
+
+    main {
+      padding: 24px 28px 56px;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 44px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      max-width: 880px;
+      color: #3b3e45;
+      font-size: 18px;
+    }
+
+    .offline {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border: 1px solid #bcd0c1;
+      border-radius: 8px;
+      background: #eef8f0;
+      color: #265236;
+      font-weight: 700;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255, 253, 248, .96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+
+    nav .wrap {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 28px;
+    }
+
+    nav a {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      color: var(--ink);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      background: var(--gray);
+    }
+
+    section {
+      margin: 0 auto 24px;
+      padding: 26px;
+      max-width: 1200px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(36, 38, 43, .06);
+    }
+
+    .note {
+      padding: 16px 18px;
+      background: #eef5fb;
+      border-left: 6px solid var(--blue);
+      border-radius: 8px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      padding: 15px;
+      min-height: 132px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .low,
+    .high {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .trigger {
+      margin-top: 9px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .dot.red { background: var(--red); }
+    .dot.green { background: var(--green); }
+    .dot.gold { background: var(--gold); }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: 1fr 34px 1fr 34px 1fr;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .node {
+      padding: 13px 14px;
+      min-height: 76px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .node b {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .node small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .node.red { border-top: 5px solid var(--red); }
+    .node.blue { border-top: 5px solid var(--blue); }
+    .node.green { border-top: 5px solid var(--green); }
+    .node.gold { border-top: 5px solid var(--gold); }
+
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .tree {
+      display: grid;
+      gap: 14px;
+    }
+
+    .stage {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .stage-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stage-title strong {
+      font-size: 19px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      padding: 12px;
+      border-radius: 8px;
+      background: #f7f8fa;
+      border-left: 5px solid var(--blue);
+    }
+
+    .choice.bad { border-left-color: var(--red); }
+    .choice.good { border-left-color: var(--green); }
+    .choice.warn { border-left-color: var(--gold); }
+
+    .choice b {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .loop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .loop {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .loop ol {
+      margin: 8px 0 0 20px;
+      padding: 0;
+    }
+
+    .loop li {
+      margin: 0 0 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      padding: 11px 10px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    th {
+      background: #f3f4f6;
+    }
+
+    td:first-child {
+      font-weight: 700;
+    }
+
+    .character {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .character .node {
+      min-height: 104px;
+    }
+
+    .econ-lab {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .econ-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .econ-head h3,
+    .econ-panel h4 {
+      margin: 0;
+    }
+
+    .econ-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .econ-panel {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .econ-control-list {
+      display: grid;
+      gap: 11px;
+      margin-top: 12px;
+    }
+
+    .econ-control {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px 10px;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .econ-control output {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .econ-control input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--red);
+    }
+
+    .econ-select {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .econ-select select {
+      width: 100%;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .econ-toggles {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .econ-toggle {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfaf6;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .econ-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .econ-kpi {
+      min-height: 76px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfaf6;
+    }
+
+    .econ-kpi span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .econ-kpi strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 20px;
+      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .econ-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, .9fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .econ-groups {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .econ-group {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+    }
+
+    .econ-group-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    .econ-bar {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #ece6d8;
+    }
+
+    .econ-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--blue);
+    }
+
+    .econ-group-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .econ-pressure {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .econ-pressure-item {
+      padding: 10px;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f7f8fa;
+    }
+
+    .econ-pressure-item strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .econ-pressure-item small {
+      color: var(--muted);
+    }
+
+    .econ-pressure-item.red { border-left-color: var(--red); }
+    .econ-pressure-item.green { border-left-color: var(--green); }
+    .econ-pressure-item.gold { border-left-color: var(--gold); }
+
+    .econ-table-wrap {
+      margin-top: 12px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .econ-table {
+      min-width: 760px;
+      font-size: 13px;
+    }
+
+    .econ-table th,
+    .econ-table td {
+      padding: 8px 9px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .econ-table th:first-child,
+    .econ-table td:first-child {
+      text-align: left;
+    }
+
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px 40px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media print {
+      nav {
+        display: none;
+      }
+
+      section {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      body {
+        background: #fff;
+      }
+    }
+
+    @media (max-width: 900px) {
+      header,
+      main {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      nav .wrap {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      section {
+        padding: 18px;
+      }
+
+      .cards,
+      .choice-grid,
+      .loop-grid,
+      .character,
+      .econ-grid,
+      .econ-split {
+        grid-template-columns: 1fr;
+      }
+
+      .econ-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow-row {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Карта развилок открытой игры</h1>
+      <p class="lead">Офлайн-инфографика для мастеров по игре о Французской революции: какие напряжения толкают мир к разным веткам и каким финалам они могут привести.</p>
+      <span class="offline">Открывается без интернета и внешних библиотек</span>
+    </div>
+  </header>
+
+  <nav>
+    <div class="wrap">
+      <a href="#read">Как читать</a>
+      <a href="#dashboard">Дашборд</a>
+      <a href="#pressure">Давления</a>
+      <a href="#tree">Развилки</a>
+      <a href="#loops">Петли</a>
+      <a href="#finals">Финалы</a>
+      <a href="#economy">Экономика</a>
+      <a href="#ifthen">Если - то</a>
+      <a href="#character">Персонаж</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="read">
+      <h2>Как читать</h2>
+      <div class="note">
+        <p>Это не линейный сценарий и не список обязательных исторических событий. Это карта давления системы.</p>
+        <p>Игроки могут уйти в разные ветки. Но если одновременно растут голод, недоверие к королю, война, религиозный раскол, страх и давление улицы, мир начинает толкать их к радикализации.</p>
+      </div>
+    </section>
+
+    <section id="dashboard">
+      <h2>1. Дашборд мастера</h2>
+      <p>Ведите эти шкалы по актам игры. Можно цифрами, жетонами, стикерами или отметками на общем листе.</p>
+      <div class="cards">
+        <div class="card"><strong>Хлеб</strong><span class="low">Низко: еда есть</span><span class="high">Высоко: голод, очереди, слухи</span><div class="trigger">Запускает: бунты и поддержку санкюлотов</div></div>
+        <div class="card"><strong>Налоги</strong><span class="low">Низко: терпимо</span><span class="high">Высоко: третье сословие не вывозит</span><div class="trigger">Запускает: отказ признавать старый порядок</div></div>
+        <div class="card"><strong>Доверие к королю</strong><span class="low">Низко: король предатель</span><span class="high">Высоко: король арбитр</span><div class="trigger">При падении: республика и суд</div></div>
+        <div class="card"><strong>Легитимность Собрания</strong><span class="low">Низко: решения не признают</span><span class="high">Высоко: законы работают</span><div class="trigger">При падении: улица берет инициативу</div></div>
+        <div class="card"><strong>Давление улицы</strong><span class="low">Низко: народ ворчит</span><span class="high">Высоко: народ организован и зол</span><div class="trigger">Запускает: штурмы и принуждение Собрания</div></div>
+        <div class="card"><strong>Религиозный раскол</strong><span class="low">Низко: компромисс возможен</span><span class="high">Высоко: вера против государства</span><div class="trigger">Запускает: Вандею и скрытую контрреволюцию</div></div>
+        <div class="card"><strong>Война</strong><span class="low">Низко: угроза далека</span><span class="high">Высоко: поражения и вторжение</span><div class="trigger">Запускает: мобилизацию и комитеты</div></div>
+        <div class="card"><strong>Подозрительность</strong><span class="low">Низко: спорят</span><span class="high">Высоко: ищут врагов</span><div class="trigger">Запускает: аресты и Террор</div></div>
+        <div class="card"><strong>Усталость</strong><span class="low">Низко: верят в перемены</span><span class="high">Высоко: хотят порядка любой ценой</span><div class="trigger">Запускает: Термидор или генерала</div></div>
+      </div>
+    </section>
+
+    <section id="pressure">
+      <h2>2. Системная карта давлений</h2>
+      <div class="legend">
+        <span class="tag"><span class="dot gold"></span>Финансы и налоги</span>
+        <span class="tag"><span class="dot red"></span>Голод и улица</span>
+        <span class="tag"><span class="dot blue"></span>Власть и право</span>
+        <span class="tag"><span class="dot green"></span>Религия и провинция</span>
+      </div>
+      <div class="flow">
+        <div class="flow-row">
+          <div class="node gold"><b>Долги государства</b><small>Войны, флот, проценты, пустая казна</small></div>
+          <div class="arrow">→</div>
+          <div class="node gold"><b>Нужны новые налоги</b><small>Но привилегированные сословия защищают исключения</small></div>
+          <div class="arrow">→</div>
+          <div class="node blue"><b>Созыв Генеральных штатов</b><small>Финансовый кризис становится политическим</small></div>
+        </div>
+        <div class="flow-row">
+          <div class="node blue"><b>Спор о голосовании</b><small>По сословиям или по головам</small></div>
+          <div class="arrow">→</div>
+          <div class="node blue"><b>Третье сословие: мы нация</b><small>Процедура превращается в вопрос суверенитета</small></div>
+          <div class="arrow">→</div>
+          <div class="node blue"><b>Национальное собрание</b><small>Новый источник законности</small></div>
+        </div>
+        <div class="flow-row">
+          <div class="node red"><b>Дорогой хлеб</b><small>Неурожай, очереди, спекуляции</small></div>
+          <div class="arrow">→</div>
+          <div class="node red"><b>Слухи о заговоре голода</b><small>Боль получает виновника</small></div>
+          <div class="arrow">→</div>
+          <div class="node red"><b>Улица входит в политику</b><small>Бастилия, Версаль, секции, штурмы</small></div>
+        </div>
+        <div class="flow-row">
+          <div class="node green"><b>Национализация церковных земель</b><small>Финансовое решение</small></div>
+          <div class="arrow">→</div>
+          <div class="node green"><b>Присяга духовенства</b><small>Государство требует выбора совести</small></div>
+          <div class="arrow">→</div>
+          <div class="node green"><b>Религиозный раскол</b><small>Провинция может восстать против центра</small></div>
+        </div>
+        <div class="flow-row">
+          <div class="node red"><b>Война и мятежи</b><small>Поражения, измены, Вандея</small></div>
+          <div class="arrow">→</div>
+          <div class="node red"><b>Страх предательства</b><small>Противник становится врагом народа</small></div>
+          <div class="arrow">→</div>
+          <div class="node red"><b>Комитеты и Террор</b><small>Чрезвычайная власть ради спасения</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tree">
+      <h2>3. Главное дерево развилок</h2>
+      <div class="tree">
+        <div class="stage">
+          <div class="stage-title"><strong>Развилка 1. Кто говорит от имени Франции?</strong><span class="tag">Старт: Генеральные штаты</span></div>
+          <div class="choice-grid">
+            <div class="choice bad"><b>Голосование по сословиям сохранено</b>Третье сословие унижено, растет шанс самообъявления Национального собрания или позднего уличного взрыва.</div>
+            <div class="choice good"><b>Голосование по головам или компромисс</b>Реформа начинается законным путем, у умеренных появляется шанс удержать процесс.</div>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage-title"><strong>Развилка 2. Король - арбитр или предатель?</strong><span class="tag">Конституция и доверие</span></div>
+          <div class="choice-grid">
+            <div class="choice good"><b>Король сотрудничает</b>Ветка конституционной монархии. Главные риски: хлеб, церковь, война.</div>
+            <div class="choice bad"><b>Король тянет время, бежит или ищет помощи</b>Растет республика. Компромисс становится подозрительным.</div>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage-title"><strong>Развилка 3. Начинается ли война?</strong><span class="tag">Ускоритель радикализации</span></div>
+          <div class="choice-grid">
+            <div class="choice good"><b>Войну удается отсрочить</b>Внутренняя борьба реформ без большой милитаризации. Больше пространства для переговоров.</div>
+            <div class="choice bad"><b>Война идет плохо</b>Поражения, измены, страх пятой колонны. Резкий рост комитетов и подозрительности.</div>
+            <div class="choice warn"><b>Война успешна</b>Растет престиж армии. Возможна ветка генерала-спасителя.</div>
+            <div class="choice bad"><b>Война соединяется с мятежами</b>Вандея, федералисты, роялисты. Центр начинает давить сильнее.</div>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage-title"><strong>Развилка 4. Кто сильнее: Собрание, улица, провинции или армия?</strong><span class="tag">Борьба субъектов</span></div>
+          <div class="choice-grid">
+            <div class="choice"><b>Собрание</b>Республика законов или конституционная монархия.</div>
+            <div class="choice bad"><b>Улица</b>Радикальная республика, максимум цен, давление санкюлотов.</div>
+            <div class="choice warn"><b>Провинции</b>Федералистский раскол, Вандея, риск распада.</div>
+            <div class="choice"><b>Армия</b>Порядок, мобилизация, возможный консулат.</div>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="stage-title"><strong>Развилка 5. Чем платить за спасение?</strong><span class="tag">Финальный узел</span></div>
+          <div class="choice-grid">
+            <div class="choice good"><b>Компромисс</b>Меньше крови, но выше риск слабости и поражения.</div>
+            <div class="choice bad"><b>Террор</b>Быстро и страшно. Спасает режим, но растит усталость и страх всех.</div>
+            <div class="choice"><b>Армия</b>Дает порядок и победы, но выводит генерала в центр политики.</div>
+            <div class="choice warn"><b>Децентрализация</b>Снимает давление центра, но может разорвать страну.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="loops">
+      <h2>4. Петли обратной связи</h2>
+      <div class="loop-grid">
+        <div class="loop">
+          <h3>Хлебная петля</h3>
+          <ol>
+            <li>Дорогой хлеб.</li>
+            <li>Очереди и слухи о заговоре.</li>
+            <li>Давление улицы.</li>
+            <li>Контроль цен и реквизиции.</li>
+            <li>Дефицит и черный рынок.</li>
+            <li>Новый рост гнева.</li>
+          </ol>
+        </div>
+        <div class="loop">
+          <h3>Военно-террористическая петля</h3>
+          <ol>
+            <li>Война и поражения.</li>
+            <li>Страх измены.</li>
+            <li>Подозрительные и комитеты.</li>
+            <li>Аресты и казни.</li>
+            <li>Молчание и страх.</li>
+            <li>Еще больше власти комитетам.</li>
+          </ol>
+        </div>
+        <div class="loop">
+          <h3>Религиозная петля</h3>
+          <ol>
+            <li>Присяга духовенства.</li>
+            <li>Раскол приходов.</li>
+            <li>Скрытые мессы и сопротивление.</li>
+            <li>Давление центра.</li>
+            <li>Мятежи и Вандея.</li>
+            <li>Еще больше давления.</li>
+          </ol>
+        </div>
+        <div class="loop">
+          <h3>Петля усталости</h3>
+          <ol>
+            <li>Очереди, страх, казни.</li>
+            <li>Усталость от революции.</li>
+            <li>Запрос на порядок.</li>
+            <li>Термидор или генерал.</li>
+            <li>Снижение роли улицы.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="finals">
+      <h2>5. Карта возможных финалов</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Финал</th>
+            <th>Что к нему ведет</th>
+            <th>Кто выигрывает</th>
+            <th>Кто проигрывает</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Конституционная монархия</td><td>Король сохраняет доверие, война сдержана, хлеб стабилизирован, найден церковный компромисс</td><td>Либеральные дворяне, умеренная буржуазия</td><td>Радикалы, крайние роялисты</td></tr>
+          <tr><td>Умеренная республика</td><td>Король дискредитирован, но война не разрушила страну, улица не полностью доминирует</td><td>Жирондисты, провинциальная буржуазия</td><td>Двор, радикальная улица</td></tr>
+          <tr><td>Радикальная республика без большого Террора</td><td>Король пал, война контролируема, комитеты ограничены, фракции договариваются</td><td>Якобинцы-реформаторы, санкюлоты</td><td>Роялисты, часть богатых</td></tr>
+          <tr><td>Якобинский Террор</td><td>Война, Вандея, голод, давление улицы и страх измены одновременно высоки</td><td>Комитеты, радикалы, военная мобилизация</td><td>Роялисты, жирондисты, подозрительные, потом сами радикалы</td></tr>
+          <tr><td>Федералистский раскол</td><td>Провинции не признают Париж, центр давит, религиозный и экономический конфликты растут</td><td>Местные элиты, роялисты или умеренные</td><td>Единый центр, радикальный Париж</td></tr>
+          <tr><td>Реставрация или иностранная победа</td><td>Республика проигрывает войну, народ устал, роялистские сети сильны</td><td>Эмигранты, двор, иностранные союзники</td><td>Новые собственники, революционные активисты</td></tr>
+          <tr><td>Термидорианская Директория</td><td>Террор вымотал всех, армия побеждает, собственники хотят порядка</td><td>Буржуазия, бывшие умеренные</td><td>Санкюлоты, якобинские клубы</td></tr>
+          <tr><td>Военная диктатура / консулат</td><td>Гражданские институты слабы, война дала популярного генерала, общество хочет порядка</td><td>Армия, чиновники, новые элиты</td><td>Клубы, улица, слабые парламенты</td></tr>
+          <tr><td>Хаос и распад</td><td>Все шкалы кризиса высоки, ни одна сила не собирает легитимность</td><td>Локальные военные и вожаки</td><td>Почти все долгосрочные проекты</td></tr>
+        </tbody>
+      </table>
+
+      <div id="economy" class="econ-lab">
+        <div class="econ-head">
+          <h3>Моделирование экономики игроков</h3>
+          <span class="tag"><span class="dot red"></span>Хлеб, деньги, долги, голод</span>
+        </div>
+
+        <div class="econ-grid">
+          <aside class="econ-panel">
+            <label class="econ-select">
+              <span>Сценарий</span>
+              <select id="econScenario"></select>
+            </label>
+            <div id="econControls" class="econ-control-list"></div>
+            <div class="econ-toggles">
+              <label class="econ-toggle">
+                <input id="econMaximum" type="checkbox">
+                <span>Максимум цен</span>
+              </label>
+              <label class="econ-toggle">
+                <input id="econHoarding" type="checkbox">
+                <span>Скупка богатыми</span>
+              </label>
+            </div>
+          </aside>
+
+          <div class="econ-output">
+            <div id="econKpis" class="econ-kpis"></div>
+
+            <div class="econ-split">
+              <div class="econ-panel">
+                <h4>Группы игроков</h4>
+                <div id="econGroups" class="econ-groups"></div>
+              </div>
+
+              <div class="econ-panel">
+                <h4>Куда давит экономика</h4>
+                <div id="econPressure" class="econ-pressure"></div>
+              </div>
+            </div>
+
+            <div class="econ-table-wrap">
+              <table class="econ-table" id="econHistory">
+                <thead>
+                  <tr>
+                    <th>Ход</th>
+                    <th>Хлеб</th>
+                    <th>В дороге</th>
+                    <th>Голод</th>
+                    <th>Казна</th>
+                    <th>Долги</th>
+                    <th>Цена</th>
+                    <th>Черный рынок</th>
+                    <th>Ассигнат</th>
+                    <th>Город</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ifthen">
+      <h2>6. Быстрая карта "если - то"</h2>
+      <table>
+        <thead>
+          <tr><th>Если в игре происходит</th><th>Вероятная следующая развилка</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Третье сословие снова и снова блокируют процедурой</td><td>Самообъявление нового органа власти</td></tr>
+          <tr><td>Хлеб дорожает, а власть говорит только о конституции</td><td>Улица перестает ждать депутатов</td></tr>
+          <tr><td>Король делает публичную уступку, но тайно ищет помощи</td><td>Резкий скачок республиканцев после разоблачения</td></tr>
+          <tr><td>Священников заставляют выбирать между совестью и государством</td><td>Провинциальное сопротивление становится религиозным</td></tr>
+          <tr><td>Война идет плохо</td><td>Любая умеренность начинает выглядеть изменой</td></tr>
+          <tr><td>Появляются успешные радикальные ораторы</td><td>Порог уличного действия падает</td></tr>
+          <tr><td>Комитеты получают право ареста по подозрению</td><td>Страх становится самостоятельным ресурсом власти</td></tr>
+          <tr><td>Казни идут слишком долго</td><td>Растет не свобода, а желание остановить революцию</td></tr>
+          <tr><td>Армия выигрывает, а политики ссорятся</td><td>Появляется ветка популярного генерала</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="character">
+      <h2>7. Мини-схема для загруза персонажа</h2>
+      <div class="character">
+        <div class="node red"><b>Личная боль</b><small>Голод, налог, потеря статуса, страх за семью</small></div>
+        <div class="node gold"><b>Объяснение</b><small>Кто виноват и почему мир устроен несправедливо</small></div>
+        <div class="node blue"><b>Группа</b><small>Клуб, секция, приход, двор, армия, рынок</small></div>
+        <div class="node green"><b>Действие</b><small>Петиция, речь, марш, донос, штурм, присяга</small></div>
+        <div class="node red"><b>Необратимость</b><small>Кровь, конфискация, измена, казнь, публичный выбор</small></div>
+      </div>
+      <p style="margin-top:14px;">Недовольный персонаж хочет решить свою проблему. Революционер появляется, когда личная боль получает общее объяснение, группу поддержки и необратимый шаг.</p>
+    </section>
+  </main>
+
+  <footer>
+    Офлайн-файл для проекта Revolution_France. Можно печатать из браузера или показывать на экране.
+  </footer>
+
+  <script>
+    (function () {
+      const scenarioSelect = document.querySelector("#econScenario");
+      const controlsRoot = document.querySelector("#econControls");
+      const kpisRoot = document.querySelector("#econKpis");
+      const groupsRoot = document.querySelector("#econGroups");
+      const pressureRoot = document.querySelector("#econPressure");
+      const historyBody = document.querySelector("#econHistory tbody");
+      const maximumToggle = document.querySelector("#econMaximum");
+      const hoardingToggle = document.querySelector("#econHoarding");
+
+      if (!scenarioSelect) {
+        return;
+      }
+
+      const controlDefs = [
+        { id: "players", label: "Игроки", min: 20, max: 90, step: 1, value: 50 },
+        { id: "turns", label: "Ходы модели", min: 3, max: 12, step: 1, value: 7 },
+        { id: "incoming", label: "Подвоз зерна", min: 0, max: 28, step: 1, value: 16 },
+        { id: "delivery", label: "Доходит до города", min: 10, max: 100, step: 5, value: 65, percent: true },
+        { id: "hidden", label: "Прячут зерно", min: 0, max: 45, step: 5, value: 10, percent: true },
+        { id: "requisition", label: "Реквизиция армии", min: 0, max: 45, step: 5, value: 0, percent: true },
+        { id: "price", label: "Цена хлеба", min: 1, max: 8, step: 1, value: 2 },
+        { id: "church", label: "Помощь церкви", min: 0, max: 100, step: 5, value: 65, percent: true },
+        { id: "stateJobs", label: "Госработы", min: 0, max: 14, step: 1, value: 4 },
+        { id: "assignats", label: "Оплата ассигнатами", min: 0, max: 100, step: 5, value: 0, percent: true },
+        { id: "war", label: "Расход войны", min: 0, max: 18, step: 1, value: 0 }
+      ];
+
+      const scenarios = [
+        {
+          id: "balanced",
+          name: "Базовая поставка",
+          values: { players: 50, turns: 7, incoming: 18, delivery: 70, hidden: 8, requisition: 0, price: 2, church: 70, stateJobs: 4, assignats: 0, war: 0 },
+          maximum: false,
+          hoarding: false
+        },
+        {
+          id: "blocked",
+          name: "Провинции не дают хлеб",
+          values: { players: 50, turns: 7, incoming: 9, delivery: 30, hidden: 24, requisition: 0, price: 3, church: 55, stateJobs: 3, assignats: 0, war: 0 },
+          maximum: false,
+          hoarding: false
+        },
+        {
+          id: "maximum",
+          name: "Максимум без подвоза",
+          values: { players: 50, turns: 7, incoming: 12, delivery: 38, hidden: 18, requisition: 0, price: 3, church: 70, stateJobs: 5, assignats: 0, war: 0 },
+          maximum: true,
+          hoarding: false
+        },
+        {
+          id: "assignats",
+          name: "Жалованье ассигнатами",
+          values: { players: 50, turns: 7, incoming: 15, delivery: 55, hidden: 12, requisition: 0, price: 3, church: 60, stateJobs: 9, assignats: 75, war: 2 },
+          maximum: false,
+          hoarding: false
+        },
+        {
+          id: "hoarding",
+          name: "Скупка богатыми",
+          values: { players: 50, turns: 7, incoming: 15, delivery: 48, hidden: 22, requisition: 0, price: 3, church: 50, stateJobs: 3, assignats: 0, war: 0 },
+          maximum: false,
+          hoarding: true
+        },
+        {
+          id: "war",
+          name: "Война и реквизиции",
+          values: { players: 50, turns: 7, incoming: 14, delivery: 45, hidden: 10, requisition: 25, price: 3, church: 60, stateJobs: 6, assignats: 35, war: 8 },
+          maximum: false,
+          hoarding: false
+        }
+      ];
+
+      const baseGroups = [
+        { id: "poor", name: "Городские бедные", ratio: 0.48, cash: 2, income: 0.7, credit: 0.2, black: 0.12, priority: 5, blackPriority: 5, color: "#a93f3f" },
+        { id: "workers", name: "Рабочие мастерских", ratio: 0.2, cash: 4, income: 1.1, credit: 0.35, black: 0.22, priority: 4, blackPriority: 4, color: "#a97622" },
+        { id: "artisans", name: "Ремесленники и лавочники", ratio: 0.16, cash: 7, income: 1.6, credit: 0.5, black: 0.45, priority: 2, blackPriority: 2, color: "#4e7258" },
+        { id: "officials", name: "Служащие и солдаты", ratio: 0.08, cash: 5, income: 0.8, credit: 0.3, black: 0.3, priority: 3, blackPriority: 3, color: "#2f5f8f" },
+        { id: "owners", name: "Буржуа и собственники", ratio: 0.08, cash: 14, income: 2.5, credit: 0.8, black: 0.8, priority: 1, blackPriority: 1, hoard: 0.35, color: "#7a5a91" }
+      ];
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function round1(value) {
+        return Math.round(value * 10) / 10;
+      }
+
+      function formatControlValue(def, rawValue) {
+        return def.percent ? `${rawValue}%` : rawValue.toString();
+      }
+
+      function buildControls() {
+        scenarioSelect.innerHTML = scenarios
+          .map((scenario) => `<option value="${scenario.id}">${scenario.name}</option>`)
+          .join("");
+
+        controlsRoot.innerHTML = controlDefs.map((def) => `
+          <label class="econ-control">
+            <span>${def.label}</span>
+            <output id="${def.id}Value"></output>
+            <input id="${def.id}" type="range" min="${def.min}" max="${def.max}" step="${def.step}">
+          </label>
+        `).join("");
+
+        controlDefs.forEach((def) => {
+          const input = document.querySelector(`#${def.id}`);
+          input.addEventListener("input", () => {
+            document.querySelector(`#${def.id}Value`).textContent = formatControlValue(def, input.value);
+            renderEconomy();
+          });
+        });
+      }
+
+      function currentScenario() {
+        return scenarios.find((scenario) => scenario.id === scenarioSelect.value) || scenarios[0];
+      }
+
+      function applyScenario() {
+        const scenario = currentScenario();
+        controlDefs.forEach((def) => {
+          const input = document.querySelector(`#${def.id}`);
+          const value = scenario.values[def.id] ?? def.value;
+          input.value = value;
+          document.querySelector(`#${def.id}Value`).textContent = formatControlValue(def, value);
+        });
+        maximumToggle.checked = scenario.maximum;
+        hoardingToggle.checked = scenario.hoarding;
+      }
+
+      function readConfig() {
+        const config = {};
+        controlDefs.forEach((def) => {
+          const value = Number(document.querySelector(`#${def.id}`).value);
+          config[def.id] = def.percent ? value / 100 : value;
+        });
+        config.maximum = maximumToggle.checked;
+        config.hoarding = hoardingToggle.checked;
+        return config;
+      }
+
+      function createGroups(players) {
+        const counts = baseGroups.map((group) => Math.max(1, Math.round(players * group.ratio)));
+        counts[counts.length - 1] += players - counts.reduce((sum, count) => sum + count, 0);
+
+        return baseGroups.map((group, index) => ({
+          ...group,
+          count: Math.max(1, counts[index]),
+          cashTotal: Math.max(1, counts[index]) * group.cash,
+          debt: 0,
+          hungerMarks: 0,
+          lastHungry: 0,
+          breadBought: 0,
+          blackBought: 0,
+          aided: 0,
+          hoarded: 0
+        }));
+      }
+
+      function distribute(groups, amount, weights) {
+        const totalWeight = Object.values(weights).reduce((sum, value) => sum + value, 0);
+        if (amount <= 0 || totalWeight <= 0) {
+          return;
+        }
+
+        groups.forEach((group) => {
+          const weight = weights[group.id] || 0;
+          if (weight > 0) {
+            group.cashTotal += amount * weight / totalWeight;
+          }
+        });
+      }
+
+      function buyUnits(group, stock, wanted, price, stats, allowDebt) {
+        const cashUnits = Math.min(wanted, stock.value, Math.floor(group.cashTotal / price));
+        let units = cashUnits;
+        let spend = cashUnits * price;
+        group.cashTotal -= spend;
+        stock.value -= cashUnits;
+
+        if (allowDebt && units < wanted && stock.value > 0) {
+          const creditUnits = Math.min(wanted - units, stock.value, Math.floor(group.count * group.credit));
+          const borrow = creditUnits * price;
+          if (borrow > 0) {
+            group.debt += borrow;
+            group.cashTotal += borrow;
+            const extraUnits = Math.min(creditUnits, stock.value, Math.floor(group.cashTotal / price));
+            const extraSpend = extraUnits * price;
+            group.cashTotal -= extraSpend;
+            stock.value -= extraUnits;
+            units += extraUnits;
+            spend += extraSpend;
+            stats.debtNew += borrow;
+          }
+        }
+
+        return { units, spend };
+      }
+
+      function snapshot(turn, state, groups, stats) {
+        const groupSnapshots = groups.map((group) => ({
+          id: group.id,
+          name: group.name,
+          count: group.count,
+          color: group.color,
+          cashPerPlayer: round1(group.cashTotal / group.count),
+          debtPerPlayer: round1(group.debt / group.count),
+          wealthPerPlayer: round1((group.cashTotal - group.debt) / group.count),
+          hungerMarks: group.hungerMarks,
+          lastHungry: group.lastHungry,
+          breadBought: group.breadBought,
+          blackBought: group.blackBought,
+          aided: group.aided,
+          hoarded: group.hoarded
+        }));
+
+        return {
+          turn,
+          marketBread: round1(state.marketBread),
+          roadGrain: round1(state.roadGrain),
+          churchBread: round1(state.churchBread),
+          blackBread: round1(state.blackBread),
+          treasury: round1(state.treasury),
+          wageDue: round1(state.wageDue),
+          legalPrice: round1(state.legalPrice),
+          blackPrice: round1(state.blackPrice),
+          blackMarket: round1(state.blackMarket),
+          assignatTrust: round1(state.assignatTrust),
+          cityUnrest: round1(state.cityUnrest),
+          ruralUnrest: round1(state.ruralUnrest),
+          totalDebt: round1(groups.reduce((sum, group) => sum + group.debt, 0)),
+          totalHungry: groups.reduce((sum, group) => sum + group.hungerMarks, 0),
+          groups: groupSnapshots,
+          stats: { ...stats }
+        };
+      }
+
+      function simulateEconomy(config) {
+        const groups = createGroups(config.players);
+        const state = {
+          marketBread: Math.round(config.players * 0.75),
+          roadGrain: 12,
+          churchBread: Math.round(config.players * 0.12),
+          blackBread: Math.round(config.players * 0.1),
+          treasury: 35,
+          wageDue: 0,
+          legalPrice: config.price,
+          blackPrice: config.price + 2,
+          blackMarket: 15,
+          assignatTrust: 100,
+          cityUnrest: 10,
+          ruralUnrest: 10
+        };
+        const history = [snapshot(0, state, groups, { hungry: 0, debtNew: 0 })];
+
+        for (let turn = 1; turn <= config.turns; turn += 1) {
+          const stats = {
+            arrived: 0,
+            hidden: 0,
+            requisitioned: 0,
+            legalBought: 0,
+            blackBought: 0,
+            hungry: 0,
+            debtNew: 0,
+            legalRevenue: 0,
+            blackRevenue: 0
+          };
+
+          state.roadGrain += config.incoming;
+          const roadPool = Math.max(0, state.roadGrain);
+          const arrived = Math.floor(roadPool * config.delivery);
+          const hidden = Math.floor(roadPool * config.hidden);
+          const requisitioned = Math.floor(roadPool * config.requisition);
+          const lost = Math.floor(roadPool * 0.03);
+          const consumed = Math.min(roadPool, arrived + hidden + requisitioned + lost);
+          state.roadGrain = roadPool - consumed;
+          state.marketBread += arrived * 2;
+          state.blackBread += Math.floor(hidden * 0.65);
+          state.blackMarket = clamp(state.blackMarket + hidden * 0.55, 0, 100);
+          state.ruralUnrest = clamp(state.ruralUnrest + requisitioned * 0.45, 0, 100);
+          stats.arrived = arrived;
+          stats.hidden = hidden;
+          stats.requisitioned = requisitioned;
+
+          if (config.maximum) {
+            const leak = Math.floor(state.marketBread * 0.18);
+            state.marketBread -= leak;
+            state.blackBread += leak;
+            state.blackMarket = clamp(state.blackMarket + leak * 0.35, 0, 100);
+          }
+
+          groups.forEach((group) => {
+            const hungerPenalty = clamp(1 - (group.lastHungry / group.count) * 0.45, 0.55, 1);
+            group.cashTotal += group.count * group.income * hungerPenalty;
+          });
+
+          const statePayroll = config.stateJobs * 2;
+          const assignatNominal = statePayroll * config.assignats;
+          const coinNeeded = statePayroll - assignatNominal;
+          const coinPaid = Math.min(coinNeeded, state.treasury);
+          const assignatReal = assignatNominal * clamp(state.assignatTrust / 100, 0.05, 1);
+          state.treasury -= coinPaid;
+          state.assignatTrust = clamp(state.assignatTrust - assignatNominal * 0.7, 0, 100);
+          state.blackMarket = clamp(state.blackMarket + assignatNominal * 0.25, 0, 100);
+          distribute(groups, coinPaid + assignatReal, { poor: 4, workers: 3, officials: 3 });
+
+          if (coinPaid < coinNeeded) {
+            const shortage = coinNeeded - coinPaid;
+            state.wageDue += shortage;
+            state.cityUnrest = clamp(state.cityUnrest + shortage * 0.5, 0, 100);
+          }
+
+          const legalPrice = config.maximum ? Math.min(state.legalPrice, 3) : state.legalPrice;
+          const marketStock = { value: state.marketBread };
+          const blackStock = { value: state.blackBread };
+
+          if (config.hoarding) {
+            const owners = groups.find((group) => group.id === "owners");
+            if (owners) {
+              const wanted = Math.floor(owners.count * owners.hoard);
+              const bought = buyUnits(owners, marketStock, wanted, legalPrice, stats, false);
+              owners.hoarded += bought.units;
+              stats.legalRevenue += bought.spend;
+            }
+          }
+
+          const needs = new Map(groups.map((group) => [group.id, Math.ceil(group.count)]));
+          [...groups].sort((a, b) => a.priority - b.priority).forEach((group) => {
+            const wanted = needs.get(group.id);
+            const bought = buyUnits(group, marketStock, wanted, legalPrice, stats, true);
+            group.breadBought += bought.units;
+            stats.legalBought += bought.units;
+            stats.legalRevenue += bought.spend;
+            needs.set(group.id, wanted - bought.units);
+          });
+
+          [...groups].sort((a, b) => b.count - a.count).forEach((group) => {
+            const wanted = needs.get(group.id);
+            const aidWanted = Math.ceil(wanted * config.church);
+            const aided = Math.min(wanted, aidWanted, state.churchBread);
+            state.churchBread -= aided;
+            group.aided += aided;
+            needs.set(group.id, wanted - aided);
+          });
+
+          [...groups].sort((a, b) => a.blackPriority - b.blackPriority).forEach((group) => {
+            const wanted = needs.get(group.id);
+            const blackWanted = Math.ceil(wanted * group.black);
+            const bought = buyUnits(group, blackStock, blackWanted, state.blackPrice, stats, true);
+            group.blackBought += bought.units;
+            stats.blackBought += bought.units;
+            stats.blackRevenue += bought.spend;
+            needs.set(group.id, wanted - bought.units);
+          });
+
+          needs.forEach((wanted, groupId) => {
+            const group = groups.find((item) => item.id === groupId);
+            const hungry = Math.max(0, wanted);
+            group.lastHungry = hungry;
+            group.hungerMarks += hungry;
+            stats.hungry += hungry;
+          });
+
+          state.marketBread = marketStock.value;
+          state.blackBread = blackStock.value;
+          state.treasury += stats.legalRevenue * 0.1;
+          distribute(groups, stats.legalRevenue * 0.9, { artisans: 4, owners: 3, officials: 1 });
+          distribute(groups, stats.blackRevenue, { owners: 5, artisans: 1 });
+
+          let priceDelta = 0;
+          if (stats.hungry >= Math.ceil(config.players * 0.1) || state.marketBread <= 0) {
+            priceDelta += 1;
+            state.cityUnrest = clamp(state.cityUnrest + 6 + stats.hungry * 0.25, 0, 100);
+          } else if (arrived >= 12 && state.marketBread > config.players * 0.25) {
+            priceDelta -= 1;
+            state.cityUnrest = clamp(state.cityUnrest - 1.5, 0, 100);
+          }
+
+          if (config.maximum && priceDelta > 0) {
+            state.legalPrice = Math.min(state.legalPrice, 3);
+            state.blackMarket = clamp(state.blackMarket + 5, 0, 100);
+          } else {
+            state.legalPrice = clamp(state.legalPrice + priceDelta, 1, 12);
+          }
+
+          state.treasury -= config.war;
+          if (state.treasury < 0) {
+            state.wageDue += Math.abs(state.treasury);
+            state.treasury = 0;
+            state.cityUnrest = clamp(state.cityUnrest + 4, 0, 100);
+          }
+
+          if (stats.requisitioned > 0) {
+            state.ruralUnrest = clamp(state.ruralUnrest + stats.requisitioned * 0.35, 0, 100);
+          }
+          if (state.blackMarket > 50) {
+            state.cityUnrest = clamp(state.cityUnrest + 2, 0, 100);
+          }
+
+          state.blackPrice = clamp(
+            Math.max(state.legalPrice + 1, state.blackPrice + (state.blackMarket > 55 ? 0.5 : 0) + (stats.hungry > 0 ? 0.2 : 0)),
+            2,
+            18
+          );
+
+          history.push(snapshot(turn, state, groups, stats));
+        }
+
+        return { history, final: history[history.length - 1] };
+      }
+
+      function buildPressure(result, config) {
+        const final = result.final;
+        const items = [];
+
+        if (final.totalHungry >= config.players || final.cityUnrest >= 68) {
+          items.push({ title: "Якобинский Террор", text: "Голод и городское давление делают чрезвычайную власть политически правдоподобной.", tone: "red" });
+        }
+        if (final.ruralUnrest >= 55) {
+          items.push({ title: "Федералистский раскол / Вандея", text: "Реквизиции и срыв подвоза переносят конфликт из Парижа в провинции.", tone: "green" });
+        }
+        if (final.treasury <= 2 && final.assignatTrust < 55) {
+          items.push({ title: "Директория или военная власть", text: "Казна пустеет, бумага дешевеет, запрос на порядок становится сильнее институтов.", tone: "gold" });
+        }
+        if (final.blackMarket >= 60) {
+          items.push({ title: "Теневая экономика", text: "Цена может быть ограничена законом, но хлеб уходит к тем, у кого есть доступ и деньги.", tone: "red" });
+        }
+        if (items.length === 0) {
+          items.push({ title: "Умеренный финал еще жив", text: "Хлебный кризис управляем, казна дышит, а городское давление не забирает всю политику себе.", tone: "blue" });
+        }
+
+        return items.slice(0, 4);
+      }
+
+      function renderKpis(result) {
+        const final = result.final;
+        const firstHunger = result.history.find((snap) => snap.turn > 0 && snap.stats.hungry > 0);
+        const firstEmpty = result.history.find((snap) => snap.turn > 0 && snap.marketBread <= 0);
+        const richest = [...final.groups].sort((a, b) => b.wealthPerPlayer - a.wealthPerPlayer)[0];
+        const poorest = [...final.groups].sort((a, b) => a.wealthPerPlayer - b.wealthPerPlayer)[0];
+        const items = [
+          ["Первый голод", firstHunger ? `ход ${firstHunger.turn}` : "нет"],
+          ["Рынок пустеет", firstEmpty ? `ход ${firstEmpty.turn}` : "нет"],
+          ["Казна", final.treasury],
+          ["Черный рынок", `${final.blackMarket}%`],
+          ["Город", `${final.cityUnrest}%`],
+          ["Провинции", `${final.ruralUnrest}%`],
+          ["Богаче всех", `${richest.name}: ${richest.wealthPerPlayer}`],
+          ["Беднее всех", `${poorest.name}: ${poorest.wealthPerPlayer}`]
+        ];
+
+        kpisRoot.innerHTML = items.map(([label, value]) => `
+          <div class="econ-kpi">
+            <span>${label}</span>
+            <strong>${value}</strong>
+          </div>
+        `).join("");
+      }
+
+      function renderGroups(result) {
+        const groups = result.final.groups;
+        const minWealth = Math.min(...groups.map((group) => group.wealthPerPlayer));
+        const maxWealth = Math.max(...groups.map((group) => group.wealthPerPlayer));
+        const spread = Math.max(1, maxWealth - minWealth);
+
+        groupsRoot.innerHTML = groups.map((group) => {
+          const width = clamp(14 + ((group.wealthPerPlayer - minWealth) / spread) * 82, 8, 96);
+          return `
+            <div class="econ-group">
+              <div class="econ-group-title">
+                <span>${group.name}</span>
+                <span>${group.wealthPerPlayer}</span>
+              </div>
+              <div class="econ-bar"><span style="width:${width}%; background:${group.color};"></span></div>
+              <div class="econ-group-meta">
+                <span>игроки: ${group.count}</span>
+                <span>долг: ${group.debtPerPlayer}</span>
+                <span>голод: ${group.hungerMarks}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function renderPressure(result, config) {
+        pressureRoot.innerHTML = buildPressure(result, config).map((item) => `
+          <div class="econ-pressure-item ${item.tone}">
+            <strong>${item.title}</strong>
+            <small>${item.text}</small>
+          </div>
+        `).join("");
+      }
+
+      function renderHistory(result) {
+        historyBody.innerHTML = result.history.slice(1).map((snap) => `
+          <tr>
+            <td>${snap.turn}</td>
+            <td>${snap.marketBread}</td>
+            <td>${snap.roadGrain}</td>
+            <td>${snap.stats.hungry}</td>
+            <td>${snap.treasury}</td>
+            <td>${snap.totalDebt}</td>
+            <td>${snap.legalPrice}</td>
+            <td>${snap.blackMarket}</td>
+            <td>${snap.assignatTrust}</td>
+            <td>${snap.cityUnrest}</td>
+          </tr>
+        `).join("");
+      }
+
+      function renderEconomy() {
+        const config = readConfig();
+        const result = simulateEconomy(config);
+        renderKpis(result);
+        renderGroups(result);
+        renderPressure(result, config);
+        renderHistory(result);
+      }
+
+      scenarioSelect.addEventListener("change", () => {
+        applyScenario();
+        renderEconomy();
+      });
+      maximumToggle.addEventListener("change", renderEconomy);
+      hoardingToggle.addEventListener("change", renderEconomy);
+
+      buildControls();
+      applyScenario();
+      renderEconomy();
+    })();
+  </script>
+</body>
+</html>

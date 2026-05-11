@@ -1,0 +1,2639 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Интерактивная карта причин Французской революции</title>
+  <style>
+    :root {
+      --paper: #efe6d7;
+      --panel: #fffaf2;
+      --panel-2: #f7f1e6;
+      --ink: #231f1d;
+      --muted: #6b665f;
+      --line: #d5cab7;
+      --shadow: 0 18px 48px rgba(35, 31, 29, .10);
+      --finance: #9b6a1a;
+      --politics: #205b8f;
+      --food: #a33d2e;
+      --religion: #517648;
+      --war: #5b495e;
+      --street: #a84d6f;
+      --provinces: #2f7d7e;
+      --repression: #3f424a;
+      --accent: #0f766e;
+      --active: #111827;
+      --chip: rgba(255, 255, 255, .85);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, .55), transparent 35%),
+        linear-gradient(180deg, #f6efe3 0%, #efe6d7 100%);
+      font-family: "Segoe UI Variable Text", "Segoe UI", "Trebuchet MS", sans-serif;
+      line-height: 1.5;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: Georgia, "Palatino Linotype", serif;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(139, 114, 77, .18);
+      background:
+        linear-gradient(120deg, rgba(252, 248, 239, .92), rgba(233, 240, 245, .88)),
+        linear-gradient(90deg, #f8f2e8, #eef5f6);
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto auto 0 0;
+      width: 38vmax;
+      height: 38vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(32, 91, 143, .10), transparent 70%);
+      transform: translate(-32%, 42%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      inset: -12vmax -12vmax auto auto;
+      background: radial-gradient(circle, rgba(163, 61, 46, .10), transparent 70%);
+      transform: none;
+    }
+
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 36px 28px 30px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border: 1px solid rgba(139, 114, 77, .24);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      color: #584c43;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .hero h1 {
+      max-width: 980px;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.04;
+    }
+
+    .hero-copy {
+      max-width: 920px;
+      margin-top: 14px;
+      color: #443f39;
+      font-size: 18px;
+    }
+
+    .hero-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .note-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(139, 114, 77, .18);
+      background: rgba(255, 255, 255, .78);
+      color: #49453f;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 24px 20px 48px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 20px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 250, 242, .97), rgba(250, 245, 236, .96));
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid rgba(213, 202, 183, .65);
+    }
+
+    .panel-head h2 {
+      font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .panel-subtitle {
+      max-width: 760px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      min-width: 116px;
+      padding: 12px 14px;
+      border: 1px solid rgba(213, 202, 183, .8);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .8);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .map-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(320px, .9fr);
+      gap: 20px;
+      padding: 0 20px 20px;
+    }
+
+    .graph-pane {
+      display: grid;
+      gap: 14px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid rgba(213, 202, 183, .8);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .7);
+    }
+
+    .control-block {
+      display: grid;
+      gap: 8px;
+    }
+
+    .control-block label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 9px 12px;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 999px;
+      background: var(--chip);
+      color: #443e38;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(133, 114, 86, .7);
+    }
+
+    .chip.is-active {
+      color: #fff;
+      background: var(--active);
+      border-color: var(--active);
+    }
+
+    .control-block.is-disabled {
+      display: none;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .search-row input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .96);
+      color: var(--ink);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search-row input:focus {
+      border-color: rgba(32, 91, 143, .8);
+      box-shadow: 0 0 0 4px rgba(32, 91, 143, .12);
+    }
+
+    .ghost-btn {
+      padding: 12px 14px;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .86);
+      color: #443e38;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .view-panel.is-hidden {
+      display: none;
+    }
+
+    .map-frame {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1240 / 820;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 22% 18%, rgba(255, 255, 255, .55), transparent 26%),
+        linear-gradient(180deg, rgba(254, 251, 246, .98), rgba(246, 240, 230, .96));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+    }
+
+    .map-frame::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(187, 167, 139, .28);
+      pointer-events: none;
+    }
+
+    .map-svg,
+    .nodes-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .edge {
+      fill: none;
+      stroke: rgba(128, 114, 97, .24);
+      stroke-width: 2.5;
+      transition: stroke .2s ease, opacity .2s ease, stroke-width .2s ease;
+      pointer-events: none;
+    }
+
+    .edge.is-hidden {
+      opacity: 0;
+    }
+
+    .edge.is-dimmed {
+      opacity: .14;
+    }
+
+    .edge.is-highlighted {
+      stroke: rgba(17, 24, 39, .82);
+      stroke-width: 3.5;
+      opacity: 1;
+    }
+
+    .node {
+      position: absolute;
+      width: 172px;
+      min-height: 92px;
+      padding: 12px 12px 10px;
+      border: 1px solid rgba(213, 202, 183, .98);
+      border-top: 6px solid var(--node-color, var(--politics));
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .94);
+      color: var(--ink);
+      text-align: left;
+      box-shadow: 0 14px 24px rgba(35, 31, 29, .09);
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease, border-color .18s ease;
+    }
+
+    .node:hover {
+      transform: translate(-50%, calc(-50% - 2px));
+      box-shadow: 0 20px 28px rgba(35, 31, 29, .13);
+    }
+
+    .node.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .node.is-dimmed {
+      opacity: .28;
+    }
+
+    .node.is-selected {
+      border-color: rgba(17, 24, 39, .56);
+      box-shadow: 0 24px 32px rgba(17, 24, 39, .18);
+      transform: translate(-50%, calc(-50% - 3px));
+    }
+
+    .node small {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(245, 241, 232, .92);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .node b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .node span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0 20px 20px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(213, 202, 183, .8);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .76);
+      color: #4b4640;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--node-color, var(--politics));
+    }
+
+    .geo-stage,
+    .timeline-stage {
+      display: grid;
+      gap: 14px;
+    }
+
+    .geo-map {
+      position: relative;
+      min-height: 820px;
+      overflow: hidden;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, .48), transparent 22%),
+        linear-gradient(180deg, rgba(253, 250, 244, .98), rgba(243, 235, 223, .98));
+    }
+
+    .geo-map::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 18px;
+      border: 1px dashed rgba(187, 167, 139, .32);
+      pointer-events: none;
+    }
+
+    .geo-sea {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 18%;
+      background: linear-gradient(180deg, rgba(211, 226, 237, .42), rgba(180, 204, 221, .18));
+      border-right: 1px solid rgba(135, 155, 173, .22);
+    }
+
+    .geo-border {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 15%;
+      background: linear-gradient(180deg, rgba(219, 214, 229, .28), rgba(191, 185, 210, .12));
+      border-left: 1px solid rgba(128, 114, 141, .18);
+    }
+
+    .geo-label {
+      position: absolute;
+      color: rgba(82, 77, 72, .72);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      pointer-events: none;
+    }
+
+    .geo-label.sea { left: 28px; top: 26px; }
+    .geo-label.border { right: 24px; top: 26px; text-align: right; }
+
+    .geo-node {
+      position: absolute;
+      width: 190px;
+      min-height: 110px;
+      padding: 14px 14px 12px;
+      border: 1px solid rgba(213, 202, 183, .96);
+      border-top: 6px solid var(--geo-color, var(--politics));
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .95);
+      box-shadow: 0 16px 24px rgba(35, 31, 29, .09);
+      text-align: left;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, opacity .18s ease;
+    }
+
+    .geo-node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 28px rgba(35, 31, 29, .12);
+    }
+
+    .geo-node.is-active {
+      border-color: rgba(17, 24, 39, .48);
+      box-shadow: 0 24px 30px rgba(17, 24, 39, .15);
+    }
+
+    .geo-node small {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(245, 241, 232, .96);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .geo-node b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+      line-height: 1.18;
+    }
+
+    .geo-node span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .geo-node.paris { left: 42%; top: 34%; --geo-color: var(--politics); }
+    .geo-node.grain { left: 44%; top: 64%; --geo-color: var(--food); }
+    .geo-node.west { left: 18%; top: 52%; --geo-color: var(--provinces); }
+    .geo-node.fronts { left: 73%; top: 28%; --geo-color: var(--war); }
+    .geo-node.ports { left: 14%; top: 80%; --geo-color: var(--finance); }
+    .geo-node.barriers { left: 58%; top: 24%; --geo-color: var(--finance); }
+    .geo-node.south { left: 61%; top: 79%; --geo-color: var(--provinces); }
+    .geo-node.depots { left: 70%; top: 57%; --geo-color: var(--food); }
+
+    .geo-route {
+      position: absolute;
+      height: 2px;
+      background: rgba(103, 96, 88, .42);
+      transform-origin: left center;
+      pointer-events: none;
+    }
+
+    .geo-route::before,
+    .geo-route::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .geo-route::before {
+      left: 0;
+      width: 100%;
+      border-top: 2px dashed rgba(103, 96, 88, .32);
+    }
+
+    .geo-route::after {
+      right: -1px;
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid rgba(103, 96, 88, .62);
+    }
+
+    .geo-route-label {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .88);
+      color: #544e47;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid rgba(213, 202, 183, .86);
+    }
+
+    .geo-route.grain-to-paris {
+      left: 38%;
+      top: 58%;
+      width: 160px;
+      transform: rotate(-74deg);
+    }
+
+    .geo-route.west-to-paris {
+      left: 24%;
+      top: 49%;
+      width: 210px;
+      transform: rotate(-16deg);
+    }
+
+    .geo-route.ports-to-paris {
+      left: 20%;
+      top: 72%;
+      width: 315px;
+      transform: rotate(-26deg);
+    }
+
+    .geo-route.fronts-pull {
+      left: 51%;
+      top: 34%;
+      width: 260px;
+      transform: rotate(-6deg);
+    }
+
+    .geo-route.barriers-hit {
+      left: 48%;
+      top: 27%;
+      width: 112px;
+      transform: rotate(-12deg);
+    }
+
+    .geo-route.south-to-paris {
+      left: 50%;
+      top: 71%;
+      width: 210px;
+      transform: rotate(-62deg);
+    }
+
+    .geo-route.depots-to-paris {
+      left: 53%;
+      top: 47%;
+      width: 168px;
+      transform: rotate(-20deg);
+    }
+
+    .geo-callout {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      max-width: 280px;
+      padding: 14px;
+      border: 1px solid rgba(213, 202, 183, .82);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .84);
+      color: #4e4943;
+      font-size: 14px;
+    }
+
+    .timeline-stepper {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .timeline-chip {
+      padding: 14px 12px;
+      border: 1px solid rgba(213, 202, 183, .92);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .86);
+      color: #403a35;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .timeline-chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 20px rgba(35, 31, 29, .08);
+    }
+
+    .timeline-chip.is-active {
+      background: linear-gradient(180deg, rgba(27, 38, 54, .96), rgba(39, 54, 76, .96));
+      color: #fff;
+      border-color: rgba(27, 38, 54, .96);
+      box-shadow: 0 18px 24px rgba(17, 24, 39, .18);
+    }
+
+    .timeline-chip small {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      opacity: .78;
+    }
+
+    .timeline-chip b {
+      display: block;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .timeline-cards {
+      display: grid;
+      gap: 14px;
+    }
+
+    .timeline-summary {
+      padding: 18px;
+      border: 1px solid rgba(213, 202, 183, .88);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .88), rgba(248, 243, 235, .88));
+    }
+
+    .timeline-summary h3 {
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+
+    .timeline-summary p {
+      color: #4a453f;
+      font-size: 16px;
+    }
+
+    .timeline-flow {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(246, 240, 230, .92);
+      border: 1px solid rgba(213, 202, 183, .88);
+      color: #564f47;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .timeline-card {
+      padding: 16px;
+      border: 1px solid rgba(213, 202, 183, .86);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .82);
+    }
+
+    .timeline-card h4 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .timeline-list,
+    .inspector-list {
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .timeline-list li,
+    .inspector-list li {
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(246, 240, 230, .88);
+      color: #4d473f;
+      font-size: 14px;
+    }
+
+    .sidebar-shell {
+      align-self: start;
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .sidebar-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .sidebar-tab {
+      padding: 11px 12px;
+      border: 1px solid rgba(213, 202, 183, .86);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .84);
+      color: #4a443e;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .sidebar-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 18px rgba(35, 31, 29, .08);
+    }
+
+    .sidebar-tab.is-active {
+      background: linear-gradient(180deg, rgba(27, 38, 54, .96), rgba(39, 54, 76, .96));
+      color: #fff;
+      border-color: rgba(27, 38, 54, .96);
+    }
+
+    .sidebar-panel.is-hidden {
+      display: none;
+    }
+
+    .inspector {
+      align-self: start;
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid rgba(213, 202, 183, .8);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .86), rgba(250, 245, 236, .95));
+      min-height: 420px;
+    }
+
+    .comments-pane {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid rgba(213, 202, 183, .8);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .86), rgba(250, 245, 236, .95));
+      min-height: 420px;
+    }
+
+    .comments-pane h3 {
+      font-size: 28px;
+      line-height: 1.08;
+    }
+
+    .comments-pane p {
+      color: #4c4741;
+      font-size: 15px;
+    }
+
+    .comments-setup {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(213, 202, 183, .82);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .78);
+    }
+
+    .comments-setup h4 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .comments-setup ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #4b453f;
+      font-size: 14px;
+    }
+
+    .comments-setup li {
+      margin-bottom: 6px;
+    }
+
+    .comments-note {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(32, 91, 143, .22);
+      background: rgba(232, 241, 248, .82);
+      color: #24415d;
+      font-size: 14px;
+    }
+
+    .giscus-host {
+      min-height: 180px;
+      padding: 10px;
+      border: 1px dashed rgba(213, 202, 183, .88);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .58);
+    }
+
+    .inspector-head {
+      display: grid;
+      gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(213, 202, 183, .72);
+    }
+
+    .inspector-head h3 {
+      font-size: 28px;
+      line-height: 1.08;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(244, 239, 229, .96);
+      color: #4d4841;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .badge::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--badge-color, var(--politics));
+    }
+
+    .inspector p {
+      color: #443f39;
+      font-size: 15px;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .info-block {
+      padding: 14px;
+      border: 1px solid rgba(213, 202, 183, .78);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .74);
+    }
+
+    .info-block h4 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .link-list,
+    .token-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .link-token,
+    .plain-token {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(213, 202, 183, .86);
+      background: rgba(255, 255, 255, .92);
+      color: #302b27;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .link-token {
+      cursor: pointer;
+    }
+
+    .link-token::before {
+      content: "→";
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .empty-line {
+      color: var(--muted);
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .recipes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 0 20px 20px;
+    }
+
+    .recipe {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border: 1px solid rgba(213, 202, 183, .82);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .88), rgba(247, 241, 230, .85));
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .recipe:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 24px rgba(35, 31, 29, .08);
+    }
+
+    .recipe.is-active {
+      border-color: rgba(17, 24, 39, .45);
+      box-shadow: 0 20px 26px rgba(17, 24, 39, .11);
+    }
+
+    .recipe h3 {
+      font-size: 22px;
+    }
+
+    .recipe p {
+      color: #504a44;
+    }
+
+    .recipe-flow {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .help-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding: 0 20px 20px;
+    }
+
+    .help-card {
+      padding: 18px;
+      border: 1px solid rgba(213, 202, 183, .82);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .78);
+    }
+
+    .help-card h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .help-card p {
+      color: #4f4942;
+    }
+
+    footer {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 28px 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1180px) {
+      .map-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .inspector {
+        position: static;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .recipes,
+      .help-grid,
+      .timeline-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .wrap {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      main {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .panel-head,
+      .map-layout,
+      .legend,
+      .recipes,
+      .help-grid {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+
+      .map-frame {
+        aspect-ratio: auto;
+        min-height: 1160px;
+      }
+
+      .geo-map {
+        min-height: 1120px;
+      }
+
+      .edge {
+        display: none;
+      }
+
+      .node {
+        width: 158px;
+      }
+
+      .geo-node {
+        width: 168px;
+      }
+
+      .timeline-stepper {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Офлайн HTML-карта</div>
+      <h1>Интерактивная карта причин и инструментов влияния Французской революции</h1>
+      <p class="hero-copy">Кликайте по узлам, чтобы видеть прямые причины, каналы действия и последствия. Слева можно фильтровать карту по темам и слоям, справа — разбирать каждый узел как игровую механику или историческую связку.</p>
+      <div class="hero-notes">
+        <span class="note-pill">Без библиотек и интернета</span>
+        <span class="note-pill">Подходит для сценариев, GDD и балансовых таблиц</span>
+        <span class="note-pill">Фокус: причина → канал → последствие</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="stack">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Живая карта узлов</h2>
+            <p class="panel-subtitle">Идея простая: одна беда редко работает в одиночку. Обычно система взрывается, когда несколько узлов сходятся в одну связку — например, `неурожай + парижские пошлины + инфляция -> дорогой хлеб -> слухи -> улица`.</p>
+          </div>
+          <div class="stats">
+            <div class="stat"><b id="statAValue">0</b><span id="statALabel">Видимых узлов</span></div>
+            <div class="stat"><b id="statBValue">0</b><span id="statBLabel">Видимых связей</span></div>
+            <div class="stat"><b id="statCValue">0</b><span id="statCLabel">Сильных пакетов</span></div>
+          </div>
+        </div>
+
+        <div class="map-layout">
+          <div class="graph-pane">
+            <div class="controls">
+              <div class="control-block">
+                <label>Режим</label>
+                <div class="chip-row" id="modeFilters"></div>
+              </div>
+              <div class="control-block network-only">
+                <label>Темы</label>
+                <div class="chip-row" id="domainFilters"></div>
+              </div>
+              <div class="control-block network-only">
+                <label>Слой системы</label>
+                <div class="chip-row" id="typeFilters"></div>
+              </div>
+              <div class="control-block network-only">
+                <label>Поиск</label>
+                <div class="search-row">
+                  <input id="searchInput" type="search" placeholder="Например: хлеб, Вандея, присяга, Террор">
+                  <button class="ghost-btn" id="resetFiltersBtn" type="button">Сбросить</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="view-panel" id="networkView">
+              <div class="map-frame">
+                <svg class="map-svg" id="edgesSvg" viewBox="0 0 1240 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                  <defs>
+                    <marker id="arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(128, 114, 97, .38)"></path>
+                    </marker>
+                    <marker id="arrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(17, 24, 39, .82)"></path>
+                    </marker>
+                  </defs>
+                </svg>
+                <div class="nodes-layer" id="nodesLayer"></div>
+              </div>
+            </div>
+
+            <div class="view-panel is-hidden" id="geoView">
+              <div class="geo-stage">
+                <div class="geo-map">
+                  <div class="geo-sea"></div>
+                  <div class="geo-border"></div>
+                  <div class="geo-label sea">Атлантика и Ла-Манш</div>
+                  <div class="geo-label border">Граница и континентальные фронты</div>
+
+                  <button class="geo-node paris" type="button" data-geo="paris">
+                    <small>Париж</small>
+                    <b>Столица и рынок паники</b>
+                    <span>Здесь любой сбой снабжения сразу превращается в политику.</span>
+                  </button>
+
+                  <button class="geo-node grain" type="button" data-geo="grain">
+                    <small>Провинции хлеба</small>
+                    <b>Зерновые районы</b>
+                    <span>Основной источник подвоза в город, пока дороги, страх и реквизиции не ломают поток.</span>
+                  </button>
+
+                  <button class="geo-node west" type="button" data-geo="west">
+                    <small>Запад и мятежи</small>
+                    <b>Вандея и провинциальный срыв</b>
+                    <span>Если центр жмет слишком сильно, регион начинает не отдавать хлеб и людей.</span>
+                  </button>
+
+                  <button class="geo-node fronts" type="button" data-geo="fronts">
+                    <small>Фронты</small>
+                    <b>Война тянет на себя ресурс</b>
+                    <span>Армия забирает зерно, лошадей, металл и внимание власти.</span>
+                  </button>
+
+                  <button class="geo-node ports" type="button" data-geo="ports">
+                    <small>Порты и внешняя закупка</small>
+                    <b>Можно купить хлеб за границей</b>
+                    <span>Но нужны деньги, море, корабли и политическая воля платить за импорт.</span>
+                  </button>
+
+                  <button class="geo-node barriers" type="button" data-geo="barriers">
+                    <small>Вокруг Парижа</small>
+                    <b>Налоговая стена и заставы</b>
+                    <span>Видимое место, где дорогой ввоз превращается в ненависть к сборщикам и погромы.</span>
+                  </button>
+
+                  <button class="geo-node south" type="button" data-geo="south">
+                    <small>Юг и торговый коридор</small>
+                    <b>Марсель, Лион, южный ввоз</b>
+                    <span>Еще один путь ресурса, денег и слухов; полезен для импорта и опасен при расколе страны.</span>
+                  </button>
+
+                  <button class="geo-node depots" type="button" data-geo="depots">
+                    <small>Внутри страны</small>
+                    <b>Склады и распределение</b>
+                    <span>Даже купленный или реквизированный хлеб надо где-то хранить, охранять и довезти до районов.</span>
+                  </button>
+
+                  <div class="geo-route grain-to-paris"><span class="geo-route-label">обычный подвоз в Париж</span></div>
+                  <div class="geo-route west-to-paris"><span class="geo-route-label">мятеж может сорвать поток</span></div>
+                  <div class="geo-route ports-to-paris"><span class="geo-route-label">импорт хлеба через порты</span></div>
+                  <div class="geo-route fronts-pull"><span class="geo-route-label">фронты вытягивают людей и ресурс</span></div>
+                  <div class="geo-route barriers-hit"><span class="geo-route-label">заставы делают налог видимым</span></div>
+                  <div class="geo-route south-to-paris"><span class="geo-route-label">южный коридор и запасной подвоз</span></div>
+                  <div class="geo-route depots-to-paris"><span class="geo-route-label">нужно распределить по городу</span></div>
+
+                  <div class="geo-callout">Географический слой теперь показывает не только “откуда еда”, но и узкие места системы: заставы, склады, порты, южный коридор, фронты и регионы, которые могут просто перестать нормально кормить столицу.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="view-panel is-hidden" id="timelineView">
+              <div class="timeline-stage">
+                <div class="timeline-stepper" id="timelineStepper"></div>
+                <div class="timeline-cards" id="timelineCards"></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="sidebar-shell">
+            <div class="sidebar-tabs">
+              <button type="button" class="sidebar-tab is-active" data-sidebar-tab="inspector">Инспектор</button>
+              <button type="button" class="sidebar-tab" data-sidebar-tab="comments">Комментарии</button>
+            </div>
+            <div class="sidebar-panel" id="inspectorPanel">
+              <div class="inspector" id="inspector"></div>
+            </div>
+            <div class="sidebar-panel is-hidden" id="commentsPanel">
+              <div class="comments-pane" id="commentsPane"></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Сильные связки</h2>
+            <p class="panel-subtitle">Это готовые пакеты для сцены, акта или сценарного поворота. Нажмите на карточку — карта подсветит соответствующие узлы.</p>
+          </div>
+        </div>
+        <div class="recipes" id="recipes"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Как использовать в работе</h2>
+            <p class="panel-subtitle">Один и тот же файл можно использовать как исследовательскую карту, мастерский экран и основу для механических таблиц.</p>
+          </div>
+        </div>
+        <div class="help-grid">
+          <div class="help-card">
+            <h3>Для сценария</h3>
+            <p>Берите 3–4 узла на акт и смотрите, что они усиливают. Например: `долг`, `привилегии`, `спор о голосовании`, `улица`.</p>
+          </div>
+          <div class="help-card">
+            <h3>Для механик</h3>
+            <p>Каждый узел легко превращается в трек, карту события или ресурс. У узла уже есть акторы и рычаги вмешательства.</p>
+          </div>
+          <div class="help-card">
+            <h3>Для баланса</h3>
+            <p>Если решения игрока гасят один кризис, но не поднимают соседний, система будет казаться слишком плоской. Карта помогает это быстро замечать.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Файл создан для проекта Revolution_France. Можно открывать локально как обычную HTML-страницу и использовать как рабочую карту обсуждения.
+  </footer>
+
+  <script>
+    const domains = {
+      all: { label: "Все темы", color: "#111827" },
+      finance: { label: "Финансы", color: "#9b6a1a" },
+      politics: { label: "Представительство", color: "#205b8f" },
+      food: { label: "Хлеб", color: "#a33d2e" },
+      religion: { label: "Церковь", color: "#517648" },
+      war: { label: "Война", color: "#5b495e" },
+      street: { label: "Улица и слухи", color: "#a84d6f" },
+      provinces: { label: "Провинции", color: "#2f7d7e" },
+      repression: { label: "Террор и откат", color: "#3f424a" }
+    };
+
+    const modes = {
+      network: { label: "Сеть причин" },
+      geo: { label: "География" },
+      timeline: { label: "Таймлайн" }
+    };
+
+    const types = {
+      all: { label: "Все слои" },
+      root: { label: "Корневые причины" },
+      pressure: { label: "Симптомы и кризисы" },
+      channel: { label: "Каналы действия" },
+      outcome: { label: "Последствия" }
+    };
+
+    const nodes = [
+      {
+        id: "debt",
+        title: "Долг государства",
+        domain: "finance",
+        type: "root",
+        x: 120,
+        y: 110,
+        short: "Войны, проценты, пустая казна",
+        summary: "Старый режим не может долго жить с такой финансовой нагрузкой. Любая попытка закрыть дефицит сразу упирается в вопрос: кто должен платить и кто вообще вправе это решать.",
+        actors: ["король", "министры", "кредиторы"],
+        levers: ["новый налог", "займы", "сокращение расходов", "продажа имущества"],
+        chain: "долг -> дефицит -> спор о налогах -> политический кризис"
+      },
+      {
+        id: "privilege",
+        title: "Сословные привилегии",
+        domain: "politics",
+        type: "root",
+        x: 120,
+        y: 250,
+        short: "Неравенство перед налогом и законом",
+        summary: "Дворянство и духовенство несут меньше нагрузки, чем третье сословие. Поэтому финансовая реформа почти неизбежно становится атакой на саму социальную конструкцию старого порядка.",
+        actors: ["дворянство", "духовенство", "третье сословие"],
+        levers: ["отмена привилегий", "равный налог", "сохранение исключений", "политический компромисс"],
+        chain: "привилегии -> ненависть к неравенству -> спор о суверенитете"
+      },
+      {
+        id: "externalThreat",
+        title: "Внешняя угроза",
+        domain: "war",
+        type: "root",
+        x: 120,
+        y: 390,
+        short: "Эмигранты и европейские монархии",
+        summary: "Когда революция начинает восприниматься как угроза для соседних монархий, внутренний конфликт получает внешнее измерение. Это дает и патриотический подъем, и аргумент в пользу чрезвычайных мер.",
+        actors: ["эмигранты", "Австрия", "Пруссия", "двор"],
+        levers: ["дипломатия", "объявление войны", "оборона", "пропаганда"],
+        chain: "внешняя угроза -> война -> мобилизация -> страх измены"
+      },
+      {
+        id: "crop",
+        title: "Неурожай",
+        domain: "food",
+        type: "root",
+        x: 120,
+        y: 550,
+        short: "Физически меньше зерна",
+        summary: "Это стартовая материальная причина хлебного кризиса. Но сама по себе она еще не делает революцию: она становится политической через цены, очереди, слухи и поиск виноватых.",
+        actors: ["крестьяне", "перевозчики", "городские покупатели"],
+        levers: ["запасы", "импорт", "подвоз", "субсидии"],
+        chain: "неурожай -> меньше зерна -> дорогой хлеб"
+      },
+      {
+        id: "churchWealth",
+        title: "Богатство церкви",
+        domain: "religion",
+        type: "root",
+        x: 120,
+        y: 700,
+        short: "Земли, десятина, моральная власть",
+        summary: "Церковь выглядит для государства одновременно богатым активом и независимым центром лояльности. Именно поэтому финансовое решение быстро превращается в религиозный раскол.",
+        actors: ["епископы", "приходы", "государство"],
+        levers: ["национализация", "отмена десятины", "компромисс с приходами", "терпимость к неприсягнувшим"],
+        chain: "церковная собственность -> ресурс для бюджета -> конфликт совести"
+      },
+      {
+        id: "taxCrisis",
+        title: "Фискальный кризис",
+        domain: "finance",
+        type: "pressure",
+        x: 350,
+        y: 110,
+        short: "Деньги нужны срочно, система не работает",
+        summary: "Проблема уже не в том, что денег мало, а в том, что старые способы их собирать политически и административно выдохлись. Отсюда рождается созыв Генеральных штатов и поиск суррогатных решений вроде ассигнатов.",
+        actors: ["министры", "сословные собрания", "кредиторы"],
+        levers: ["созыв штатов", "единый налог", "эмиссия", "займы"],
+        chain: "дефицит -> срочные решения -> раскол по вопросу власти"
+      },
+      {
+        id: "representation",
+        title: "Кризис представительства",
+        domain: "politics",
+        type: "pressure",
+        x: 350,
+        y: 250,
+        short: "По сословиям или по головам?",
+        summary: "Процедурный спор определяет, кто считается Францией. Если большинство снова блокируют формой голосования, это почти толкает третье сословие к самообъявлению нацией.",
+        actors: ["депутаты третьего сословия", "либеральные дворяне", "низшее духовенство"],
+        levers: ["изменить процедуру", "удвоить представительство", "тянуть время", "сделать новый орган власти"],
+        chain: "спор о процедуре -> спор о суверенитете"
+      },
+      {
+        id: "war",
+        title: "Война",
+        domain: "war",
+        type: "pressure",
+        x: 350,
+        y: 390,
+        short: "Внешний фронт ускоряет все кризисы",
+        summary: "Война делает хлеб, финансы, доверие и кадровую политику острее. Поражение выглядит как измена, победа — как заслуга армии, а не только гражданских институтов.",
+        actors: ["жирондисты", "офицеры", "корона", "Конвент"],
+        levers: ["избежать войны", "вести оборону", "мобилизация", "чистки командования"],
+        chain: "война -> расходы, рекрутчина, подозрение"
+      },
+      {
+        id: "parisWall",
+        title: "Парижские пошлины",
+        domain: "finance",
+        type: "pressure",
+        x: 350,
+        y: 510,
+        short: "Стена откупщиков и octroi",
+        summary: "Налог вокруг Парижа делает дорогой хлеб и товары буквально видимыми. Для горожан это не абстрактная экономика, а реальные заставы, сборщики и ненавистные ворота.",
+        actors: ["откупщики", "сборщики", "муниципалитет"],
+        levers: ["отмена octroi", "реформа пошлин", "контрабанда", "погром застав"],
+        chain: "видимый налог -> дорогой ввоз -> ненависть к сборщикам"
+      },
+      {
+        id: "bread",
+        title: "Хлебный кризис",
+        domain: "food",
+        type: "pressure",
+        x: 350,
+        y: 620,
+        short: "Цена хлеба становится политикой",
+        summary: "Когда хлеб съедает слишком большую часть дохода, люди уже воспринимают политику через тело. Кризис усиливается, если провинции срывают подвоз из-за мятежей, а власть не успевает купить хлеб за границей и завести его через порты.",
+        actors: ["городская беднота", "женщины рынков", "булочники", "торговцы зерном"],
+        levers: ["максимум цен", "субсидии", "подвоз", "реквизиции", "запасы", "закупка хлеба за границей"],
+        chain: "дефицит + цена + срыв подвоза -> очереди -> взрыв улицы"
+      },
+      {
+        id: "oath",
+        title: "Присяга духовенства",
+        domain: "religion",
+        type: "pressure",
+        x: 350,
+        y: 730,
+        short: "Выбор между нацией и старой церковью",
+        summary: "Государство требует от священника публично решить, кому он верен. Для прихода это ломает привычный мир и делает вопрос веры вопросом политической лояльности.",
+        actors: ["приходские священники", "епископы", "революционная власть"],
+        levers: ["жесткая присяга", "уступки", "терпимость", "преследование неприсягнувших"],
+        chain: "присяга -> раскол прихода -> религиозное сопротивление"
+      },
+      {
+        id: "assignats",
+        title: "Ассигнаты",
+        domain: "finance",
+        type: "channel",
+        x: 620,
+        y: 110,
+        short: "Решение бюджета сегодня, инфляция завтра",
+        summary: "Бумажные деньги позволяют выиграть время и оживить платежи, но подрывают доверие к деньгам и поднимают цену хлеба. Это одно из самых удобных и самых опасных решений власти.",
+        actors: ["государство", "покупатели национальных имуществ", "торговцы"],
+        levers: ["эмиссия", "обеспечение землями", "ограничение выпуска", "ценовой контроль"],
+        chain: "эмиссия -> инфляция -> новый хлебный стресс"
+      },
+      {
+        id: "assembly",
+        title: "Национальное собрание",
+        domain: "politics",
+        type: "channel",
+        x: 620,
+        y: 240,
+        short: "Новая машина законности",
+        summary: "Собрание получает право переопределять режим через декреты. Оно может уравнивать налоги, отменять привилегии и продавать земли, но каждое решение создает новую группу победителей и проигравших.",
+        actors: ["депутаты", "комитеты", "клубы", "монархия"],
+        levers: ["декрет", "конституция", "реформа процедуры", "вето", "комитеты"],
+        chain: "представительство -> закон -> новый порядок"
+      },
+      {
+        id: "conscription",
+        title: "Рекрутчина",
+        domain: "war",
+        type: "channel",
+        x: 620,
+        y: 370,
+        short: "Война приходит в каждую деревню",
+        summary: "Пока война абстрактна, ее можно поддерживать. Когда центр начинает забирать молодых мужчин, фронт становится личным опытом семьи и общины.",
+        actors: ["Конвент", "деревенские общины", "молодые мужчины"],
+        levers: ["массовый набор", "льготы", "замена службы", "мягкая мобилизация"],
+        chain: "война -> набор людей -> анти-парижская злость"
+      },
+      {
+        id: "requisitions",
+        title: "Реквизиции",
+        domain: "war",
+        type: "channel",
+        x: 620,
+        y: 480,
+        short: "Центр забирает хлеб, лошадей и металл",
+        summary: "Реквизиции решают проблему снабжения города и фронта, но заставляют провинции чувствовать себя колонией центра. Это быстрый способ снабжения и быстрый способ вырастить ненависть.",
+        actors: ["комиссары", "армия", "крестьяне", "муниципалитеты"],
+        levers: ["жесткость норм", "компенсация", "распределение бремени", "военная логистика"],
+        chain: "фронт требует ресурсов -> деревня сопротивляется"
+      },
+      {
+        id: "rumors",
+        title: "Слухи и язык врага",
+        domain: "street",
+        type: "channel",
+        x: 620,
+        y: 610,
+        short: "Бытовая боль получает виновника",
+        summary: "Слухи соединяют материальный дефицит с моральной схемой: кто-то нарочно прячет зерно, предает нацию или разрушает веру. После этого толпе уже проще действовать.",
+        actors: ["газеты", "ораторы", "рынки", "клубы"],
+        levers: ["памфлеты", "речь", "обвинение", "контрпропаганда", "публичные символы"],
+        chain: "очередь -> слух -> поиск врага -> действие"
+      },
+      {
+        id: "street",
+        title: "Уличное давление",
+        domain: "street",
+        type: "channel",
+        x: 620,
+        y: 730,
+        short: "Толпа меняет темп политики",
+        summary: "Когда люди видят, что действуют другие, порог страха падает. Улица начинает делать то, на что институты не решаются: штурмовать, маршировать, заставлять, вытеснять.",
+        actors: ["санкюлоты", "женщины рынков", "секции", "Коммуна"],
+        levers: ["марш", "петиция", "штурм", "секция", "вооруженное давление"],
+        chain: "боль + слухи + толпа -> политическое принуждение"
+      },
+      {
+        id: "armyOrder",
+        title: "Армия как порядок",
+        domain: "war",
+        type: "outcome",
+        x: 1120,
+        y: 240,
+        short: "Победы армии тянут власть к генералу",
+        summary: "Если гражданские институты слабы, а армия выигрывает и дает дисциплину, общество начинает видеть в генералах не только инструмент, но и возможный источник порядка.",
+        actors: ["генералы", "армия", "исполнительная власть"],
+        levers: ["военный престиж", "централизация", "личная популярность", "исполнительная дисциплина"],
+        chain: "война + усталость -> спрос на сильную руку"
+      },
+      {
+        id: "suspicion",
+        title: "Подозрение в измене",
+        domain: "repression",
+        type: "channel",
+        x: 900,
+        y: 390,
+        short: "Оппонент превращается во врага народа",
+        summary: "В этой точке спор перестает быть спором. Любая неудача, дефицит или поражение легко начинает объясняться предательством, а значит — требует ареста, доноса и исключительных мер.",
+        actors: ["комитеты", "радикалы", "журналисты", "доносчики"],
+        levers: ["донос", "цензура", "комитеты", "арест", "трибунал"],
+        chain: "поражения и страх -> поиск внутреннего врага"
+      },
+      {
+        id: "vendee",
+        title: "Вандея и провинциальный фронт",
+        domain: "provinces",
+        type: "outcome",
+        x: 900,
+        y: 620,
+        short: "Религия, рекрутчина и реквизиции сходятся",
+        summary: "Вандея вырастает не из одной любви к королю, а из связки прихода, семьи, хозяйства и ненависти к далекому центру. Чем жестче отвечает центр, тем дольше живет внутренний фронт.",
+        actors: ["приходские общины", "местные элиты", "роялисты", "комиссары"],
+        levers: ["уступки провинциям", "терпимость к приходу", "мягкая мобилизация", "карательные меры"],
+        chain: "присяга + рекрутчина + реквизиции -> восстание"
+      },
+      {
+        id: "terror",
+        title: "Террор",
+        domain: "repression",
+        type: "outcome",
+        x: 900,
+        y: 480,
+        short: "Чрезвычайная власть как способ спасения",
+        summary: "Террор возникает не от одной злой идеи, а из спайки войны, мятежей, уличного давления и подозрения. Он может дать короткую управляемость, но очень быстро начинает пожирать и союзников.",
+        actors: ["Комитет общественного спасения", "трибунал", "местные комитеты"],
+        levers: ["закон о подозрительных", "ускоренное правосудие", "казни", "жесткий контроль цен", "массовое подавление"],
+        chain: "страх + комитеты + враг народа -> машина исключения"
+      },
+      {
+        id: "thermidor",
+        title: "Термидор и откат",
+        domain: "repression",
+        type: "outcome",
+        x: 1120,
+        y: 480,
+        short: "Усталость от спасения страхом",
+        summary: "Когда страх становится слишком дорогим и для депутатов, и для общества, возникает коалиция, которая уже не хочет продолжать революцию тем же темпом. Отсюда растет спрос на стабилизацию и ограничение улицы.",
+        actors: ["испуганные депутаты", "буржуазия", "военные", "бывшие умеренные"],
+        levers: ["смещение радикалов", "ослабление клубов", "новая конституция", "опора на порядок"],
+        chain: "Террор -> усталость -> Термидор -> новый порядок"
+      }
+    ];
+
+    const edges = [
+      { from: "debt", to: "taxCrisis", label: "дефицит" },
+      { from: "privilege", to: "taxCrisis", label: "несправедливый сбор" },
+      { from: "privilege", to: "representation", label: "кто имеет голос" },
+      { from: "taxCrisis", to: "representation", label: "нужен новый мандат" },
+      { from: "taxCrisis", to: "assignats", label: "быстрое финансовое решение" },
+      { from: "representation", to: "assembly", label: "новая законность" },
+      { from: "assembly", to: "oath", label: "гражданская конституция" },
+      { from: "assembly", to: "assignats", label: "национальные имущества" },
+      { from: "externalThreat", to: "war", label: "осада и Пильниц" },
+      { from: "war", to: "conscription", label: "нужны люди" },
+      { from: "war", to: "requisitions", label: "нужны ресурсы" },
+      { from: "war", to: "suspicion", label: "поражения и измена" },
+      { from: "war", to: "armyOrder", label: "престиж генералов" },
+      { from: "crop", to: "bread", label: "меньше зерна" },
+      { from: "parisWall", to: "bread", label: "дорогой ввоз" },
+      { from: "assignats", to: "bread", label: "инфляция" },
+      { from: "requisitions", to: "bread", label: "ломают нормальный подвоз" },
+      { from: "bread", to: "rumors", label: "очереди и паника" },
+      { from: "bread", to: "street", label: "моральный гнев" },
+      { from: "rumors", to: "street", label: "виноватые найдены" },
+      { from: "churchWealth", to: "assignats", label: "земли как обеспечение" },
+      { from: "churchWealth", to: "oath", label: "контроль над церковью" },
+      { from: "oath", to: "vendee", label: "раскол приходов" },
+      { from: "conscription", to: "vendee", label: "забирают сыновей" },
+      { from: "requisitions", to: "vendee", label: "забирают хлеб и лошадей" },
+      { from: "street", to: "suspicion", label: "радикальный порог" },
+      { from: "street", to: "terror", label: "давление секций" },
+      { from: "vendee", to: "terror", label: "внутренний фронт" },
+      { from: "suspicion", to: "terror", label: "комитеты и аресты" },
+      { from: "terror", to: "thermidor", label: "усталость и страх" },
+      { from: "terror", to: "armyOrder", label: "запрос на порядок" }
+    ];
+
+    const recipes = [
+      {
+        id: "recipe-political-break",
+        title: "Политический слом старого режима",
+        description: "Финансовый вопрос становится спором о том, кто вообще имеет право говорить от имени Франции.",
+        flow: "Долг -> фискальный кризис -> кризис представительства -> Национальное собрание",
+        nodes: ["debt", "privilege", "taxCrisis", "representation", "assembly"]
+      },
+      {
+        id: "recipe-bread",
+        title: "Хлебный взрыв Парижа",
+        description: "Материальный дефицит получает моральную интерпретацию и выходит на улицу.",
+        flow: "Неурожай + парижские пошлины + срыв подвоза из провинций -> хлебный кризис -> импорт как костыль или улица как ответ",
+        nodes: ["crop", "parisWall", "assignats", "requisitions", "bread", "rumors", "street", "vendee"]
+      },
+      {
+        id: "recipe-church-vendee",
+        title: "Религиозный путь к Вандее",
+        description: "Финансовая реформа бьет по церковной структуре, а война добавляет рекрутчину и реквизиции.",
+        flow: "Богатство церкви -> присяга -> рекрутчина и реквизиции -> Вандея",
+        nodes: ["churchWealth", "oath", "conscription", "requisitions", "vendee"]
+      },
+      {
+        id: "recipe-terror",
+        title: "Спираль Террора",
+        description: "Война и уличная радикализация соединяются с подозрением в измене и внутренним фронтом.",
+        flow: "Война + улица + подозрение + Вандея -> Террор",
+        nodes: ["war", "street", "suspicion", "vendee", "terror"]
+      },
+      {
+        id: "recipe-order",
+        title: "Переход к порядку",
+        description: "После пика насилия и усталости общество начинает поддерживать тех, кто обещает остановить качку.",
+        flow: "Террор -> Термидор / армия как порядок",
+        nodes: ["terror", "thermidor", "armyOrder", "war"]
+      }
+    ];
+
+    const geoLayers = {
+      paris: {
+        title: "Париж",
+        summary: "Столица — это место, где хлеб становится политическим датчиком. Здесь дефицит быстрее всего превращается в очередь, слух, марш и давление на власть.",
+        flows: ["входящий хлеб из провинций", "входящий импорт через порты", "исходящее уличное давление на центр"],
+        actions: ["субсидировать хлеб", "давить цены", "охранять подвоз", "успокаивать секции"],
+        risks: ["очереди", "погромы застав", "марши женщин", "радикализация секций"],
+        nodes: ["bread", "parisWall", "rumors", "street"]
+      },
+      grain: {
+        title: "Провинции хлеба",
+        summary: "Зерновые районы кормят столицу, пока им выгодно и пока дорога не ломается войной, реквизициями или страхом перед центром. Это не фон, а главный источник физического хлеба.",
+        flows: ["зерно в Париж", "локальные запасы в уезды", "скрытый уход товара на черный рынок"],
+        actions: ["стимулировать продажу", "компенсировать подвоз", "не душить реквизициями", "открывать дороги"],
+        risks: ["прятать зерно", "отказываться везти", "держать товар до лучшей цены"],
+        nodes: ["crop", "bread", "requisitions"]
+      },
+      west: {
+        title: "Запад и Вандея",
+        summary: "Когда приход, семья и хозяйство чувствуют, что центр ломает привычный мир, провинция перестает охотно отдавать хлеб и людей. Тогда мятеж бьет не только по политике, но и по снабжению столицы.",
+        flows: ["срыв подвоза", "рост внутреннего фронта", "ненависть к комиссарам"],
+        actions: ["терпимость к приходу", "смягчать рекрутчину", "уменьшать реквизиции", "договариваться с местными"],
+        risks: ["восстание", "саботаж дорог", "не дают хлеба центру"],
+        nodes: ["vendee", "oath", "conscription", "requisitions", "bread"]
+      },
+      fronts: {
+        title: "Фронты",
+        summary: "Фронт конкурирует с Парижем за один и тот же ресурс. Армии нужны хлеб, лошади, металл и люди, поэтому военная карта напрямую меняет гражданскую экономику.",
+        flows: ["тянут зерно и транспорт", "забирают рекрутов", "возвращают страх поражения"],
+        actions: ["сокращать фронт", "перекидывать снабжение", "менять стратегию войны", "покупать ресурс извне"],
+        risks: ["поражения", "дефицит в тылу", "рост подозрения в измене"],
+        nodes: ["war", "conscription", "requisitions", "suspicion", "armyOrder"]
+      },
+      ports: {
+        title: "Порты и внешняя закупка",
+        summary: "Если внутри страны не хватает хлеба или провинции срывают подвоз, власть может покупать зерно за границей. Но это работает только если есть деньги, суда, безопасный путь и административная воля.",
+        flows: ["импорт зерна", "деньги наружу", "облегчение Парижа ценой бюджета"],
+        actions: ["покупать хлеб за границей", "субсидировать морской ввоз", "страховать конвои", "распределять импорт по столице"],
+        risks: ["дорого", "зависимость от флота и войны", "не успевает прийти вовремя"],
+        nodes: ["bread", "assignats", "war", "parisWall"]
+      },
+      barriers: {
+        title: "Налоговая стена и заставы Парижа",
+        summary: "Это физическая точка, где налог становится предметом ненависти. Здесь дорогой ввоз можно почувствовать буквально: очередью, проверкой, сборщиком, взяткой, контрабандой и пожаром.",
+        flows: ["вход товара через ворота", "сбор пошлины", "контрабанда в обход"],
+        actions: ["реформировать octroi", "сжечь заставу", "подкупать сборщиков", "открывать льготный проход для хлеба"],
+        risks: ["дорогой хлеб", "погромы застав", "ненависть к откупщикам"],
+        nodes: ["parisWall", "bread", "street"]
+      },
+      south: {
+        title: "Южный торговый коридор",
+        summary: "Через юг идут не только товары, но и альтернативные политические и торговые логики. Это запасной путь для импорта и внутренней торговли, особенно когда север и запад нестабильны.",
+        flows: ["ввоз через порты Средиземноморья", "деньги и коммерция через крупные города", "альтернативный путь к столице"],
+        actions: ["открывать южный импорт", "стимулировать купцов", "держать дорогу безопасной", "не ссориться с крупными городами"],
+        risks: ["дорогое плечо доставки", "федералистский раскол", "задержка подвоза"],
+        nodes: ["ports", "bread", "war"]
+      },
+      depots: {
+        title: "Склады и распределение",
+        summary: "Купить хлеб мало — его нужно привезти, сложить, охранять и отдать в правильный район. На этом этапе дефицит часто превращается либо в реальную раздачу, либо в слух о том, что хлеб снова спрятали.",
+        flows: ["запасы в городе", "раздача по районам", "потери при хранении и воровстве"],
+        actions: ["строить запас", "охранять склады", "пускать секции к учету", "выдавать по очередям"],
+        risks: ["грабеж", "слухи о сокрытии", "неравномерное снабжение районов"],
+        nodes: ["bread", "rumors", "street"]
+      }
+    };
+
+    const timelineActs = [
+      {
+        id: "1788",
+        label: "1788",
+        era: "Акт 0",
+        title: "1788 — старая система уже трещит",
+        summary: "Еще нет нового режима, но уже есть дефицит бюджета, неурожай и ненависть к привилегиям. Это момент, когда старый порядок еще выглядит прочным, но уже не может дешево прожить следующий год.",
+        flow: "долг + привилегии + неурожай -> фискальный кризис -> необходимость созыва",
+        dominant: ["долг государства", "налоговое неравенство", "неурожай"],
+        moves: ["искать новые налоги", "занимать", "держать элиты в компромиссе"],
+        geography: ["Париж чувствует рост цены", "провинции чувствуют слабый урожай"],
+        nodes: ["debt", "privilege", "crop", "taxCrisis", "bread"]
+      },
+      {
+        id: "1789",
+        label: "1789",
+        era: "Акт 1",
+        title: "1789 — процедура ломается, улица входит",
+        summary: "Финансовый кризис превращается в спор о суверенитете, а хлебный кризис вытаскивает на сцену городские низы. Это момент встречи депутатской и уличной революции.",
+        flow: "кризис представительства + дорогой хлеб -> Национальное собрание + уличный прорыв",
+        dominant: ["кто говорит от имени Франции", "цена хлеба", "давление Парижа"],
+        moves: ["менять процедуру", "успокаивать столицу хлебом", "держать короля в рамке"],
+        geography: ["Париж давит на центр", "подвоз в столицу критичен", "заставы становятся точками конфликта"],
+        nodes: ["representation", "assembly", "bread", "parisWall", "rumors", "street"]
+      },
+      {
+        id: "1791",
+        label: "1791",
+        era: "Акт 2",
+        title: "1791 — трещина доверия и церковный раскол",
+        summary: "После конституционных шагов революция упирается в более сложные узлы: присягу духовенства, бегство короля, бумажные деньги и растущую внешнюю угрозу. Это фаза скользящего недоверия.",
+        flow: "конституция + присяга + Варенн + ассигнаты -> падает доверие к монархии",
+        dominant: ["раскол прихода", "слабое доверие к королю", "денежная нервозность"],
+        moves: ["искать церковный компромисс", "ограничивать эмиссию", "удерживать монархию от разрыва"],
+        geography: ["провинции начинают раскалываться по линии прихода", "Париж нервничает сильнее, чем департаменты"],
+        nodes: ["assembly", "oath", "churchWealth", "assignats", "externalThreat", "war"]
+      },
+      {
+        id: "1793",
+        label: "1793",
+        era: "Акт 3",
+        title: "1793 — война, Вандея и пик чрезвычайщины",
+        summary: "Все главные кризисы сходятся разом: фронты, рекрутчина, реквизиции, внутренние мятежи, дорогой хлеб и страх измены. Это самая перегруженная фаза всей системы.",
+        flow: "война + рекрутчина + реквизиции + Вандея + улица -> Террор",
+        dominant: ["военное давление", "срыв провинциальной лояльности", "поиск врагов"],
+        moves: ["мобилизовать", "реквизировать", "давить подозрительных", "вводить максимум"],
+        geography: ["фронты тянут ресурс", "Запад горит", "Париж требует хлеб и казни"],
+        nodes: ["war", "conscription", "requisitions", "vendee", "bread", "street", "suspicion", "terror"]
+      },
+      {
+        id: "thermidor",
+        label: "Термидор",
+        era: "Акт 4",
+        title: "Термидор — усталость от спасения страхом",
+        summary: "После пика чрезвычайщины появляется другой импульс: остановить качку, ослабить улицу и вернуть управляемость. Это не конец кризиса, а смена главного страха.",
+        flow: "Террор -> усталость -> Термидор -> порядок через буржуазию и армию",
+        dominant: ["усталость элит", "переизбыток страха", "рост веса армии"],
+        moves: ["снимать радикалов", "ослаблять клубы", "искать порядок", "опираться на армию"],
+        geography: ["Париж уже не единственный хозяин темпа", "фронтовая и административная логика сильнее улицы"],
+        nodes: ["terror", "thermidor", "armyOrder", "war", "assignats"]
+      }
+    ];
+
+    const nodesById = Object.fromEntries(nodes.map((node) => [node.id, node]));
+    const incomingMap = new Map(nodes.map((node) => [node.id, []]));
+    const outgoingMap = new Map(nodes.map((node) => [node.id, []]));
+    edges.forEach((edge) => {
+      outgoingMap.get(edge.from).push(edge);
+      incomingMap.get(edge.to).push(edge);
+    });
+
+    const state = {
+      mode: "network",
+      sidebarTab: "inspector",
+      domain: "all",
+      type: "all",
+      query: "",
+      selectedNode: "bread",
+      selectedRecipe: null,
+      selectedGeo: "paris",
+      selectedAct: "1788"
+    };
+
+    const commentsConfig = {
+      provider: "giscus",
+      enabled: false,
+      repo: "your-org/your-repo",
+      repoId: "REPLACE_WITH_REPO_ID",
+      category: "Ideas",
+      categoryId: "REPLACE_WITH_CATEGORY_ID",
+      mapping: "pathname",
+      strict: "0",
+      reactionsEnabled: "1",
+      emitMetadata: "0",
+      inputPosition: "top",
+      theme: "light",
+      lang: "ru"
+    };
+
+    const modeFiltersEl = document.getElementById("modeFilters");
+    const domainFiltersEl = document.getElementById("domainFilters");
+    const typeFiltersEl = document.getElementById("typeFilters");
+    const searchInputEl = document.getElementById("searchInput");
+    const resetFiltersBtnEl = document.getElementById("resetFiltersBtn");
+    const networkViewEl = document.getElementById("networkView");
+    const geoViewEl = document.getElementById("geoView");
+    const timelineViewEl = document.getElementById("timelineView");
+    const timelineStepperEl = document.getElementById("timelineStepper");
+    const timelineCardsEl = document.getElementById("timelineCards");
+    const nodesLayerEl = document.getElementById("nodesLayer");
+    const edgesSvgEl = document.getElementById("edgesSvg");
+    const inspectorEl = document.getElementById("inspector");
+    const commentsPaneEl = document.getElementById("commentsPane");
+    const inspectorPanelEl = document.getElementById("inspectorPanel");
+    const commentsPanelEl = document.getElementById("commentsPanel");
+    const legendEl = document.getElementById("legend");
+    const recipesEl = document.getElementById("recipes");
+    const statAValueEl = document.getElementById("statAValue");
+    const statALabelEl = document.getElementById("statALabel");
+    const statBValueEl = document.getElementById("statBValue");
+    const statBLabelEl = document.getElementById("statBLabel");
+    const statCValueEl = document.getElementById("statCValue");
+    const statCLabelEl = document.getElementById("statCLabel");
+    const networkOnlyControls = Array.from(document.querySelectorAll(".network-only"));
+    const geoButtons = Array.from(document.querySelectorAll("[data-geo]"));
+    const sidebarTabButtons = Array.from(document.querySelectorAll("[data-sidebar-tab]"));
+
+    const nodeElements = new Map();
+    const edgeElements = [];
+    let commentsLoaded = false;
+
+    function makeChip(label, active, onClick) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `chip${active ? " is-active" : ""}`;
+      button.textContent = label;
+      button.addEventListener("click", onClick);
+      return button;
+    }
+
+    function renderModeFilters() {
+      modeFiltersEl.innerHTML = "";
+      Object.entries(modes).forEach(([key, value]) => {
+        modeFiltersEl.appendChild(
+          makeChip(value.label, state.mode === key, () => {
+            state.mode = key;
+            if (key === "network" && !state.selectedNode && !state.selectedRecipe) {
+              state.selectedNode = "bread";
+            }
+            renderModeFilters();
+            renderFilters();
+            applyState();
+          })
+        );
+      });
+    }
+
+    function renderFilters() {
+      domainFiltersEl.innerHTML = "";
+      Object.entries(domains).forEach(([key, value]) => {
+        domainFiltersEl.appendChild(
+          makeChip(value.label, state.domain === key, () => {
+            state.domain = key;
+            state.selectedRecipe = null;
+            renderFilters();
+            applyState();
+          })
+        );
+      });
+
+      typeFiltersEl.innerHTML = "";
+      Object.entries(types).forEach(([key, value]) => {
+        typeFiltersEl.appendChild(
+          makeChip(value.label, state.type === key, () => {
+            state.type = key;
+            state.selectedRecipe = null;
+            renderFilters();
+            applyState();
+          })
+        );
+      });
+    }
+
+    function updateStats(mode, payload = {}) {
+      if (mode === "geo") {
+        statAValueEl.textContent = String(Object.keys(geoLayers).length);
+        statALabelEl.textContent = "Ключевых зон";
+        statBValueEl.textContent = "4";
+        statBLabelEl.textContent = "Маршрута давления";
+        statCValueEl.textContent = "2";
+        statCLabelEl.textContent = "Пути закрыть хлеб";
+        return;
+      }
+
+      if (mode === "timeline") {
+        const act = timelineActs.find((entry) => entry.id === state.selectedAct) || timelineActs[0];
+        statAValueEl.textContent = String(timelineActs.length);
+        statALabelEl.textContent = "Актов";
+        statBValueEl.textContent = String(act.nodes.length);
+        statBLabelEl.textContent = "Узлов акта";
+        statCValueEl.textContent = String(act.dominant.length);
+        statCLabelEl.textContent = "Главных давлений";
+        return;
+      }
+
+      statAValueEl.textContent = String(payload.visibleNodes ?? 0);
+      statALabelEl.textContent = "Видимых узлов";
+      statBValueEl.textContent = String(payload.visibleEdges ?? 0);
+      statBLabelEl.textContent = "Видимых связей";
+      statCValueEl.textContent = String(recipes.length);
+      statCLabelEl.textContent = "Сильных пакетов";
+    }
+
+    function renderSidebarTabs() {
+      sidebarTabButtons.forEach((button) => {
+        const isActive = button.dataset.sidebarTab === state.sidebarTab;
+        button.classList.toggle("is-active", isActive);
+      });
+
+      inspectorPanelEl.classList.toggle("is-hidden", state.sidebarTab !== "inspector");
+      commentsPanelEl.classList.toggle("is-hidden", state.sidebarTab !== "comments");
+    }
+
+    function loadGiscus() {
+      if (commentsLoaded || !commentsConfig.enabled || window.location.protocol === "file:") {
+        return;
+      }
+
+      const host = commentsPaneEl.querySelector(".giscus-host");
+      if (!host) {
+        return;
+      }
+
+      host.innerHTML = "";
+      const script = document.createElement("script");
+      script.src = "https://giscus.app/client.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.setAttribute("data-repo", commentsConfig.repo);
+      script.setAttribute("data-repo-id", commentsConfig.repoId);
+      script.setAttribute("data-category", commentsConfig.category);
+      script.setAttribute("data-category-id", commentsConfig.categoryId);
+      script.setAttribute("data-mapping", commentsConfig.mapping);
+      script.setAttribute("data-strict", commentsConfig.strict);
+      script.setAttribute("data-reactions-enabled", commentsConfig.reactionsEnabled);
+      script.setAttribute("data-emit-metadata", commentsConfig.emitMetadata);
+      script.setAttribute("data-input-position", commentsConfig.inputPosition);
+      script.setAttribute("data-theme", commentsConfig.theme);
+      script.setAttribute("data-lang", commentsConfig.lang);
+      host.appendChild(script);
+      commentsLoaded = true;
+    }
+
+    function renderCommentsPane() {
+      const isLocalFile = window.location.protocol === "file:";
+      const giscusReady = commentsConfig.enabled && commentsConfig.repoId !== "REPLACE_WITH_REPO_ID" && commentsConfig.categoryId !== "REPLACE_WITH_CATEGORY_ID";
+
+      commentsPaneEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:#111827">Онлайн-обсуждение</span>
+          </div>
+          <h3>Комментарии справа</h3>
+          <p>Эта колонка подготовлена под giscus: статическая страница хостится онлайн, а комментарии живут в GitHub Discussions и показываются здесь же сбоку.</p>
+        </div>
+        <div class="comments-setup">
+          <h4>Что уже сделано</h4>
+          <ul>
+            <li>Страница остается статическим HTML и годится для GitHub Pages или Netlify.</li>
+            <li>Правый блок зарезервирован под виджет комментариев.</li>
+            <li>Если включить конфиг commentsConfig, сюда подгрузится giscus.</li>
+          </ul>
+        </div>
+        <div class="comments-setup">
+          <h4>Быстрый путь</h4>
+          <ul>
+            <li>Выложить страницу в GitHub-репозиторий и включить GitHub Pages.</li>
+            <li>Включить GitHub Discussions.</li>
+            <li>Настроить giscus для этого репозитория и подставить repoId и categoryId в commentsConfig.</li>
+          </ul>
+        </div>
+        <div class="comments-note">
+          ${isLocalFile
+            ? "Сейчас страница открыта как file://, поэтому онлайн-комментарии не подгрузятся. После публикации на нормальном URL этот блок сможет стать живым."
+            : giscusReady
+              ? "Страница открыта по URL. Если конфиг заполнен, виджет комментариев может загружаться прямо здесь."
+              : "Страница уже может жить онлайн, но конфиг giscus пока оставлен в режиме шаблона."}
+        </div>
+        <div class="giscus-host">
+          ${isLocalFile
+            ? "<div class=\"empty-line\">Опубликуй страницу онлайн, и здесь появится обсуждение.</div>"
+            : giscusReady
+              ? ""
+              : "<div class=\"empty-line\">Заполни commentsConfig.repoId и commentsConfig.categoryId, чтобы включить обсуждение.</div>"}
+        </div>
+      `;
+
+      if (!isLocalFile && giscusReady) {
+        loadGiscus();
+      }
+    }
+
+    function renderLegend() {
+      const keys = ["finance", "politics", "food", "religion", "war", "street", "provinces", "repression"];
+      legendEl.innerHTML = "";
+      keys.forEach((key) => {
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `<span class="legend-dot" style="--node-color:${domains[key].color}"></span>${domains[key].label}`;
+        legendEl.appendChild(item);
+      });
+    }
+
+    function createNodeElement(node) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "node";
+      button.style.left = `${(node.x / 1240) * 100}%`;
+      button.style.top = `${(node.y / 820) * 100}%`;
+      button.style.setProperty("--node-color", domains[node.domain].color);
+      button.dataset.id = node.id;
+      button.innerHTML = `
+        <small>${types[node.type].label}</small>
+        <b>${node.title}</b>
+        <span>${node.short}</span>
+      `;
+      button.addEventListener("click", () => {
+        state.selectedNode = node.id;
+        state.selectedRecipe = null;
+        applyState();
+      });
+      return button;
+    }
+
+    function curvedPath(fromNode, toNode) {
+      const x1 = fromNode.x + 86;
+      const y1 = fromNode.y;
+      const x2 = toNode.x - 86;
+      const y2 = toNode.y;
+      const c1x = x1 + Math.max(50, (x2 - x1) * .45);
+      const c2x = x2 - Math.max(50, (x2 - x1) * .45);
+      return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+    }
+
+    function renderGraph() {
+      nodes.forEach((node) => {
+        const element = createNodeElement(node);
+        nodesLayerEl.appendChild(element);
+        nodeElements.set(node.id, element);
+      });
+
+      edges.forEach((edge) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("class", "edge");
+        path.setAttribute("marker-end", "url(#arrow-muted)");
+        path.setAttribute("d", curvedPath(nodesById[edge.from], nodesById[edge.to]));
+        edgesSvgEl.appendChild(path);
+        edgeElements.push({ edge, element: path });
+      });
+    }
+
+    function renderRecipes() {
+      recipesEl.innerHTML = "";
+      recipes.forEach((recipe) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "recipe";
+        card.dataset.id = recipe.id;
+        card.innerHTML = `
+          <div>
+            <h3>${recipe.title}</h3>
+            <p>${recipe.description}</p>
+          </div>
+          <div class="recipe-flow">${recipe.flow}</div>
+        `;
+        card.addEventListener("click", () => {
+          state.mode = "network";
+          state.selectedRecipe = recipe.id;
+          state.selectedNode = null;
+          renderModeFilters();
+          renderFilters();
+          applyState();
+        });
+        recipesEl.appendChild(card);
+      });
+    }
+
+    function initGeoButtons() {
+      geoButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = "geo";
+          state.selectedGeo = button.dataset.geo;
+          renderModeFilters();
+          applyState();
+        });
+      });
+    }
+
+    function initSidebarTabs() {
+      sidebarTabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          state.sidebarTab = button.dataset.sidebarTab;
+          renderSidebarTabs();
+          if (state.sidebarTab === "comments") {
+            renderCommentsPane();
+          }
+        });
+      });
+    }
+
+    function renderTimeline() {
+      const activeAct = timelineActs.find((entry) => entry.id === state.selectedAct) || timelineActs[0];
+
+      timelineStepperEl.innerHTML = timelineActs.map((act) => `
+        <button type="button" class="timeline-chip${act.id === activeAct.id ? " is-active" : ""}" data-act="${act.id}">
+          <small>${act.era}</small>
+          <b>${act.label}</b>
+        </button>
+      `).join("");
+
+      timelineCardsEl.innerHTML = `
+        <div class="timeline-summary">
+          <h3>${activeAct.title}</h3>
+          <p>${activeAct.summary}</p>
+          <div class="timeline-flow">${activeAct.flow}</div>
+        </div>
+        <div class="timeline-grid">
+          <div class="timeline-card">
+            <h4>Главные давления</h4>
+            <ul class="timeline-list">
+              ${activeAct.dominant.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="timeline-card">
+            <h4>Что обычно пытаются делать</h4>
+            <ul class="timeline-list">
+              ${activeAct.moves.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="timeline-card">
+            <h4>География акта</h4>
+            <ul class="timeline-list">
+              ${activeAct.geography.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+        </div>
+      `;
+
+      timelineStepperEl.querySelectorAll("[data-act]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = "timeline";
+          state.selectedAct = button.dataset.act;
+          renderModeFilters();
+          applyState();
+        });
+      });
+    }
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function nodeMatchesFilters(node) {
+      const domainOk = state.domain === "all" || node.domain === state.domain;
+      const typeOk = state.type === "all" || node.type === state.type;
+      const haystack = normalize(`${node.title} ${node.short} ${node.summary} ${node.chain}`);
+      const queryOk = !state.query || haystack.includes(normalize(state.query));
+      return domainOk && typeOk && queryOk;
+    }
+
+    function getActiveRecipe() {
+      return recipes.find((recipe) => recipe.id === state.selectedRecipe) || null;
+    }
+
+    function getHighlightSet(visibleNodeIds) {
+      if (state.selectedNode && visibleNodeIds.has(state.selectedNode)) {
+        const related = new Set([state.selectedNode]);
+        incomingMap.get(state.selectedNode).forEach((edge) => visibleNodeIds.has(edge.from) && related.add(edge.from));
+        outgoingMap.get(state.selectedNode).forEach((edge) => visibleNodeIds.has(edge.to) && related.add(edge.to));
+        return related;
+      }
+
+      const recipe = getActiveRecipe();
+      if (recipe) {
+        return new Set(recipe.nodes.filter((id) => visibleNodeIds.has(id)));
+      }
+
+      return null;
+    }
+
+    function updateInspectorForNode(node) {
+      const incoming = incomingMap.get(node.id).map((edge) => edge.from);
+      const outgoing = outgoingMap.get(node.id).map((edge) => edge.to);
+
+      const renderLinkedNodes = (ids, emptyText) => {
+        if (!ids.length) {
+          return `<div class="empty-line">${emptyText}</div>`;
+        }
+
+        return `
+          <div class="link-list">
+            ${ids.map((id) => `<button type="button" class="link-token" data-jump="${id}">${nodesById[id].title}</button>`).join("")}
+          </div>
+        `;
+      };
+
+      const renderTokens = (items, emptyText) => {
+        if (!items.length) {
+          return `<div class="empty-line">${emptyText}</div>`;
+        }
+
+        return `
+          <div class="token-list">
+            ${items.map((item) => `<span class="plain-token">${item}</span>`).join("")}
+          </div>
+        `;
+      };
+
+      inspectorEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:${domains[node.domain].color}">${domains[node.domain].label}</span>
+            <span class="badge" style="--badge-color:${domains[node.domain].color}">${types[node.type].label}</span>
+          </div>
+          <h3>${node.title}</h3>
+          <p>${node.summary}</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-block">
+            <h4>Сигнатура узла</h4>
+            <p>${node.chain}</p>
+          </div>
+          <div class="info-block">
+            <h4>Что толкает</h4>
+            ${renderLinkedNodes(incoming, "Это один из стартовых узлов. Его толкают не другие узлы, а фундаментальные условия системы.")}
+          </div>
+          <div class="info-block">
+            <h4>Во что ведет</h4>
+            ${renderLinkedNodes(outgoing, "Это скорее конечный или почти конечный узел. Он сам подводит систему к развязке.")}
+          </div>
+          <div class="info-block">
+            <h4>Кто включается</h4>
+            ${renderTokens(node.actors, "Для этого узла важнее не акторы, а общая системная динамика.")}
+          </div>
+          <div class="info-block">
+            <h4>Чем можно влиять</h4>
+            ${renderTokens(node.levers, "Этот узел сложнее всего менять прямым решением — он скорее накапливается исторически.")}
+          </div>
+        </div>
+      `;
+
+      inspectorEl.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedNode = button.dataset.jump;
+          state.selectedRecipe = null;
+          applyState();
+        });
+      });
+    }
+
+    function updateInspectorForRecipe(recipe) {
+      inspectorEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:#111827">Сильная связка</span>
+          </div>
+          <h3>${recipe.title}</h3>
+          <p>${recipe.description}</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-block">
+            <h4>Поток</h4>
+            <p>${recipe.flow}</p>
+          </div>
+          <div class="info-block">
+            <h4>Какие узлы подсвечены</h4>
+            <div class="link-list">
+              ${recipe.nodes.map((id) => `<button type="button" class="link-token" data-jump="${id}">${nodesById[id].title}</button>`).join("")}
+            </div>
+          </div>
+          <div class="info-block">
+            <h4>Зачем это удобно</h4>
+            <p>Такую связку легко брать как основу для акта, ивента или мастерского трека. Она уже соединяет материальную причину, политический канал и последствия.</p>
+          </div>
+        </div>
+      `;
+
+      inspectorEl.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selectedNode = button.dataset.jump;
+          state.selectedRecipe = null;
+          applyState();
+        });
+      });
+    }
+
+    function updateInspectorForGeo(layer) {
+      inspectorEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:${state.selectedGeo === "paris" ? domains.politics.color : state.selectedGeo === "ports" ? domains.finance.color : state.selectedGeo === "fronts" ? domains.war.color : domains.provinces.color}">Географический слой</span>
+          </div>
+          <h3>${layer.title}</h3>
+          <p>${layer.summary}</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-block">
+            <h4>Основные потоки</h4>
+            <ul class="inspector-list">
+              ${layer.flows.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Что можно делать</h4>
+            <ul class="inspector-list">
+              ${layer.actions.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Главные риски</h4>
+            <ul class="inspector-list">
+              ${layer.risks.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Связанные узлы сети</h4>
+            <div class="link-list">
+              ${layer.nodes.map((id) => `<button type="button" class="link-token" data-jump-network="${id}">${nodesById[id].title}</button>`).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      inspectorEl.querySelectorAll("[data-jump-network]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = "network";
+          state.selectedNode = button.dataset.jumpNetwork;
+          state.selectedRecipe = null;
+          renderModeFilters();
+          renderFilters();
+          applyState();
+        });
+      });
+    }
+
+    function updateInspectorForAct(act) {
+      inspectorEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:#111827">${act.era}</span>
+          </div>
+          <h3>${act.title}</h3>
+          <p>${act.summary}</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-block">
+            <h4>Сигнатура акта</h4>
+            <p>${act.flow}</p>
+          </div>
+          <div class="info-block">
+            <h4>Главные давления</h4>
+            <ul class="inspector-list">
+              ${act.dominant.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>География акта</h4>
+            <ul class="inspector-list">
+              ${act.geography.map((item) => `<li>${item}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="info-block">
+            <h4>Связанные узлы сети</h4>
+            <div class="link-list">
+              ${act.nodes.map((id) => `<button type="button" class="link-token" data-jump-network="${id}">${nodesById[id].title}</button>`).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      inspectorEl.querySelectorAll("[data-jump-network]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.mode = "network";
+          state.selectedNode = button.dataset.jumpNetwork;
+          state.selectedRecipe = null;
+          renderModeFilters();
+          renderFilters();
+          applyState();
+        });
+      });
+    }
+
+    function updateInspectorEmpty() {
+      inspectorEl.innerHTML = `
+        <div class="inspector-head">
+          <div class="badge-row">
+            <span class="badge" style="--badge-color:#111827">Навигатор</span>
+          </div>
+          <h3>Выберите узел</h3>
+          <p>Клик по карточке в карте показывает, что этот узел питает, что питает его и какими рычагами на него можно воздействовать.</p>
+        </div>
+        <div class="info-grid">
+          <div class="info-block">
+            <h4>Как лучше читать</h4>
+            <p>Начинайте с корневых причин вроде долга, неурожая или привилегий, потом смотрите на каналы действия: ассигнаты, улица, рекрутчина, комитеты.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function applyState() {
+      renderSidebarTabs();
+
+      networkOnlyControls.forEach((control) => {
+        control.classList.toggle("is-disabled", state.mode !== "network");
+      });
+
+      networkViewEl.classList.toggle("is-hidden", state.mode !== "network");
+      geoViewEl.classList.toggle("is-hidden", state.mode !== "geo");
+      timelineViewEl.classList.toggle("is-hidden", state.mode !== "timeline");
+
+      geoButtons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.geo === state.selectedGeo);
+      });
+
+      renderTimeline();
+
+      const activeRecipeForMode = state.mode === "network" ? getActiveRecipe() : null;
+
+      document.querySelectorAll(".recipe").forEach((card) => {
+        card.classList.toggle("is-active", !!activeRecipeForMode && card.dataset.id === activeRecipeForMode.id);
+      });
+
+      if (state.mode === "geo") {
+        updateStats("geo");
+        updateInspectorForGeo(geoLayers[state.selectedGeo] || geoLayers.paris);
+        return;
+      }
+
+      if (state.mode === "timeline") {
+        const activeAct = timelineActs.find((entry) => entry.id === state.selectedAct) || timelineActs[0];
+        updateStats("timeline");
+        updateInspectorForAct(activeAct);
+        return;
+      }
+
+      const visibleNodeIds = new Set(nodes.filter(nodeMatchesFilters).map((node) => node.id));
+
+      if (state.selectedNode && !visibleNodeIds.has(state.selectedNode)) {
+        state.selectedNode = null;
+      }
+
+      const activeRecipe = getActiveRecipe();
+      const highlightSet = getHighlightSet(visibleNodeIds);
+      let visibleEdges = 0;
+
+      nodeElements.forEach((element, id) => {
+        const isVisible = visibleNodeIds.has(id);
+        const isSelected = state.selectedNode === id;
+        const shouldDim = highlightSet && isVisible && !highlightSet.has(id);
+        element.classList.toggle("is-hidden", !isVisible);
+        element.classList.toggle("is-selected", isSelected);
+        element.classList.toggle("is-dimmed", !!shouldDim);
+      });
+
+      edgeElements.forEach(({ edge, element }) => {
+        const edgeVisible = visibleNodeIds.has(edge.from) && visibleNodeIds.has(edge.to);
+        if (edgeVisible) {
+          visibleEdges += 1;
+        }
+        const highlightedByNode = state.selectedNode && (edge.from === state.selectedNode || edge.to === state.selectedNode);
+        const highlightedByRecipe = highlightSet && highlightSet.has(edge.from) && highlightSet.has(edge.to);
+        const isHighlighted = edgeVisible && (highlightedByNode || (!state.selectedNode && highlightedByRecipe));
+        const shouldDim = highlightSet && edgeVisible && !isHighlighted;
+        element.classList.toggle("is-hidden", !edgeVisible);
+        element.classList.toggle("is-highlighted", !!isHighlighted);
+        element.classList.toggle("is-dimmed", !!shouldDim);
+        element.setAttribute("marker-end", isHighlighted ? "url(#arrow-active)" : "url(#arrow-muted)");
+      });
+
+      updateStats("network", { visibleNodes: visibleNodeIds.size, visibleEdges });
+
+      if (state.selectedNode) {
+        updateInspectorForNode(nodesById[state.selectedNode]);
+      } else if (activeRecipe) {
+        updateInspectorForRecipe(activeRecipe);
+      } else {
+        updateInspectorEmpty();
+      }
+    }
+
+    searchInputEl.addEventListener("input", () => {
+      state.query = searchInputEl.value;
+      state.selectedRecipe = null;
+      applyState();
+    });
+
+    resetFiltersBtnEl.addEventListener("click", () => {
+      state.domain = "all";
+      state.type = "all";
+      state.query = "";
+      state.selectedRecipe = null;
+      if (state.mode === "network") {
+        state.selectedNode = "bread";
+      }
+      searchInputEl.value = "";
+      renderModeFilters();
+      renderFilters();
+      applyState();
+    });
+
+    renderModeFilters();
+    renderFilters();
+    renderLegend();
+    renderGraph();
+    renderRecipes();
+    initGeoButtons();
+    initSidebarTabs();
+    renderCommentsPane();
+    applyState();
+  </script>
+</body>
+</html>

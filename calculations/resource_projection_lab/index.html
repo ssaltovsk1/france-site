@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Модель ресурсов революционной экономики</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --ink: #1f2630;
+      --muted: #667085;
+      --line: #d8dee8;
+      --panel: #ffffff;
+      --blue: #2f78d0;
+      --red: #c94c4c;
+      --green: #2f8f61;
+      --amber: #d89a35;
+      --purple: #8a5fb4;
+      --radius: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .topbar {
+      width: min(1500px, calc(100vw - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 750;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    select,
+    button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    select {
+      min-width: 240px;
+      padding: 0 34px 0 10px;
+    }
+
+    button {
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    button:hover,
+    select:hover {
+      border-color: #aab4c2;
+    }
+
+    main {
+      width: min(1500px, calc(100vw - 32px));
+      margin: 18px auto 32px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    aside,
+    .content {
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .scenario-panel {
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .scenario-panel h2,
+    .control-group h2,
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 15px;
+      line-height: 1.2;
+      font-weight: 720;
+    }
+
+    .scenario-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .toggle {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      font-size: 13px;
+      background: #fbfcfe;
+    }
+
+    .control-group {
+      padding: 14px;
+      border-top: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .control-group:first-child {
+      border-top: 0;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+    }
+
+    .control-group:last-child {
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+    }
+
+    .control-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .control output {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      min-height: 78px;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      align-content: space-between;
+    }
+
+    .kpi span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kpi strong {
+      font-size: 19px;
+      line-height: 1.15;
+      font-weight: 760;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .chart-panel {
+      min-height: 290px;
+      padding: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 270px;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .below {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 12px;
+      margin-top: 12px;
+      align-items: start;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      background: #fbfcfe;
+      font-weight: 650;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .notes {
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .notes ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1120px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: stretch;
+      }
+
+      select,
+      button {
+        width: 100%;
+      }
+
+      .chart-grid,
+      .below,
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <h1>Модель ресурсов революционной экономики</h1>
+        <p class="subtitle">Хлеб, зерно, казна, долги, голод и богатство групп по ходам</p>
+      </div>
+      <div class="toolbar">
+        <select id="scenarioSelect" aria-label="Сценарий"></select>
+        <button id="resetButton" type="button">Сбросить</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <section class="scenario-panel panel">
+        <h2 id="scenarioTitle"></h2>
+        <p id="scenarioDescription"></p>
+        <div class="toggles">
+          <label class="toggle">
+            <input id="maximumToggle" type="checkbox">
+            <span>Максимум</span>
+          </label>
+          <label class="toggle">
+            <input id="hoardingToggle" type="checkbox">
+            <span>Скупка</span>
+          </label>
+        </div>
+      </section>
+      <section id="controlsRoot" class="panel"></section>
+    </aside>
+
+    <section class="content">
+      <div id="kpiRoot" class="kpis"></div>
+
+      <div class="chart-grid">
+        <section class="chart-panel">
+          <canvas id="breadChart"></canvas>
+        </section>
+        <section class="chart-panel">
+          <canvas id="resourceChart"></canvas>
+        </section>
+        <section class="chart-panel">
+          <canvas id="moneyChart"></canvas>
+        </section>
+        <section class="chart-panel">
+          <canvas id="tensionChart"></canvas>
+        </section>
+        <section class="chart-panel wide">
+          <canvas id="groupsChart"></canvas>
+        </section>
+      </div>
+
+      <div class="below">
+        <section class="table-wrap">
+          <table id="historyTable">
+            <thead>
+              <tr>
+                <th>Ход</th>
+                <th>Хлеб</th>
+                <th>Зерно в дороге</th>
+                <th>Спрятано</th>
+                <th>Голод</th>
+                <th>Долги</th>
+                <th>Казна</th>
+                <th>Цена</th>
+                <th>Черный рынок</th>
+                <th>Ассигнат</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </section>
+
+        <section class="notes">
+          <h2 class="section-title">Заметки сценария</h2>
+          <ul id="notesRoot"></ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="data/scenarios.js"></script>
+  <script src="src/model.js"></script>
+  <script src="src/charts.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>

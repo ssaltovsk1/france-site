@@ -1,0 +1,2177 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Карта связей новых сюжетов</title>
+  <style>
+    :root {
+      --bg: #f7f8f5;
+      --ink: #20252b;
+      --muted: #5f6973;
+      --line: #d6d9d2;
+      --panel: #ffffff;
+      --panel-2: #eef2f4;
+      --story: #274c77;
+      --mechanic: #5b6470;
+      --citizen: #9b4d2e;
+      --royalist: #6f4a8e;
+      --historical: #2f7168;
+      --primary: #20252b;
+      --secondary: #8a6a2f;
+      --watch: #6a7280;
+      --risk: #b24336;
+      --ok: #3f7b45;
+      --shadow: 0 18px 45px rgba(24, 31, 39, .08);
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(180deg, rgba(39, 76, 119, .06), transparent 300px),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      padding: 22px clamp(16px, 3vw, 34px) 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .78);
+      backdrop-filter: blur(10px);
+    }
+
+    .title-block {
+      display: grid;
+      gap: 6px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(28px, 3.5vw, 48px);
+      line-height: 1.02;
+      font-weight: 860;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .stat {
+      min-width: 90px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      text-align: right;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .view-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 16px 0;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .tab-button {
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px 8px 0 0;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 780;
+    }
+
+    .tab-button:hover,
+    .tab-button.is-active {
+      color: var(--ink);
+      border-color: rgba(39, 76, 119, .45);
+      background: #f6f9fb;
+    }
+
+    .app-view {
+      display: none;
+    }
+
+    .shell.app-view.is-active,
+    .players-shell.app-view.is-active {
+      display: grid;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 360px;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .panel {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f7f9f8);
+    }
+
+    .panel-head h2 {
+      font-size: 15px;
+      line-height: 1.2;
+      font-weight: 850;
+    }
+
+    .panel-head p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .filters {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 38px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .story-list {
+      display: grid;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .story-button {
+      width: 100%;
+      min-height: 52px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--story);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .story-button:hover,
+    .story-button.is-active {
+      border-color: rgba(39, 76, 119, .55);
+      background: #f1f6fb;
+    }
+
+    .story-button b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .story-button span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-2);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .map-wrap {
+      position: relative;
+      min-height: 760px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(39, 76, 119, .06), transparent 34%, rgba(47, 113, 104, .05) 70%, rgba(111, 74, 142, .06)),
+        radial-gradient(circle at 52% 42%, rgba(138, 106, 47, .08), transparent 31%),
+        #fcfdfb;
+    }
+
+    svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .edge {
+      fill: none;
+      stroke: rgba(78, 86, 96, .26);
+      stroke-width: 2;
+    }
+
+    .edge.primary {
+      stroke: rgba(32, 37, 43, .48);
+      stroke-width: 3.2;
+    }
+
+    .edge.secondary {
+      stroke: rgba(138, 106, 47, .44);
+      stroke-width: 2.4;
+      stroke-dasharray: 7 7;
+    }
+
+    .edge.watch {
+      stroke: rgba(106, 114, 128, .33);
+      stroke-width: 1.8;
+      stroke-dasharray: 3 7;
+    }
+
+    .edge.is-muted {
+      opacity: .12;
+    }
+
+    .node-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    .node {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      width: 150px;
+      min-height: 78px;
+      transform: translate(-50%, -50%);
+      padding: 10px;
+      border: 2px solid currentColor;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 10px 22px rgba(24, 31, 39, .10);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .node:hover,
+    .node.is-active {
+      background: #fff;
+      box-shadow: 0 16px 32px rgba(24, 31, 39, .16);
+    }
+
+    .node.is-muted {
+      opacity: .24;
+    }
+
+    .node.story {
+      width: 172px;
+      color: var(--story);
+      background: #f4f8fc;
+    }
+
+    .node.mechanic {
+      width: 168px;
+      color: var(--mechanic);
+      background: #f7f8f9;
+    }
+
+    .node.citizen {
+      color: var(--citizen);
+    }
+
+    .node.royalist {
+      color: var(--royalist);
+    }
+
+    .node.historical {
+      color: var(--historical);
+    }
+
+    .node small {
+      display: block;
+      color: currentColor;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: .04em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .node b {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.15;
+    }
+
+    .node span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .inspector {
+      align-self: start;
+      position: sticky;
+      top: 12px;
+      max-height: calc(100vh - 24px);
+      overflow: auto;
+    }
+
+    .details {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .details h2 {
+      font-size: 20px;
+      line-height: 1.12;
+    }
+
+    .details p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .tag.primary {
+      border-color: rgba(32, 37, 43, .32);
+      color: var(--primary);
+    }
+
+    .tag.secondary {
+      border-color: rgba(138, 106, 47, .34);
+      color: var(--secondary);
+    }
+
+    .tag.watch {
+      color: var(--watch);
+    }
+
+    .detail-section {
+      display: grid;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .detail-section h3 {
+      font-size: 13px;
+      font-weight: 840;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .link-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .link-card {
+      display: grid;
+      gap: 5px;
+      width: 100%;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .link-card:hover {
+      border-color: rgba(39, 76, 119, .45);
+      background: #f7fafc;
+    }
+
+    .link-card b {
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .link-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .matrix {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .matrix h2 {
+      font-size: 15px;
+    }
+
+    .rows {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(120px, 1fr) 82px 92px;
+      gap: 10px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfb;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .row b {
+      font-size: 13px;
+    }
+
+    .row span {
+      color: var(--muted);
+    }
+
+    .recommendation {
+      color: var(--ok);
+      font-weight: 780;
+    }
+
+    .risk {
+      color: var(--risk);
+      font-weight: 780;
+    }
+
+    .players-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 360px;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .player-list {
+      display: grid;
+      gap: 8px;
+      padding: 0 12px 12px;
+      max-height: calc(100vh - 420px);
+      overflow: auto;
+    }
+
+    .player-button {
+      width: 100%;
+      min-height: 54px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--tone, var(--muted));
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .player-button:hover,
+    .player-button.is-active {
+      border-color: var(--tone, rgba(39, 76, 119, .55));
+      background: #f7fafc;
+    }
+
+    .player-button b,
+    .relation-button b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .player-button span,
+    .relation-button span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .player-tools {
+      display: grid;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .player-surfaces {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .surface {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .surface-head {
+      display: grid;
+      gap: 3px;
+      min-height: 68px;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f8faf9;
+    }
+
+    .surface-head h2 {
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .surface-head p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .player-network,
+    .axis-map {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(39, 76, 119, .05), transparent 50%, rgba(155, 77, 46, .05)),
+        #fcfdfb;
+    }
+
+    .axis-map {
+      background:
+        linear-gradient(90deg, rgba(111, 74, 142, .08), transparent 50%, rgba(39, 76, 119, .07)),
+        linear-gradient(180deg, rgba(178, 67, 54, .06), transparent 52%, rgba(63, 123, 69, .08)),
+        #fcfdfb;
+    }
+
+    .player-edge {
+      fill: none;
+      stroke: rgba(78, 86, 96, .28);
+      stroke-linecap: round;
+    }
+
+    .player-edge.strong {
+      stroke: rgba(32, 37, 43, .48);
+    }
+
+    .player-node {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      width: 132px;
+      min-height: 64px;
+      transform: translate(-50%, -50%);
+      padding: 9px;
+      border: 2px solid var(--tone, var(--muted));
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 10px 22px rgba(24, 31, 39, .10);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .player-node:hover,
+    .player-node.is-active {
+      background: #fff;
+      box-shadow: 0 16px 32px rgba(24, 31, 39, .16);
+    }
+
+    .player-node small {
+      display: block;
+      color: var(--tone, var(--muted));
+      font-size: 10px;
+      font-weight: 850;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .player-node b {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.15;
+    }
+
+    .player-node span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .axis-line {
+      position: absolute;
+      background: rgba(95, 105, 115, .24);
+      pointer-events: none;
+    }
+
+    .axis-line.x {
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      height: 1px;
+    }
+
+    .axis-line.y {
+      top: 8%;
+      bottom: 8%;
+      left: 50%;
+      width: 1px;
+    }
+
+    .axis-label {
+      position: absolute;
+      max-width: 170px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 780;
+      line-height: 1.25;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .axis-label.left {
+      left: 10px;
+      top: 51%;
+    }
+
+    .axis-label.right {
+      right: 10px;
+      top: 51%;
+      text-align: right;
+    }
+
+    .axis-label.top {
+      left: 52%;
+      top: 10px;
+    }
+
+    .axis-label.bottom {
+      left: 52%;
+      bottom: 10px;
+    }
+
+    .axis-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    .axis-dot {
+      position: absolute;
+      left: calc(var(--x) * 1%);
+      top: calc(var(--y) * 1%);
+      min-width: 18px;
+      min-height: 18px;
+      transform: translate(-50%, -50%);
+      border: 2px solid #fff;
+      border-radius: 999px;
+      background: var(--tone, var(--muted));
+      box-shadow: 0 0 0 1px rgba(24, 31, 39, .18), 0 8px 18px rgba(24, 31, 39, .16);
+      cursor: pointer;
+    }
+
+    .axis-dot.is-active {
+      min-width: 24px;
+      min-height: 24px;
+      box-shadow: 0 0 0 4px rgba(39, 76, 119, .18), 0 10px 22px rgba(24, 31, 39, .20);
+      z-index: 3;
+    }
+
+    .axis-dot span {
+      display: none;
+      position: absolute;
+      left: 22px;
+      top: 50%;
+      min-width: max-content;
+      transform: translateY(-50%);
+      padding: 3px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .96);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .axis-dot.is-active span,
+    .axis-dot.show-label span {
+      display: block;
+    }
+
+    .relation-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .relation-button {
+      width: 100%;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfb;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .relation-button:hover {
+      border-color: rgba(39, 76, 119, .45);
+      background: #f7fafc;
+    }
+
+    .relation-section {
+      display: grid;
+      gap: 8px;
+    }
+
+    .relation-section + .relation-section {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .relation-section-title {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 820;
+      text-transform: uppercase;
+    }
+
+    .relation-button small {
+      display: block;
+      margin-top: 4px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 780;
+      line-height: 1.2;
+    }
+
+    .relation-button.kventa-text-row span {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.38;
+    }
+
+    .app-view:not(.is-active) {
+      display: none;
+    }
+
+    @media (max-width: 1160px) {
+      .shell,
+      .players-shell {
+        grid-template-columns: 250px minmax(0, 1fr);
+      }
+
+      .inspector {
+        grid-column: 1 / -1;
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .status-strip {
+        justify-content: start;
+      }
+
+      .shell,
+      .players-shell {
+        grid-template-columns: 1fr;
+        padding: 10px;
+      }
+
+      .player-list {
+        max-height: none;
+      }
+
+      .player-surfaces {
+        grid-template-columns: 1fr;
+      }
+
+      .player-network,
+      .axis-map {
+        min-height: 520px;
+      }
+
+      .player-node {
+        width: 118px;
+      }
+
+      .map-wrap {
+        min-height: 1800px;
+      }
+
+      .node {
+        width: 142px;
+      }
+
+      .node.story {
+        width: 150px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-block">
+      <h1>Карта связей новых сюжетов</h1>
+      <p class="subtitle">Четыре сюжетные заготовки разложены по существующим загрузам, а связи игроков собраны в отдельную сеть по общим игровым механикам.</p>
+    </div>
+    <div class="status-strip" aria-label="Сводка">
+      <div class="stat"><b id="storyCount">4</b><span>сюжета</span></div>
+      <div class="stat"><b id="playerCount">0</b><span>игроков</span></div>
+      <div class="stat"><b id="mechanicCount">0</b><span>важных связей</span></div>
+      <div class="stat"><b id="edgeCount">0</b><span>входов</span></div>
+      <div class="stat"><b id="playerLinkCount">0</b><span>связей</span></div>
+    </div>
+  </header>
+
+  <nav class="view-tabs" aria-label="Разделы карты">
+    <button class="tab-button is-active" type="button" data-view-button="stories">Сюжеты</button>
+    <button class="tab-button" type="button" data-view-button="players">Игроки</button>
+  </nav>
+
+  <main class="shell app-view is-active" id="storyView" data-view="stories">
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Фильтр</h2>
+        <p>Поиск по сюжету, персонажу и смысловой роли.</p>
+      </div>
+      <div class="filters">
+        <div class="field">
+          <label for="searchInput">Поиск</label>
+          <input id="searchInput" type="search" placeholder="например: печать, церковь, Бастилия">
+        </div>
+        <div class="field">
+          <label for="layerSelect">Слой</label>
+          <select id="layerSelect">
+            <option value="all">Сюжеты + важные связи</option>
+            <option value="story">Только сюжеты</option>
+            <option value="mechanic">Только важные связи</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="strengthSelect">Сила связи</label>
+          <select id="strengthSelect">
+            <option value="all">Все связи</option>
+            <option value="primary">Основные</option>
+            <option value="secondary">Вторичные</option>
+            <option value="watch">Осторожно</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="classSelect">Класс</label>
+          <select id="classSelect">
+            <option value="all">Все классы</option>
+            <option value="citizen">Горожане</option>
+            <option value="royalist">Роялисты</option>
+            <option value="historical">Исторические</option>
+          </select>
+        </div>
+      </div>
+      <div class="story-list" id="storyList"></div>
+    </aside>
+
+    <section class="panel">
+      <div class="legend">
+        <span class="legend-item" style="color: var(--story)"><span class="dot"></span>Сюжет</span>
+        <span class="legend-item" style="color: var(--mechanic)"><span class="dot"></span>Важная связь</span>
+        <span class="legend-item" style="color: var(--citizen)"><span class="dot"></span>Горожане</span>
+        <span class="legend-item" style="color: var(--royalist)"><span class="dot"></span>Роялисты</span>
+        <span class="legend-item" style="color: var(--historical)"><span class="dot"></span>Исторические</span>
+        <span class="legend-item"><span class="dot" style="background: var(--primary)"></span>Основная связь</span>
+        <span class="legend-item"><span class="dot" style="background: var(--secondary)"></span>Вторичная</span>
+        <span class="legend-item"><span class="dot" style="background: var(--watch)"></span>Осторожно</span>
+      </div>
+      <div class="map-wrap" id="mapWrap">
+        <svg id="edgeLayer" viewBox="0 0 1000 760" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="node-layer" id="nodeLayer"></div>
+      </div>
+      <div class="matrix">
+        <h2>Список видимых связей</h2>
+        <div class="rows" id="edgeRows"></div>
+      </div>
+    </section>
+
+    <aside class="panel inspector">
+      <div class="panel-head">
+        <h2>Детали</h2>
+        <p>Смысл связи и ближайший файл для правки.</p>
+      </div>
+      <div class="details" id="details"></div>
+    </aside>
+  </main>
+
+  <main class="players-shell app-view" id="playersView" data-view="players">
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Игроки</h2>
+        <p>Поиск по имени, группе, ресурсу, риску и общей механике.</p>
+      </div>
+      <div class="filters">
+        <div class="field">
+          <label for="playerSearchInput">Поиск игрока</label>
+          <input id="playerSearchInput" type="search" placeholder="например: Дантон, хлеб, подозрение">
+        </div>
+        <div class="field">
+          <label for="playerGroupSelect">Группа</label>
+          <select id="playerGroupSelect"></select>
+        </div>
+        <div class="field">
+          <label for="playerResourceSelect">Ресурс</label>
+          <select id="playerResourceSelect"></select>
+        </div>
+      </div>
+      <div class="player-list" id="playerList"></div>
+    </aside>
+
+    <section class="panel">
+      <div class="legend">
+        <span class="legend-item" style="color: var(--story)"><span class="dot"></span>Политики / клубы</span>
+        <span class="legend-item" style="color: var(--citizen)"><span class="dot"></span>Рынок / ремесло</span>
+        <span class="legend-item" style="color: var(--royalist)"><span class="dot"></span>Двор / роялисты</span>
+        <span class="legend-item" style="color: var(--historical)"><span class="dot"></span>Духовенство</span>
+        <span class="legend-item" style="color: var(--risk)"><span class="dot"></span>Подозрение / репрессии</span>
+      </div>
+      <div class="player-tools">
+        <div class="player-surfaces">
+          <section class="surface">
+            <div class="surface-head">
+              <h2>Сеть ближайших отношений</h2>
+              <p>Рёбра строятся по блоку `Связи` в загрузах: одна или две записи между игроками.</p>
+            </div>
+            <div class="player-network" id="playerNetwork">
+              <svg id="playerEdgeLayer" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="node-layer" id="playerNodeLayer"></div>
+            </div>
+          </section>
+
+          <section class="surface">
+            <div class="surface-head">
+              <h2>Граф по осям</h2>
+              <p>X: власть — от короны к нации. Y: хлеб и цены — от свободного рынка к контролю цен.</p>
+            </div>
+            <div class="axis-map" id="axisPlot">
+              <span class="axis-line x"></span>
+              <span class="axis-line y"></span>
+              <span class="axis-label left">Корона / старый порядок</span>
+              <span class="axis-label right">Нация / республика</span>
+              <span class="axis-label top">Свободный рынок</span>
+              <span class="axis-label bottom">Контроль цен / право на хлеб</span>
+              <div class="axis-layer" id="axisLayer"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="surface">
+          <div class="surface-head">
+            <h2>Отношения выбранного игрока</h2>
+            <p>Список показывает связи из загрузов и направление: кто о ком пишет.</p>
+          </div>
+          <div class="matrix">
+            <div class="rows" id="playerRelationRows"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel inspector">
+      <div class="panel-head">
+        <h2>Информация по игроку</h2>
+        <p>Ресурсы, риски, ближайшие связи и файл загрузки.</p>
+      </div>
+      <div class="details" id="playerDetails"></div>
+    </aside>
+  </main>
+
+  <script src="../metadata/revolution_character_relations_data.js"></script>
+  <script src="../metadata/player_axis_scores.js"></script>
+  <script src="../metadata/player_kventa_links.js"></script>
+  <script>
+    const stories = [
+      {
+        id: "bakers",
+        title: "Пекари Леруа",
+        short: "Мука, аббатство, договор на латыни",
+        x: 18,
+        y: 18,
+        mx: 23,
+        my: 8,
+        summary: "Провенский хлебный конфликт усиливает темы долга, плохой муки, церковной экономии и права, написанного не для простого ремесленника.",
+        bestUse: "Добавить как семейную или профессиональную историю булочника, затем дать юридический и церковный отзвук.",
+        risk: "Если делать всех Леруа игроками, сюжет расползётся в отдельную линию и утяжелит текущий набор.",
+        nextCommit: "boulanger + avocat + cure"
+      },
+      {
+        id: "victoria",
+        title: "Виктуар де Монфор",
+        short: "Письмо из Лондона и lettre de cachet",
+        x: 18,
+        y: 40,
+        mx: 23,
+        my: 29,
+        summary: "Дело о просвещённой аристократке показывает произвол королевского приказа без суда и человеческую цену полицейской подозрительности.",
+        bestUse: "Развести на три перспективы: министр подписывает, адвокат бессилен, служанка видит ребёнка и опечатанный дом.",
+        risk: "Не превращать переписку с Лондоном в шпионаж: сила сюжета именно в преувеличенном доносе.",
+        nextCommit: "breteuil + avocat + servante"
+      },
+      {
+        id: "printers",
+        title: "Три печатника",
+        short: "Памфлет, донос, смерть Луи",
+        x: 18,
+        y: 62,
+        mx: 23,
+        my: 50,
+        summary: "Тайна ремесленного предательства внутри типографии добавляет личный риск к подпольной печати.",
+        bestUse: "Оставить 1787-1788 в загрузке, а 1790-1791 держать как развитие после старта.",
+        risk: "Не переименовывать Луи Прюдома в одного из трёх печатников без отдельного решения.",
+        nextCommit: "imprimeur"
+      },
+      {
+        id: "fabre",
+        title: "Фабр и зелёная корова",
+        short: "Театр, честь, сестра-прачка",
+        x: 18,
+        y: 84,
+        mx: 23,
+        my: 72,
+        summary: "Театральный скандал с Фабром связывает цензуру, дворянское унижение и бедную женскую работу.",
+        bestUse: "Внести через актрису и прачку; линию Пентьевра держать аккуратно.",
+        risk: "Текущий Пентьевр у Ламбаль добрый и благотворительный, поэтому злой заказчик конфликтует с уже заданным образом.",
+        nextCommit: "actrice + lavandiere"
+      }
+    ];
+
+    const characters = [
+      { id: "boulanger", name: "Пьер Моро", label: "Булочник", className: "citizen", file: "../kventas/citizens/boulanger_kventa.md", x: 50, y: 12, mx: 72, my: 5 },
+      { id: "avocat", name: "Шарль Меренвиль", label: "Адвокат", className: "citizen", file: "../kventas/citizens/avocat_kventa.md", x: 68, y: 20, mx: 72, my: 12 },
+      { id: "cure", name: "Отец Жером", label: "Кюре", className: "citizen", file: "../kventas/citizens/cure_kventa.md", x: 83, y: 30, mx: 72, my: 19 },
+      { id: "imprimeur", name: "Луи Прюдом", label: "Типограф", className: "citizen", file: "../kventas/citizens/imprimeur_kventa.md", x: 49, y: 57, mx: 72, my: 50 },
+      { id: "breteuil", name: "Барон де Бретёй", label: "Министр и полиция", className: "royalist", file: "../kventas/royalists/breteuil_kventa.md", x: 51, y: 35, mx: 72, my: 27 },
+      { id: "servante", name: "Мадлен Флёри", label: "Служанка", className: "citizen", file: "../kventas/citizens/servante_kventa.md", x: 83, y: 43, mx: 72, my: 34 },
+      { id: "brissot", name: "Жак Пьер Бриссо", label: "Памфлетист", className: "historical", file: "../kventas/historical/group_2/brissot_kventa.md", x: 64, y: 52, mx: 72, my: 41 },
+      { id: "mirabeau", name: "Мирабо", label: "Жертва lettres de cachet", className: "historical", file: "../kventas/historical/group_1/mirabeau_kventa.md", x: 83, y: 60, mx: 72, my: 64 },
+      { id: "danton", name: "Дантон", label: "Кордельеры", className: "historical", file: "../kventas/historical/group_2/danton_kventa.md", x: 61, y: 70, mx: 72, my: 57 },
+      { id: "hebert", name: "Эбер", label: "Радикальная печать", className: "historical", file: "../kventas/historical/group_2/hebert_kventa.md", x: 83, y: 75, mx: 72, my: 71 },
+      { id: "actrice", name: "Жюли Ренар", label: "Актриса", className: "citizen", file: "../kventas/citizens/actrice_kventa.md", x: 49, y: 84, mx: 72, my: 80 },
+      { id: "lavandiere", name: "Катрин Лебон", label: "Прачка", className: "citizen", file: "../kventas/citizens/lavandiere_kventa.md", x: 66, y: 86, mx: 72, my: 87 },
+      { id: "lamballe", name: "Принцесса Ламбаль", label: "Связь с Пентьевром", className: "royalist", file: "../kventas/royalists/lamballe_kventa.md", x: 83, y: 88, mx: 72, my: 94 }
+    ];
+
+    const edges = [
+      { story: "bakers", character: "boulanger", strength: "primary", role: "главный получатель", note: "Профессиональный опыт с мукой, долгом и угрозой потерять печь." },
+      { story: "bakers", character: "avocat", strength: "primary", role: "юридический кейс", note: "Договор на латыни, скрытая кабала и спор о мастерской." },
+      { story: "bakers", character: "cure", strength: "secondary", role: "церковный контраст", note: "Бедный кюре против богатых аббатств и монастырской экономии." },
+      { story: "bakers", character: "imprimeur", strength: "watch", role: "памфлетный отзвук", note: "Можно печатать жалобу против аббатства, но это не его личная линия." },
+
+      { story: "victoria", character: "breteuil", strength: "primary", role: "приказ и полиция", note: "Его загруз уже содержит lettres de cachet и управление тюрьмами." },
+      { story: "victoria", character: "avocat", strength: "primary", role: "адвокат Анри", note: "Произвол без суда даёт Меренвилю конкретное дело и личную злость к процедуре." },
+      { story: "victoria", character: "servante", strength: "primary", role: "человеческая цена", note: "Служанка видит обыск, ребёнка, опечатанный дом и страх слуг." },
+      { story: "victoria", character: "brissot", strength: "secondary", role: "Лондон и Бастилия", note: "У Бриссо уже есть Бастилия, Лондон и круг реформаторов." },
+      { story: "victoria", character: "imprimeur", strength: "secondary", role: "запрещённые книги", note: "Голландские книги, письма и риск обыска естественно проходят через печатный мир." },
+      { story: "victoria", character: "mirabeau", strength: "watch", role: "общая тема", note: "Он ненавидит lettres de cachet, но его личная загруз уже насыщена этой темой." },
+
+      { story: "printers", character: "imprimeur", strength: "primary", role: "главный получатель", note: "Подпольная печать, обыск, арест и смерть в тюрьме — его ремесленная среда." },
+      { story: "printers", character: "danton", strength: "secondary", role: "квартал и защита", note: "Кордельеры и адвокатская среда могут подхватить дело вдовы или Этьена." },
+      { story: "printers", character: "hebert", strength: "secondary", role: "радикальный печатный мир", note: "Донос и смерть памфлетиста хорошо резонируют с будущей радикальной печатью." },
+      { story: "printers", character: "brissot", strength: "secondary", role: "Бастилия и памфлеты", note: "Он сам знает, как анонимный текст приводит в тюрьму." },
+
+      { story: "fabre", character: "actrice", strength: "primary", role: "театр и цензура", note: "В её загрузке уже есть Фабр и вырезанная цензором сцена." },
+      { story: "fabre", character: "lavandiere", strength: "primary", role: "сестра-прачка", note: "Виктуар показывает, как дворянская прихоть бьёт по бедной работе." },
+      { story: "fabre", character: "danton", strength: "secondary", role: "будущий круг Фабра", note: "Лучше оставить как развитие после старта игры, а не стартовую биографию Дантона." },
+      { story: "fabre", character: "lamballe", strength: "watch", role: "Пентьевр", note: "Связь есть, но прямой злой герцог спорит с текущей доброй рамкой Пентьевра." }
+    ];
+
+    characters.forEach((character, index) => {
+      character.ax = index % 2 === 0 ? 75 : 88;
+      character.ay = 7 + Math.floor(index / 2) * 13;
+    });
+
+    const relationData = window.REVOLUTION_CHARACTER_RELATIONS || { relations: [], characters: [] };
+    const relationCharacterById = Object.fromEntries((relationData.characters || []).map((item) => [item.id, item]));
+    const mechanics = (relationData.relations || []).map((relation, index) => ({
+      id: `mechanic_${relation.id}`,
+      sourceId: relation.id,
+      title: relation.title,
+      short: relation.summary,
+      relation,
+      x: index % 2 === 0 ? 42 : 58,
+      y: 7 + Math.floor(index / 2) * 10,
+      mx: 72,
+      my: 5 + index * 5
+    }));
+
+    const mechanicById = Object.fromEntries(mechanics.map((item) => [item.id, item]));
+    const mechanicBySourceId = Object.fromEntries(mechanics.map((item) => [item.sourceId, item]));
+
+    const mechanicEdges = [
+      { story: "bakers", mechanic: "bread_flow", strength: "primary", role: "хлебная цепочка", note: "Мука, печь, очередь и бунт становятся общей экономической рамкой." },
+      { story: "bakers", mechanic: "work_wages", strength: "primary", role: "работа и мастерская", note: "Пекарня как рабочее место, семейный труд и риск потерять собственность." },
+      { story: "bakers", mechanic: "debt_credit", strength: "secondary", role: "долг и кабала", note: "Предоплата за муку и договор с подвохом переводят хлеб в долговую ловушку." },
+      { story: "bakers", mechanic: "church_oath", strength: "secondary", role: "церковная экономика", note: "Аббатство становится не только религией, но и поставщиком, кредитором и судящимся владельцем." },
+      { story: "bakers", mechanic: "representation_law", strength: "secondary", role: "закон и суд", note: "Договор на латыни показывает, кому закон читаем, а кому нет." },
+      { story: "bakers", mechanic: "black_market", strength: "watch", role: "плохая мука и обход правил", note: "Можно связать с дешёвой мукой и подозрением в подмешивании." },
+
+      { story: "victoria", mechanic: "suspicion_terror", strength: "primary", role: "подозрение и арест", note: "Донос превращает идеи и письма в угрозу для тела и дома." },
+      { story: "victoria", mechanic: "patronage_secrets", strength: "primary", role: "сведения и покровительство", note: "Слуги, кузина, адвокат и полиция знают разные куски одной правды." },
+      { story: "victoria", mechanic: "representation_law", strength: "primary", role: "право против приказа", note: "Lettre de cachet обходят суд и дают адвокату ясную точку конфликта." },
+      { story: "victoria", mechanic: "press_rumor", strength: "secondary", role: "письма, книги, слух", note: "Лондон, запрещённые книги и пересказ писем легко становятся публичным подозрением." },
+
+      { story: "printers", mechanic: "press_rumor", strength: "primary", role: "печать и донос", note: "Памфлет запускает цепочку: студент, полиция, типография, тюрьма." },
+      { story: "printers", mechanic: "suspicion_terror", strength: "primary", role: "донос как оружие", note: "Филипп спасает себя и превращает друга в одиночную вину." },
+      { story: "printers", mechanic: "faction_club", strength: "secondary", role: "политические круги", note: "После старта игры вдова, Этьен и печатники могут войти в клубные конфликты." },
+      { story: "printers", mechanic: "patronage_secrets", strength: "secondary", role: "тайна ремесленного круга", note: "Письмо Луи и молчание Филиппа становятся ресурсом давления." },
+
+      { story: "fabre", mechanic: "press_rumor", strength: "primary", role: "театр как печать", note: "Вырезанная сцена и скандал распространяются как слух и текст." },
+      { story: "fabre", mechanic: "work_wages", strength: "primary", role: "бедная работа сестры", note: "Виктуар-прачка платит за конфликт, который устроили мужчины с гонорарами и титулами." },
+      { story: "fabre", mechanic: "patronage_secrets", strength: "secondary", role: "дворянский патронат", note: "Заказ, гонорар и замковая прислуга связывают театр с аристократической милостью." },
+      { story: "fabre", mechanic: "faction_club", strength: "watch", role: "будущий круг Фабра", note: "Лучше раскрывать после начала игры, когда Фабр станет политической фигурой." }
+    ].map((edge) => ({
+      ...edge,
+      mechanic: mechanicBySourceId[edge.mechanic]?.id || `mechanic_${edge.mechanic}`
+    }));
+
+    const state = {
+      view: "stories",
+      story: "all",
+      layer: "all",
+      strength: "all",
+      className: "all",
+      search: "",
+      selected: { type: "story", id: "bakers" }
+    };
+
+    const storyById = Object.fromEntries(stories.map((item) => [item.id, item]));
+    const characterById = Object.fromEntries(characters.map((item) => [item.id, item]));
+
+    const classLabels = {
+      citizen: "Горожане",
+      royalist: "Роялисты",
+      historical: "Исторические"
+    };
+
+    const strengthLabels = {
+      primary: "Основная",
+      secondary: "Вторичная",
+      watch: "Осторожно"
+    };
+
+    const playerGroupLabels = {
+      clergy: "Духовенство",
+      military: "Военные",
+      court: "Двор",
+      politicians: "Политики",
+      market: "Рынок",
+      press: "Печать",
+      repression: "Репрессии",
+      poor: "Бедные"
+    };
+
+    const playerGroupColors = {
+      clergy: "#2f7168",
+      military: "#496f9b",
+      court: "#6f4a8e",
+      politicians: "#274c77",
+      market: "#9b4d2e",
+      press: "#7a5935",
+      repression: "#b24336",
+      poor: "#6a7280"
+    };
+
+    const citizenPlayerIds = new Set([
+      "actrice", "avocat", "boulanger", "cafetier", "chirurgien", "cure", "imprimeur", "invalide",
+      "journalier", "lavandiere", "menuisier", "mercier", "poissarde", "servante", "vinier"
+    ]);
+
+    const royalistPlayerIds = new Set([
+      "artois", "bouille", "breteuil", "cazales", "fersen", "lamballe", "marie_antoinette",
+      "maury", "polignac", "provence"
+    ]);
+
+    const historicalPlayerGroups = {
+      group_1: ["bailly", "barnave", "lafayette", "louis_xvi", "marat", "mirabeau", "necker", "robespierre", "sieyes"],
+      group_2: ["brissot", "charlotte_corday", "danton", "dumouriez", "hebert", "manon_roland", "roland", "saint_just", "vergniaud"],
+      group_3: ["barere", "barras", "carnot", "carrier", "couthon", "desmoulins", "fouche", "fouquier_tinville"],
+      group_4: ["babeuf", "buonarroti", "jourdan", "larevelliere", "moreau", "napoleon", "pichegru", "talleyrand", "tallien"]
+    };
+
+    const historicalGroupByPlayer = Object.fromEntries(
+      Object.entries(historicalPlayerGroups).flatMap(([group, ids]) => ids.map((id) => [id, group]))
+    );
+
+    const playerState = {
+      search: "",
+      group: "all",
+      resource: "all",
+      selected: "boulanger"
+    };
+
+    const playerAxisData = window.REVOLUTION_PLAYER_AXIS_SCORES || { axes: {}, scores: {} };
+    const playerAxisScores = playerAxisData.scores || {};
+    const playerKventaLinkData = window.REVOLUTION_PLAYER_KVENTA_LINKS || { links: [] };
+    const playerKventaLinks = playerKventaLinkData.links || [];
+
+    const allPlayers = (relationData.characters || []).map((player) => ({
+      ...player,
+      label: playerGroupLabels[player.group] || player.group,
+      color: playerGroupColors[player.group] || "#5f6973",
+      file: kventaPathForPlayer(player.id),
+      axis: axisForPlayer(player)
+    }));
+
+    const playerById = Object.fromEntries(allPlayers.map((player) => [player.id, player]));
+    const playerRelationEdges = buildPlayerRelationEdges();
+    const playerResources = [...new Set(allPlayers.flatMap((player) => player.resources || []))].sort((a, b) => a.localeCompare(b, "ru"));
+
+    function init() {
+      document.getElementById("storyCount").textContent = stories.length;
+      document.getElementById("playerCount").textContent = allPlayers.length;
+      document.getElementById("mechanicCount").textContent = mechanics.length;
+      document.getElementById("edgeCount").textContent = allEdges().length;
+      document.getElementById("playerLinkCount").textContent = playerKventaLinks.length;
+      window.selectMechanic = (id) => {
+        state.selected = { type: "mechanic", id };
+        state.layer = "all";
+        document.getElementById("layerSelect").value = state.layer;
+        render();
+      };
+      populatePlayerFilters();
+      bindViewControls();
+      bindControls();
+      bindPlayerControls();
+      window.addEventListener("resize", () => render());
+      render();
+    }
+
+    function bindControls() {
+      document.getElementById("searchInput").addEventListener("input", (event) => {
+        state.search = event.target.value.trim().toLowerCase();
+        render();
+      });
+      document.getElementById("layerSelect").addEventListener("change", (event) => {
+        state.layer = event.target.value;
+        render();
+      });
+      document.getElementById("strengthSelect").addEventListener("change", (event) => {
+        state.strength = event.target.value;
+        render();
+      });
+      document.getElementById("classSelect").addEventListener("change", (event) => {
+        state.className = event.target.value;
+        render();
+      });
+    }
+
+    function bindViewControls() {
+      document.querySelectorAll("[data-view-button]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.view = button.dataset.viewButton;
+          render();
+        });
+      });
+    }
+
+    function populatePlayerFilters() {
+      const groupSelect = document.getElementById("playerGroupSelect");
+      const resourceSelect = document.getElementById("playerResourceSelect");
+      groupSelect.innerHTML = `<option value="all">Все группы</option>` + Object.entries(playerGroupLabels)
+        .map(([value, label]) => `<option value="${value}">${escapeHtml(label)}</option>`)
+        .join("");
+      resourceSelect.innerHTML = `<option value="all">Все ресурсы</option>` + playerResources
+        .map((resource) => `<option value="${escapeHtml(resource)}">${escapeHtml(resource)}</option>`)
+        .join("");
+    }
+
+    function bindPlayerControls() {
+      document.getElementById("playerSearchInput").addEventListener("input", (event) => {
+        playerState.search = event.target.value.trim().toLowerCase();
+        renderPlayers();
+      });
+      document.getElementById("playerGroupSelect").addEventListener("change", (event) => {
+        playerState.group = event.target.value;
+        ensureSelectedPlayerVisible();
+        renderPlayers();
+      });
+      document.getElementById("playerResourceSelect").addEventListener("change", (event) => {
+        playerState.resource = event.target.value;
+        ensureSelectedPlayerVisible();
+        renderPlayers();
+      });
+    }
+
+    function render() {
+      renderViewTabs();
+      renderStories();
+      renderEdges();
+      renderNodes();
+      renderRows();
+      renderDetails();
+      renderPlayers();
+    }
+
+    function renderViewTabs() {
+      document.querySelectorAll("[data-view]").forEach((view) => {
+        view.classList.toggle("is-active", view.dataset.view === state.view);
+      });
+      document.querySelectorAll("[data-view-button]").forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.viewButton === state.view);
+      });
+    }
+
+    function allEdges() {
+      return [
+        ...edges.map((edge) => ({ ...edge, type: "character" })),
+        ...mechanicEdges.map((edge) => ({ ...edge, type: "mechanic" }))
+      ];
+    }
+
+    function visibleEdges() {
+      return allEdges().filter((edge) => {
+        const story = storyById[edge.story];
+        const character = edge.character ? characterById[edge.character] : null;
+        const mechanic = edge.mechanic ? mechanicById[edge.mechanic] : null;
+        const mechanicParticipants = mechanic ? mechanic.relation.participants.map((id) => relationCharacterById[id]?.name || id).join(" ") : "";
+        const haystack = [
+          story.title,
+          story.short,
+          story.summary,
+          story.bestUse,
+          story.risk,
+          character?.name,
+          character?.label,
+          mechanic?.title,
+          mechanic?.short,
+          mechanicParticipants,
+          edge.role,
+          edge.note,
+          character ? classLabels[character.className] : "Важные связи",
+          strengthLabels[edge.strength]
+        ].filter(Boolean).join(" ").toLowerCase();
+        const layerOk = state.layer === "all"
+          || (state.layer === "story" && edge.type === "character")
+          || (state.layer === "mechanic" && edge.type === "mechanic");
+        return (state.story === "all" || edge.story === state.story)
+          && layerOk
+          && (state.strength === "all" || edge.strength === state.strength)
+          && (state.className === "all" || (character && character.className === state.className))
+          && (!state.search || haystack.includes(state.search));
+      });
+    }
+
+    function visibleStoryIds() {
+      return new Set(visibleEdges().map((edge) => edge.story));
+    }
+
+    function visibleCharacterIds() {
+      return new Set(visibleEdges().filter((edge) => edge.character).map((edge) => edge.character));
+    }
+
+    function visibleMechanicIds() {
+      return new Set(visibleEdges().filter((edge) => edge.mechanic).map((edge) => edge.mechanic));
+    }
+
+    function renderStories() {
+      const host = document.getElementById("storyList");
+      const visible = visibleStoryIds();
+      const allButton = `
+        <button class="story-button ${state.story === "all" ? "is-active" : ""}" type="button" data-story="all">
+          <b>Все сюжеты</b>
+          <span>${visibleEdges().length} видимых связей</span>
+        </button>
+      `;
+      host.innerHTML = allButton + stories.map((story) => `
+        <button class="story-button ${state.story === story.id ? "is-active" : ""}" type="button" data-story="${story.id}" ${visible.has(story.id) || state.story === story.id ? "" : "style=\"opacity:.45\""}>
+          <b>${escapeHtml(story.title)}</b>
+          <span>${escapeHtml(story.short)}</span>
+        </button>
+      `).join("");
+
+      host.querySelectorAll("[data-story]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.story = button.dataset.story;
+          state.selected = state.story === "all" ? { type: "story", id: "bakers" } : { type: "story", id: state.story };
+          render();
+        });
+      });
+    }
+
+    function renderEdges() {
+      const host = document.getElementById("edgeLayer");
+      const visible = visibleEdges();
+      const visibleIds = new Set(visible.map(edgeId));
+      const selected = selectedEdgeIds();
+      host.innerHTML = allEdges().map((edge, index) => {
+        const story = storyById[edge.story];
+        const target = edge.character ? characterById[edge.character] : mechanicById[edge.mechanic];
+        const path = curvePath(story, target);
+        const muted = !visibleIds.has(edgeId(edge)) || (selected.size && !selected.has(edgeId(edge)));
+        return `<path class="edge ${edge.strength} ${muted ? "is-muted" : ""}" d="${path}" data-index="${index}"></path>`;
+      }).join("");
+    }
+
+    function renderNodes() {
+      const host = document.getElementById("nodeLayer");
+      const storyIds = visibleStoryIds();
+      const characterIds = visibleCharacterIds();
+      const mechanicIds = visibleMechanicIds();
+      const active = activeNodeIds();
+      const selected = `${state.selected.type}:${state.selected.id}`;
+
+      const storyNodes = stories.map((story) => {
+        const muted = !storyIds.has(story.id);
+        const isActive = active.has(`story:${story.id}`) || selected === `story:${story.id}`;
+        const point = position(story);
+        return `
+          <button class="node story ${muted ? "is-muted" : ""} ${isActive ? "is-active" : ""}" style="--x:${point.x}; --y:${point.y}" type="button" data-node-type="story" data-node-id="${story.id}">
+            <small>Сюжет</small>
+            <b>${escapeHtml(story.title)}</b>
+            <span>${escapeHtml(story.short)}</span>
+          </button>
+        `;
+      }).join("");
+
+      const characterNodes = state.layer === "mechanic" ? "" : characters.map((character) => {
+        const muted = !characterIds.has(character.id);
+        const isActive = active.has(`character:${character.id}`) || selected === `character:${character.id}`;
+        const point = position(character);
+        return `
+          <button class="node ${character.className} ${muted ? "is-muted" : ""} ${isActive ? "is-active" : ""}" style="--x:${point.x}; --y:${point.y}" type="button" data-node-type="character" data-node-id="${character.id}">
+            <small>${escapeHtml(classLabels[character.className])}</small>
+            <b>${escapeHtml(character.name)}</b>
+            <span>${escapeHtml(character.label)}</span>
+          </button>
+        `;
+      }).join("");
+
+      const mechanicNodes = state.layer === "story" ? "" : mechanics.map((mechanic) => {
+        const muted = !mechanicIds.has(mechanic.id);
+        const isActive = active.has(`mechanic:${mechanic.id}`) || selected === `mechanic:${mechanic.id}`;
+        const point = position(mechanic);
+        return `
+          <button class="node mechanic ${muted ? "is-muted" : ""} ${isActive ? "is-active" : ""}" style="--x:${point.x}; --y:${point.y}" type="button" data-node-type="mechanic" data-node-id="${mechanic.id}">
+            <small>Важная связь</small>
+            <b>${escapeHtml(mechanic.title)}</b>
+            <span>${escapeHtml(mechanic.relation.domain || "механика")}</span>
+          </button>
+        `;
+      }).join("");
+
+      host.innerHTML = storyNodes + mechanicNodes + characterNodes;
+      host.querySelectorAll("[data-node-type]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.selected = { type: button.dataset.nodeType, id: button.dataset.nodeId };
+          if (state.selected.type === "story") state.story = state.selected.id;
+          render();
+        });
+      });
+    }
+
+    function renderRows() {
+      const host = document.getElementById("edgeRows");
+      const rows = visibleEdges();
+      host.innerHTML = rows.length ? rows.map((edge) => {
+        const story = storyById[edge.story];
+        const target = edge.character ? characterById[edge.character] : mechanicById[edge.mechanic];
+        const targetName = edge.character ? target.name : target.title;
+        const targetClass = edge.character ? classLabels[target.className] : "Важная связь";
+        return `
+          <div class="row">
+            <div><b>${escapeHtml(story.title)} → ${escapeHtml(targetName)}</b><br><span>${escapeHtml(edge.role)}</span></div>
+            <span class="${edge.strength === "watch" ? "risk" : "recommendation"}">${escapeHtml(strengthLabels[edge.strength])}</span>
+            <span>${escapeHtml(targetClass)}</span>
+          </div>
+        `;
+      }).join("") : `<p class="subtitle">Связей по текущим фильтрам нет.</p>`;
+    }
+
+    function renderDetails() {
+      const host = document.getElementById("details");
+      if (state.selected.type === "character") {
+        const character = characterById[state.selected.id];
+        const related = visibleEdges().filter((edge) => edge.character === character.id);
+        const mechanicMembership = mechanics.filter((mechanic) => mechanic.relation.participants.includes(character.id));
+        host.innerHTML = `
+          <h2>${escapeHtml(character.name)}</h2>
+          <div class="tags">
+            <span class="tag">${escapeHtml(classLabels[character.className])}</span>
+            <a class="tag primary" href="${character.file}">Открыть загруз</a>
+          </div>
+          <p>${escapeHtml(character.label)}. Видимые сюжетные входы: ${related.length}. Важные общие связи: ${mechanicMembership.length}.</p>
+          <div class="detail-section">
+            <h3>Сюжетные входы</h3>
+            <div class="link-list">
+              ${related.map((edge) => linkCard(edge)).join("") || "<p>По фильтрам связей нет.</p>"}
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Уже важен в механиках</h3>
+            <div class="tags">
+              ${mechanicMembership.map((item) => `<button class="tag" type="button" data-detail-mechanic="${item.id}">${escapeHtml(item.title)}</button>`).join("")}
+            </div>
+          </div>
+        `;
+        host.querySelectorAll("[data-detail-mechanic]").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.selected = { type: "mechanic", id: button.dataset.detailMechanic };
+            state.layer = "all";
+            document.getElementById("layerSelect").value = state.layer;
+            render();
+          });
+        });
+      } else if (state.selected.type === "mechanic") {
+        const mechanic = mechanicById[state.selected.id];
+        const relation = mechanic.relation;
+        const related = visibleEdges().filter((edge) => edge.mechanic === mechanic.id);
+        host.innerHTML = `
+          <h2>${escapeHtml(mechanic.title)}</h2>
+          <div class="tags">
+            <span class="tag primary">${escapeHtml(relation.domain || "механика")}</span>
+            <span class="tag">${escapeHtml(`${relation.participants.length} персонажей`)}</span>
+          </div>
+          <p>${escapeHtml(relation.summary || "Важная механическая связь из общей карты персонажей.")}</p>
+          <div class="detail-section">
+            <h3>Связано с новыми сюжетами</h3>
+            <div class="link-list">
+              ${related.map((edge) => linkCard(edge)).join("") || "<p>По фильтрам связей нет.</p>"}
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Участники из общей карты</h3>
+            <div class="tags">
+              ${relation.participants.map((id) => `<span class="tag">${escapeHtml(relationCharacterById[id]?.name || id)}</span>`).join("")}
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Рычаги игроков</h3>
+            <div class="tags">
+              ${(relation.playerLevers || []).map((item) => `<span class="tag secondary">${escapeHtml(item)}</span>`).join("") || "<p>Не указаны.</p>"}
+            </div>
+          </div>
+        `;
+      } else {
+        const story = storyById[state.selected.id] || stories[0];
+        const related = visibleEdges().filter((edge) => edge.story === story.id);
+        const storyCharacterEdges = related.filter((edge) => edge.character);
+        const storyMechanicEdges = related.filter((edge) => edge.mechanic);
+        host.innerHTML = `
+          <h2>${escapeHtml(story.title)}</h2>
+          <div class="tags">
+            <span class="tag primary">${escapeHtml(story.nextCommit)}</span>
+          </div>
+          <p>${escapeHtml(story.summary)}</p>
+          <div class="detail-section">
+            <h3>Лучшее применение</h3>
+            <p>${escapeHtml(story.bestUse)}</p>
+          </div>
+          <div class="detail-section">
+            <h3>Риск</h3>
+            <p>${escapeHtml(story.risk)}</p>
+          </div>
+          <div class="detail-section">
+            <h3>Кандидаты</h3>
+            <div class="link-list">
+              ${storyCharacterEdges.map((edge) => linkCard(edge)).join("") || "<p>По фильтрам связей нет.</p>"}
+            </div>
+          </div>
+          <div class="detail-section">
+            <h3>Другие важные связи</h3>
+            <div class="link-list">
+              ${storyMechanicEdges.map((edge) => linkCard(edge)).join("") || "<p>По фильтрам связей нет.</p>"}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function linkCard(edge) {
+      const story = storyById[edge.story];
+      if (edge.character) {
+        const character = characterById[edge.character];
+        return `
+          <a class="link-card" href="${character.file}">
+            <b>${escapeHtml(story.title)} → ${escapeHtml(character.name)}</b>
+            <span>${escapeHtml(strengthLabels[edge.strength])}: ${escapeHtml(edge.role)}. ${escapeHtml(edge.note)}</span>
+          </a>
+        `;
+      }
+      const mechanic = mechanicById[edge.mechanic];
+      return `
+        <button class="link-card" type="button" onclick="window.selectMechanic && window.selectMechanic('${edge.mechanic}')">
+          <b>${escapeHtml(story.title)} → ${escapeHtml(mechanic.title)}</b>
+          <span>${escapeHtml(strengthLabels[edge.strength])}: ${escapeHtml(edge.role)}. ${escapeHtml(edge.note)}</span>
+        </button>
+      `;
+    }
+
+    function renderPlayers() {
+      if (!document.getElementById("playerList")) return;
+      renderPlayerList();
+      renderPlayerNetwork();
+      renderAxisPlot();
+      renderPlayerRows();
+      renderPlayerDetails();
+    }
+
+    function renderPlayerList() {
+      const host = document.getElementById("playerList");
+      const players = filteredPlayers();
+      host.innerHTML = players.length ? players.map((player) => `
+        <button class="player-button ${player.id === playerState.selected ? "is-active" : ""}" type="button" data-player-id="${player.id}" style="--tone:${player.color}">
+          <b>${escapeHtml(player.name)}</b>
+          <span>${escapeHtml(player.label)} · ${(player.resources || []).map(escapeHtml).join(", ")}</span>
+        </button>
+      `).join("") : `<p class="subtitle">Игроков по текущим фильтрам нет.</p>`;
+      host.querySelectorAll("[data-player-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
+      });
+    }
+
+    function renderPlayerNetwork() {
+      const edgeHost = document.getElementById("playerEdgeLayer");
+      const nodeHost = document.getElementById("playerNodeLayer");
+      const edges = selectedPlayerEdges(18);
+      const selected = playerById[playerState.selected] || allPlayers[0];
+      const nodePositions = playerNetworkPositions(selected, edges);
+
+      edgeHost.innerHTML = edges.map((edge) => {
+        const from = nodePositions.get(edge.a);
+        const to = nodePositions.get(edge.b);
+        if (!from || !to) return "";
+        const width = Math.min(6, 1.8 + edge.links.length * 1.2);
+        const strong = edge.links.length > 1 ? "strong" : "";
+        return `<path class="player-edge ${strong}" d="M ${from.x * 10} ${from.y * 6.2} C ${from.x * 10} ${from.y * 6.2}, ${to.x * 10} ${to.y * 6.2}, ${to.x * 10} ${to.y * 6.2}" style="stroke-width:${width}"></path>`;
+      }).join("");
+
+      nodeHost.innerHTML = [...nodePositions.entries()].map(([id, point]) => {
+        const player = playerById[id];
+        const active = id === playerState.selected;
+        const edgeCount = playerRelationEdges.filter((edge) => edge.a === id || edge.b === id).length;
+        return `
+          <button class="player-node ${active ? "is-active" : ""}" type="button" data-player-id="${id}" style="--x:${point.x}; --y:${point.y}; --tone:${player.color}">
+            <small>${escapeHtml(player.label)}</small>
+            <b>${escapeHtml(player.name)}</b>
+            <span>${edgeCount} связей · ${(player.resources || []).slice(0, 2).map(escapeHtml).join(", ")}</span>
+          </button>
+        `;
+      }).join("");
+      nodeHost.querySelectorAll("[data-player-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
+      });
+    }
+
+    function renderAxisPlot() {
+      const host = document.getElementById("axisLayer");
+      const players = filteredPlayers();
+      const labelAll = players.length <= 24 || Boolean(playerState.search);
+      host.innerHTML = players.map((player) => {
+        const active = player.id === playerState.selected;
+        const showLabel = labelAll || active;
+        return `
+          <button class="axis-dot ${active ? "is-active" : ""} ${showLabel ? "show-label" : ""}" type="button" data-player-id="${player.id}" style="--x:${player.axis.x}; --y:${player.axis.y}; --tone:${player.color}" title="${escapeHtml(`${player.name}: власть ${player.axis.power}, хлеб ${player.axis.bread}`)}">
+            <span>${escapeHtml(player.name)}</span>
+          </button>
+        `;
+      }).join("");
+      host.querySelectorAll("[data-player-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
+      });
+    }
+
+    function renderPlayerRows() {
+      const host = document.getElementById("playerRelationRows");
+      const selected = playerById[playerState.selected] || allPlayers[0];
+      const outgoing = playerOutgoingKventaLinks(selected.id).filter((link) => playerById[link.target] && playerMatches(playerById[link.target]));
+      const incoming = playerIncomingKventaLinks(selected.id).filter((link) => playerById[link.source] && playerMatches(playerById[link.source]));
+      host.innerHTML = outgoing.length || incoming.length ? `
+        <div class="relation-section">
+          <div class="relation-section-title">Строки из загрузки выбранного игрока (${outgoing.length})</div>
+          ${outgoing.map((link) => renderKventaRelationButton(link, "outgoing")).join("") || `<p class="subtitle">По текущим фильтрам строк из его загрузки нет.</p>`}
+        </div>
+        <div class="relation-section">
+          <div class="relation-section-title">У других игроков про него (${incoming.length})</div>
+          ${incoming.map((link) => renderKventaRelationButton(link, "incoming")).join("") || `<p class="subtitle">По текущим фильтрам входящих упоминаний нет.</p>`}
+        </div>
+      ` : `<p class="subtitle">У выбранного игрока нет связей из загрузов по текущим фильтрам.</p>`;
+      host.querySelectorAll("[data-player-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
+      });
+    }
+
+    function renderPlayerDetails() {
+      const host = document.getElementById("playerDetails");
+      const player = playerById[playerState.selected] || allPlayers[0];
+      const mechanics = playerMechanics(player.id);
+      const outgoing = playerOutgoingKventaLinks(player.id);
+      const incoming = playerIncomingKventaLinks(player.id);
+      host.innerHTML = `
+        <h2>${escapeHtml(player.name)}</h2>
+        <div class="tags">
+          <span class="tag primary" style="border-color:${player.color}; color:${player.color}">${escapeHtml(player.label)}</span>
+          <a class="tag primary" href="${player.file}">Открыть загруз</a>
+        </div>
+        <p>Граф: Власть ${formatScore(player.axis.power)} — ${escapeHtml(player.axis.powerLabel)}. Хлеб и цены ${formatScore(player.axis.bread)} — ${escapeHtml(player.axis.breadLabel)}. Строк в его загрузке: ${outgoing.length}. У других про него: ${incoming.length}. Общих механик: ${mechanics.length}.</p>
+        <div class="detail-section">
+          <h3>Оси графа</h3>
+          <div class="tags">
+            <span class="tag primary">Власть: ${formatScore(player.axis.power)} · ${escapeHtml(player.axis.powerScaleLabel)}</span>
+            <span class="tag secondary">Хлеб и цены: ${formatScore(player.axis.bread)} · ${escapeHtml(player.axis.breadScaleLabel)}</span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Ресурсы</h3>
+          <div class="tags">
+            ${(player.resources || []).map((resource) => `<span class="tag">${escapeHtml(resource)}</span>`).join("") || "<p>Не указаны.</p>"}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Риски</h3>
+          <div class="tags">
+            ${(player.risks || []).map((risk) => `<span class="tag watch">${escapeHtml(risk)}</span>`).join("") || "<p>Не указаны.</p>"}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Связи в загрузах</h3>
+          <div class="link-list">
+            ${outgoing.map((link) => renderKventaLinkCard(link, "outgoing")).join("") || "<p>В загрузке игрока связей нет.</p>"}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>У других игроков про него</h3>
+          <div class="link-list">
+            ${incoming.map((link) => renderKventaLinkCard(link, "incoming")).join("") || "<p>В других загрузках упоминаний нет.</p>"}
+          </div>
+        </div>
+        <div class="detail-section">
+          <h3>Общие механики (справочно)</h3>
+          <div class="tags">
+            ${mechanics.map((item) => `<span class="tag secondary">${escapeHtml(item.title)}</span>`).join("") || "<p>Не указаны.</p>"}
+          </div>
+        </div>
+      `;
+      host.querySelectorAll("[data-player-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
+      });
+    }
+
+    function filteredPlayers() {
+      return allPlayers
+        .filter((player) => playerMatches(player))
+        .sort((a, b) => a.name.localeCompare(b.name, "ru"));
+    }
+
+    function playerMatches(player) {
+      const mechanics = playerMechanics(player.id);
+      const kventaLinks = playerKventaLinks.filter((link) => link.source === player.id || link.target === player.id);
+      const neighbors = playerRelationEdges
+        .filter((edge) => edge.a === player.id || edge.b === player.id)
+        .map((edge) => playerById[edge.a === player.id ? edge.b : edge.a]?.name)
+        .filter(Boolean)
+        .join(" ");
+      const haystack = [
+        player.name,
+        player.label,
+        player.group,
+        ...(player.resources || []),
+        ...(player.risks || []),
+        player.axis?.powerLabel,
+        player.axis?.breadLabel,
+        player.axis?.powerScaleLabel,
+        player.axis?.breadScaleLabel,
+        kventaLinks.map((link) => `${link.targetLabel} ${link.text} ${linkDirection(link)}`).join(" "),
+        mechanics.map((item) => `${item.title} ${item.summary || ""}`).join(" "),
+        neighbors
+      ].join(" ").toLowerCase();
+      return (playerState.group === "all" || player.group === playerState.group)
+        && (playerState.resource === "all" || (player.resources || []).includes(playerState.resource))
+        && (!playerState.search || haystack.includes(playerState.search));
+    }
+
+    function playerOutgoingKventaLinks(id) {
+      return playerKventaLinks.filter((link) => link.source === id && playerById[link.target]);
+    }
+
+    function playerIncomingKventaLinks(id) {
+      return playerKventaLinks.filter((link) => link.target === id && playerById[link.source]);
+    }
+
+    function renderKventaRelationButton(link, direction) {
+      const source = playerById[link.source];
+      const target = playerById[link.target];
+      const otherId = direction === "outgoing" ? link.target : link.source;
+      const sourceTitle = source?.name || link.source;
+      const targetTitle = direction === "outgoing" ? (link.targetLabel || target?.name || link.target) : (target?.name || link.target);
+      const note = direction === "outgoing"
+        ? "текст из загрузки выбранного игрока"
+        : `текст из загрузки: ${sourceTitle}`;
+      return `
+        <button class="relation-button kventa-text-row" type="button" data-player-id="${otherId}">
+          <b>${escapeHtml(sourceTitle)} → ${escapeHtml(targetTitle)}</b>
+          <small>${escapeHtml(note)}</small>
+          <span>${escapeHtml(link.text)}</span>
+        </button>
+      `;
+    }
+
+    function renderKventaLinkCard(link, direction) {
+      const source = playerById[link.source];
+      const target = playerById[link.target];
+      const otherId = direction === "outgoing" ? link.target : link.source;
+      const title = direction === "outgoing"
+        ? (link.targetLabel || target?.name || link.target)
+        : (source?.name || link.source);
+      const note = direction === "outgoing"
+        ? "из загрузки игрока"
+        : `из загрузки: ${source?.name || link.source}`;
+      return `
+        <button class="link-card" type="button" data-player-id="${otherId}">
+          <b>${escapeHtml(title)}</b>
+          <span>${escapeHtml(note)}: ${escapeHtml(link.text)}</span>
+        </button>
+      `;
+    }
+
+    function selectedPlayerEdges(limit = 18) {
+      const selected = playerById[playerState.selected] ? playerState.selected : allPlayers[0]?.id;
+      return playerRelationEdges
+        .filter((edge) => edge.a === selected || edge.b === selected)
+        .filter((edge) => {
+          const other = playerById[edge.a === selected ? edge.b : edge.a];
+          return other && playerMatches(other);
+        })
+        .slice(0, limit);
+    }
+
+    function edgeLinksForSelected(edge, selectedId) {
+      return [...edge.links].sort((a, b) => {
+        const aOwn = a.source === selectedId ? 0 : 1;
+        const bOwn = b.source === selectedId ? 0 : 1;
+        return aOwn - bOwn || a.source.localeCompare(b.source, "ru");
+      });
+    }
+
+    function linkDirection(link) {
+      return `${playerById[link.source]?.name || link.source} → ${playerById[link.target]?.name || link.target}`;
+    }
+
+    function linkCountLabel(count) {
+      if (count === 1) return "1 запись в загрузах";
+      if (count > 1 && count < 5) return `${count} записи в загрузах`;
+      return `${count} записей в загрузах`;
+    }
+
+    function playerNetworkPositions(selected, edges) {
+      const positions = new Map();
+      if (!selected) return positions;
+      positions.set(selected.id, { x: 50, y: 50 });
+      const others = edges.map((edge) => playerById[edge.a === selected.id ? edge.b : edge.a]).filter(Boolean);
+      const radiusX = 34;
+      const radiusY = 34;
+      others.forEach((player, index) => {
+        const angle = -Math.PI / 2 + (Math.PI * 2 * index) / Math.max(1, others.length);
+        positions.set(player.id, {
+          x: 50 + Math.cos(angle) * radiusX,
+          y: 50 + Math.sin(angle) * radiusY
+        });
+      });
+      return positions;
+    }
+
+    function playerMechanics(id) {
+      return mechanics.filter((mechanic) => mechanic.relation.participants.includes(id));
+    }
+
+    function ensureSelectedPlayerVisible() {
+      const selected = playerById[playerState.selected];
+      const hardFilterOk = selected
+        && (playerState.group === "all" || selected.group === playerState.group)
+        && (playerState.resource === "all" || (selected.resources || []).includes(playerState.resource));
+      if (!hardFilterOk) {
+        playerState.selected = filteredPlayers()[0]?.id || allPlayers[0]?.id || "";
+      }
+    }
+
+    function selectPlayer(id) {
+      if (!playerById[id]) return;
+      playerState.selected = id;
+      state.view = "players";
+      render();
+    }
+
+    function buildPlayerRelationEdges() {
+      const pairs = new Map();
+      playerKventaLinks.forEach((link) => {
+        if (!playerById[link.source] || !playerById[link.target]) return;
+        const [left, right] = [link.source, link.target].sort();
+        const key = `${left}::${right}`;
+        if (!pairs.has(key)) {
+          pairs.set(key, { a: left, b: right, links: [], score: 0 });
+        }
+        const pair = pairs.get(key);
+        pair.links.push(link);
+      });
+      return [...pairs.values()].map((pair) => {
+        const directions = new Set(pair.links.map((link) => `${link.source}->${link.target}`));
+        const reciprocal = directions.size > 1;
+        return {
+          ...pair,
+          reciprocal,
+          score: pair.links.length + (reciprocal ? 2 : 0)
+        };
+      }).sort((a, b) => b.score - a.score || b.links.length - a.links.length || playerById[a.a].name.localeCompare(playerById[b.a].name, "ru"));
+    }
+
+    function axisForPlayer(player) {
+      const score = playerAxisScores[player.id] || { power: 0, bread: 0, powerLabel: "оценка не задана", breadLabel: "оценка не задана" };
+      const jitter = axisJitter(player.id);
+      const power = clamp(Number(score.power ?? 0), -2, 2);
+      const bread = clamp(Number(score.bread ?? 0), -2, 2);
+      const axis = {
+        power,
+        bread,
+        powerLabel: score.powerLabel || scaleLabel("power", power),
+        breadLabel: score.breadLabel || scaleLabel("bread", bread),
+        powerScaleLabel: scaleLabel("power", power),
+        breadScaleLabel: scaleLabel("bread", bread),
+        x: clamp(scoreToPercent(power) + jitter.x, 8, 92),
+        y: clamp(scoreToPercent(bread) + jitter.y, 8, 92)
+      };
+      return axis;
+    }
+
+    function scoreToPercent(score) {
+      return 50 + score * 20;
+    }
+
+    function axisJitter(id) {
+      let hash = 0;
+      for (let index = 0; index < id.length; index += 1) {
+        hash = (hash * 31 + id.charCodeAt(index)) % 9973;
+      }
+      return {
+        x: ((hash % 7) - 3) * .85,
+        y: (((Math.floor(hash / 7)) % 7) - 3) * .85
+      };
+    }
+
+    function scaleLabel(axisId, value) {
+      const scale = playerAxisData.axes?.[axisId]?.scale || {};
+      return scale[String(Math.round(value))] || "смешанная позиция";
+    }
+
+    function formatScore(value) {
+      return value > 0 ? `+${value}` : String(value);
+    }
+
+    function kventaPathForPlayer(id) {
+      if (citizenPlayerIds.has(id)) return `../kventas/citizens/${id}_kventa.md`;
+      if (royalistPlayerIds.has(id)) return `../kventas/royalists/${id}_kventa.md`;
+      const group = historicalGroupByPlayer[id];
+      if (group) return `../kventas/historical/${group}/${id}_kventa.md`;
+      return "#";
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function selectedEdgeIds() {
+      if (!state.selected.id) return new Set();
+      return new Set(allEdges()
+        .filter((edge) => {
+          if (state.selected.type === "story") return edge.story === state.selected.id;
+          if (state.selected.type === "character") return edge.character === state.selected.id;
+          if (state.selected.type === "mechanic") return edge.mechanic === state.selected.id;
+          return false;
+        })
+        .map(edgeId));
+    }
+
+    function activeNodeIds() {
+      const ids = new Set();
+      selectedEdgeIds().forEach((id) => {
+        const [story, targetType, targetId] = id.split("::");
+        ids.add(`story:${story}`);
+        ids.add(`${targetType}:${targetId}`);
+      });
+      return ids;
+    }
+
+    function edgeId(edge) {
+      return edge.character ? `${edge.story}::character::${edge.character}` : `${edge.story}::mechanic::${edge.mechanic}`;
+    }
+
+    function curvePath(story, character) {
+      const start = position(story);
+      const end = position(character);
+      const x1 = start.x * 10;
+      const y1 = start.y * 7.6;
+      const x2 = end.x * 10;
+      const y2 = end.y * 7.6;
+      const dx = Math.max(80, Math.abs(x2 - x1) * .42);
+      const c1x = x1 + dx;
+      const c2x = x2 - dx;
+      return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+    }
+
+    function position(item) {
+      const mobile = window.innerWidth <= 760;
+      if (!mobile && state.layer === "all" && item.ax) {
+        return { x: item.ax, y: item.ay };
+      }
+      return {
+        x: mobile && item.mx ? item.mx : item.x,
+        y: mobile && item.my ? item.my : item.y
+      };
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Revolution France site
+
+Статическая сборка для GitHub Pages.
+
+## Что внутри
+
+- `index.html` - стартовая страница.
+- `tools.html` - каталог HTML-инструментов, карт и расчетных выгрузок.
+- `characters.html` - каталог 60 персонажей с читаемыми HTML-загрузами и исходными Markdown-файлами.
+- `docs.html` - основные правила и рабочие документы.
+- `tools/` - готовые HTML/JS/CSS-инструменты из рабочей папки.
+- `kventas/` - актуальные загрузки персонажей.
+- `kventas-html/` - HTML-версии загрузов для чтения на сайте.
+- `downloads/kventas_all.zip` - архив всех загрузов.
+- `docs/` - отобранные документы для публикации.
+- `.nojekyll` - GitHub Pages должен отдавать файлы как статические.
+
+## Как опубликовать через GitHub web
+
+1. Открыть `https://github.com/ssaltovsk1/france-site/upload/main`.
+2. Перетащить содержимое этой папки `france-site`, не саму папку.
+3. Нажать `Commit changes`.
+4. Открыть `Settings` -> `Pages`.
+5. Выбрать `Deploy from a branch`, ветка `main`, папка `/root`.
+
+После сборки адрес будет таким:
+
+`https://ssaltovsk1.github.io/france-site/`
+
+## Как опубликовать через git
+
+```powershell
+cd D:\_projects\_Mars\Games\Revolution_France\france-site
+git init
+git branch -M main
+git add .
+git commit -m "Initial site"
+git remote add origin https://github.com/ssaltovsk1/france-site.git
+git push -u origin main
+```

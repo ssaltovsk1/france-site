@@ -1,0 +1,296 @@
+.economy-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.sim-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.2fr) minmax(200px, 1fr) minmax(150px, .7fr) auto;
+  gap: 12px;
+  align-items: end;
+  padding: 16px 18px;
+  border-top: 1px solid var(--soft-line);
+  background: rgba(247, 241, 231, .72);
+}
+
+.run-button {
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid rgba(17, 24, 39, .35);
+  border-radius: 8px;
+  background: var(--focus);
+  color: #fffaf2;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.run-button:hover {
+  background: #332e2a;
+}
+
+.tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px 16px;
+  background: rgba(247, 241, 231, .72);
+}
+
+.tab-button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(123, 108, 88, .28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .72);
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.tab-button.is-active {
+  border-color: rgba(17, 24, 39, .35);
+  background: var(--focus);
+  color: #fffaf2;
+}
+
+.economy-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 18px;
+  align-items: start;
+}
+
+.summary-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 16px;
+}
+
+.summary-card {
+  min-height: 88px;
+  padding: 12px;
+  border: 1px solid rgba(118, 104, 84, .22);
+  border-left: 6px solid var(--card-color, var(--players));
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .62);
+}
+
+.summary-card b {
+  display: block;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.summary-card span {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.table-wrap {
+  overflow: auto;
+  border-top: 1px solid var(--soft-line);
+}
+
+.sim-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.sim-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 11px 12px;
+  background: #efe6d7;
+  color: #453d35;
+  font-size: 12px;
+  letter-spacing: .07em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.sim-table td {
+  vertical-align: top;
+  padding: 11px 12px;
+  border-top: 1px solid var(--soft-line);
+  color: #37322e;
+  font-size: 13px;
+}
+
+.sim-table tr:hover {
+  background: rgba(31, 111, 120, .06);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  border: 1px solid rgba(118, 104, 84, .20);
+  background: rgba(255, 255, 255, .74);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.status-surplus {
+  color: #1f6f78;
+}
+
+.status-ok {
+  color: #517648;
+}
+
+.status-stress {
+  color: #9b6a1a;
+}
+
+.status-crisis {
+  color: #a33d2e;
+}
+
+.track-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.track-card {
+  padding: 12px;
+  border: 1px solid rgba(118, 104, 84, .22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .60);
+}
+
+.track-card h3 {
+  font-family: inherit;
+  color: #4b433c;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.track-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  color: #433d37;
+  font-size: 13px;
+}
+
+.bar {
+  position: relative;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(118, 104, 84, .16);
+}
+
+.bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--value) * 1%);
+  border-radius: inherit;
+  background: var(--bar-color, var(--players));
+}
+
+.role-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+
+.role-card {
+  padding: 14px;
+  border: 1px solid rgba(118, 104, 84, .22);
+  border-left: 6px solid var(--role-color, var(--players));
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .62);
+}
+
+.role-card h3 {
+  font-size: 20px;
+}
+
+.role-card p {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.role-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.mini-chip {
+  display: inline-flex;
+  min-height: 25px;
+  align-items: center;
+  padding: 4px 7px;
+  border: 1px solid rgba(118, 104, 84, .22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .74);
+  color: #47413a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.scenario-note {
+  padding: 14px 16px;
+  border-top: 1px solid var(--soft-line);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 1120px) {
+  .sim-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .economy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .role-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .sim-toolbar {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .tabbar {
+    padding: 0 12px 12px;
+  }
+
+  .tab-button {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .summary-strip {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+}

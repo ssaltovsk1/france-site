@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Механические взаимосвязи персонажей</title>
+  <link rel="stylesheet" href="./revolution_control_styles.css">
+  <link rel="stylesheet" href="./revolution_character_relations_styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-block">
+      <a class="brand-link" href="./revolution_control_map.html">Карта управляемости</a>
+      <h1>Механические взаимосвязи персонажей</h1>
+      <p>Кто с кем связан через хлеб, деньги, работу, церковь, войну, подозрение и собственность. Не про симпатии, а про то, что один персонаж может получить, отдать, заблокировать или запустить для другого.</p>
+    </div>
+    <nav class="view-switcher" aria-label="Соседние визуализации">
+      <a class="view-link" href="./revolution_control_map.html">Узлы контроля</a>
+      <a class="view-link" href="./revolution_control_chains.html">Цепочки</a>
+      <a class="view-link" href="./revolution_economy_simulator.html">Экономика</a>
+      <a class="view-link is-active" href="./revolution_character_relations.html">Персонажи</a>
+    </nav>
+  </header>
+
+  <main class="app-shell">
+    <div id="characterRelationsApp"></div>
+  </main>
+
+  <script src="./revolution_character_relations_data.js"></script>
+  <script src="./revolution_character_relations_app.js"></script>
+</body>
+</html>
