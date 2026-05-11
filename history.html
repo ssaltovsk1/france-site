@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>История революции - Revolution France</title>
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a href="./tools.html">Расчеты</a>
+      <a href="./characters.html">Персонажи</a>
+      <a class="is-active" href="./history.html">История</a>
+      <a href="./docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title history-title">
+      <p class="section-label">Историческая база</p>
+      <h1>История революции: причины, события, режимы</h1>
+      <p>Поисковая вкладка для мастеров и игроков: что случилось, почему случилось, какие типы правления сменялись и какие причинные узлы толкали Францию от финансового кризиса к Консульству.</p>
+      <div class="action-row compact">
+        <a class="button primary" href="#historySearch">Искать по базе</a>
+        <a class="button" href="./docs/revolution_causes_readme.md">Причины и рычаги</a>
+        <a class="button" href="./tools/revolution_control_chains.html">Причинные цепочки</a>
+      </div>
+    </section>
+
+    <section class="history-intro" aria-label="Состав исторической базы">
+      <article>
+        <strong>7</strong>
+        <span>периодов от Старого порядка до Брюмера</span>
+      </article>
+      <article>
+        <strong>5</strong>
+        <span>типов записей: причины, события, режимы, группы, объяснения</span>
+      </article>
+      <article>
+        <strong>90+</strong>
+        <span>карточек с причинами и последствиями</span>
+      </article>
+      <article>
+        <strong>100%</strong>
+        <span>статический поиск без сервера и базы данных</span>
+      </article>
+    </section>
+
+    <section class="toolbar-panel history-toolbar" aria-label="Фильтры исторической базы">
+      <label>
+        Поиск
+        <input id="historySearch" type="search" placeholder="Хлеб, Вандея, тип правления, почему террор">
+      </label>
+      <label>
+        Тип
+        <select id="historyType">
+          <option value="all">Все типы</option>
+        </select>
+      </label>
+      <label>
+        Период
+        <select id="historyPeriod">
+          <option value="all">Все периоды</option>
+        </select>
+      </label>
+      <button class="button" id="historyReset" type="button">Сбросить</button>
+      <div class="counter" id="historyCounter"></div>
+    </section>
+
+    <section class="history-layout">
+      <aside class="history-guide">
+        <h2>Как читать</h2>
+        <p>Это не линейный учебник, а рабочая база для игры. Лучше искать не только событие, но и механизм: <strong>долг</strong>, <strong>хлеб</strong>, <strong>церковь</strong>, <strong>война</strong>, <strong>улица</strong>, <strong>подозрение</strong>.</p>
+        <div class="history-guide-list">
+          <a href="#historySearch" data-query="типы правления">Типы правления</a>
+          <a href="#historySearch" data-query="почему">Почему случалось</a>
+          <a href="#historySearch" data-query="причины">Причины</a>
+          <a href="#historySearch" data-query="события">События</a>
+        </div>
+      </aside>
+
+      <section class="history-results" id="historyGrid" aria-live="polite"></section>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <h2>Основа и точность</h2>
+        <p>Карточки собраны из текущих проектных материалов: карты причин, дат, выжимок из обсуждений, заметок по Чудинову, экономической модели и базы Revolution Database.</p>
+      </div>
+      <div class="doc-list">
+        <a href="./docs/revolution_causes_readme.md"><strong>Причины и рычаги революции</strong><span>Главная причинная рамка: долг, хлеб, сословия, церковь, война, Вандея, улица, Террор.</span></a>
+        <a href="./docs/economy/historical_audit_and_model.md"><strong>Исторический аудит и модель</strong><span>Как исторические процессы переведены в экономику, ресурсы и игровые последствия.</span></a>
+        <a href="./tools/revolution_control_map.html"><strong>Карта управляемости</strong><span>Какие узлы можно контролировать, какие только сдвигать, а какие отвечают побочными эффектами.</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="./index.html">На главную</a>
+    <a href="./characters.html">Персонажи</a>
+    <a href="./docs.html">Правила и доки</a>
+  </footer>
+
+  <script src="./history-data.js"></script>
+  <script src="./history.js"></script>
+</body>
+</html>

@@ -271,6 +271,10 @@ main {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.card-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .card-grid.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -328,6 +332,10 @@ main {
 
 .accent-green {
   border-top-color: var(--green);
+}
+
+.accent-gold {
+  border-top-color: var(--gold);
 }
 
 .accent-ink {
@@ -510,6 +518,273 @@ main {
 .card-actions a:first-child {
   background: var(--ink);
   color: #fffaf2;
+}
+
+.history-title {
+  position: relative;
+}
+
+.history-title > * {
+  position: relative;
+  z-index: 1;
+}
+
+.history-title::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 14px;
+  width: min(360px, 44vw);
+  height: 150px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 24% 46%, rgba(155, 106, 26, .22), transparent 42%),
+    radial-gradient(circle at 72% 58%, rgba(31, 111, 120, .18), transparent 48%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(4px);
+}
+
+.history-intro {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 24px;
+}
+
+.history-intro article {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--soft-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 242, .88), rgba(237, 246, 247, .72)),
+    var(--surface);
+  box-shadow: 0 10px 24px rgba(35, 31, 29, .06);
+}
+
+.history-intro strong {
+  display: block;
+  font-family: Georgia, "Palatino Linotype", serif;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.history-intro span {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.toolbar-panel.history-toolbar {
+  grid-template-columns: minmax(240px, 1fr) minmax(150px, 220px) minmax(230px, 320px) auto auto;
+}
+
+.history-toolbar .button {
+  width: 100%;
+  min-height: 42px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.history-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 290px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.history-guide {
+  position: sticky;
+  top: 92px;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--soft-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(32, 29, 26, .94), rgba(77, 57, 38, .88)),
+    var(--ink);
+  color: #fffaf2;
+  box-shadow: var(--shadow);
+}
+
+.history-guide h2 {
+  font-size: 28px;
+}
+
+.history-guide p {
+  color: rgba(255, 250, 242, .82);
+  font-size: 15px;
+}
+
+.history-guide strong {
+  color: #fff;
+}
+
+.history-guide-list {
+  display: grid;
+  gap: 8px;
+}
+
+.history-guide-list a {
+  display: block;
+  padding: 10px 11px;
+  border: 1px solid rgba(255, 250, 242, .18);
+  border-radius: 8px;
+  background: rgba(255, 250, 242, .08);
+  color: #fffaf2;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.history-guide-list a:hover {
+  background: rgba(255, 250, 242, .16);
+}
+
+.history-results {
+  display: grid;
+  gap: 14px;
+}
+
+.history-card,
+.empty-state {
+  min-width: 0;
+  padding: clamp(18px, 3vw, 24px);
+  border: 1px solid var(--soft-line);
+  border-left: 6px solid var(--teal);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .32), rgba(255, 255, 255, 0)),
+    rgba(255, 250, 242, .88);
+  box-shadow: 0 12px 30px rgba(35, 31, 29, .07);
+}
+
+.history-card-event {
+  border-left-color: var(--blue);
+}
+
+.history-card-cause {
+  border-left-color: var(--red);
+}
+
+.history-card-regime {
+  border-left-color: var(--gold);
+}
+
+.history-card-faction {
+  border-left-color: var(--green);
+}
+
+.history-card-explanation {
+  border-left-color: var(--ink);
+}
+
+.history-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.history-type,
+.history-date {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 9px;
+  border: 1px solid rgba(117, 103, 83, .22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .58);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.history-type {
+  color: var(--ink);
+}
+
+.history-card h2,
+.empty-state h2 {
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.08;
+}
+
+.history-card p,
+.empty-state p {
+  margin-top: 10px;
+  color: #49433d;
+}
+
+.history-card section {
+  margin-top: 16px;
+}
+
+.history-card h3 {
+  color: var(--teal);
+  font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.history-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.history-card ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: #3d3833;
+}
+
+.history-card li + li {
+  margin-top: 5px;
+}
+
+.history-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.history-tags span {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(31, 111, 120, .10);
+  color: #28575d;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.history-sources {
+  margin-top: 14px;
+  color: var(--muted);
+}
+
+.history-sources summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.history-sources code {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  background: rgba(255, 255, 255, .72);
 }
 
 .site-footer {
@@ -756,11 +1031,14 @@ main {
   .content-section.split,
   .section-head,
   .toolbar-panel,
-  .reader-shell {
+  .toolbar-panel.history-toolbar,
+  .reader-shell,
+  .history-layout {
     grid-template-columns: 1fr;
   }
 
-  .reader-side {
+  .reader-side,
+  .history-guide {
     position: static;
   }
 
@@ -769,11 +1047,13 @@ main {
     padding-top: 26px;
   }
 
+  .card-grid.four,
   .card-grid.three,
   .card-grid.two,
   .character-grid,
   .link-grid,
-  .stats-band {
+  .stats-band,
+  .history-intro {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -802,6 +1082,14 @@ main {
     font-size: 18px;
   }
 
+  .history-title::after {
+    display: none;
+  }
+
+  .history-columns {
+    grid-template-columns: 1fr;
+  }
+
   .reader-nav-links {
     flex-direction: column;
   }
@@ -810,11 +1098,13 @@ main {
     text-align: left;
   }
 
+  .card-grid.four,
   .card-grid.three,
   .card-grid.two,
   .character-grid,
   .link-grid,
-  .stats-band {
+  .stats-band,
+  .history-intro {
     grid-template-columns: 1fr;
   }
 }

@@ -45,6 +45,60 @@
       text-decoration: none;
     }
 
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px clamp(18px, 4vw, 44px);
+      border-bottom: 1px solid rgba(150, 126, 91, .22);
+      background: rgba(255, 250, 242, .94);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .site-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 9px 13px;
+      border: 1px solid rgba(117, 103, 83, .28);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .72);
+      color: #3d3833;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .site-nav a:hover {
+      border-color: rgba(31, 111, 120, .46);
+      background: #fff;
+    }
+
+    .site-nav a.is-active {
+      border-color: rgba(17, 24, 39, .36);
+      background: var(--ink);
+      color: #fffaf2;
+    }
+
     .topbar {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -946,6 +1000,15 @@
     }
 
     @media (max-width: 760px) {
+      .site-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .site-nav {
+        justify-content: flex-start;
+      }
+
       .topbar {
         grid-template-columns: 1fr;
       }
@@ -996,6 +1059,14 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand" id="siteBrandLink" href="../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a class="is-active" id="siteToolsLink" href="../tools.html">Расчеты</a>
+      <a id="siteCharactersLink" href="../characters.html">Персонажи</a>
+      <a id="siteDocsLink" href="../docs.html">Правила и доки</a>
+    </nav>
+  </header>
   <header class="topbar">
     <div class="title-block">
       <h1>Карта связей новых сюжетов</h1>
@@ -1162,7 +1233,7 @@
     <aside class="panel inspector">
       <div class="panel-head">
         <h2>Информация по игроку</h2>
-        <p>Ресурсы, риски, ближайшие связи и файл загрузки.</p>
+        <p>Ресурсы, риски, ближайшие связи и страница игрока.</p>
       </div>
       <div class="details" id="playerDetails"></div>
     </aside>
@@ -1228,19 +1299,19 @@
     ];
 
     const characters = [
-      { id: "boulanger", name: "Пьер Моро", label: "Булочник", className: "citizen", file: "../kventas/citizens/boulanger_kventa.md", x: 50, y: 12, mx: 72, my: 5 },
-      { id: "avocat", name: "Шарль Меренвиль", label: "Адвокат", className: "citizen", file: "../kventas/citizens/avocat_kventa.md", x: 68, y: 20, mx: 72, my: 12 },
-      { id: "cure", name: "Отец Жером", label: "Кюре", className: "citizen", file: "../kventas/citizens/cure_kventa.md", x: 83, y: 30, mx: 72, my: 19 },
-      { id: "imprimeur", name: "Луи Прюдом", label: "Типограф", className: "citizen", file: "../kventas/citizens/imprimeur_kventa.md", x: 49, y: 57, mx: 72, my: 50 },
-      { id: "breteuil", name: "Барон де Бретёй", label: "Министр и полиция", className: "royalist", file: "../kventas/royalists/breteuil_kventa.md", x: 51, y: 35, mx: 72, my: 27 },
-      { id: "servante", name: "Мадлен Флёри", label: "Служанка", className: "citizen", file: "../kventas/citizens/servante_kventa.md", x: 83, y: 43, mx: 72, my: 34 },
-      { id: "brissot", name: "Жак Пьер Бриссо", label: "Памфлетист", className: "historical", file: "../kventas/historical/group_2/brissot_kventa.md", x: 64, y: 52, mx: 72, my: 41 },
-      { id: "mirabeau", name: "Мирабо", label: "Жертва lettres de cachet", className: "historical", file: "../kventas/historical/group_1/mirabeau_kventa.md", x: 83, y: 60, mx: 72, my: 64 },
-      { id: "danton", name: "Дантон", label: "Кордельеры", className: "historical", file: "../kventas/historical/group_2/danton_kventa.md", x: 61, y: 70, mx: 72, my: 57 },
-      { id: "hebert", name: "Эбер", label: "Радикальная печать", className: "historical", file: "../kventas/historical/group_2/hebert_kventa.md", x: 83, y: 75, mx: 72, my: 71 },
-      { id: "actrice", name: "Жюли Ренар", label: "Актриса", className: "citizen", file: "../kventas/citizens/actrice_kventa.md", x: 49, y: 84, mx: 72, my: 80 },
-      { id: "lavandiere", name: "Катрин Лебон", label: "Прачка", className: "citizen", file: "../kventas/citizens/lavandiere_kventa.md", x: 66, y: 86, mx: 72, my: 87 },
-      { id: "lamballe", name: "Принцесса Ламбаль", label: "Связь с Пентьевром", className: "royalist", file: "../kventas/royalists/lamballe_kventa.md", x: 83, y: 88, mx: 72, my: 94 }
+      { id: "boulanger", name: "Пьер Моро", label: "Булочник", className: "citizen", file: playerPagePathForId("boulanger"), x: 50, y: 12, mx: 72, my: 5 },
+      { id: "avocat", name: "Шарль Меренвиль", label: "Адвокат", className: "citizen", file: playerPagePathForId("avocat"), x: 68, y: 20, mx: 72, my: 12 },
+      { id: "cure", name: "Отец Жером", label: "Кюре", className: "citizen", file: playerPagePathForId("cure"), x: 83, y: 30, mx: 72, my: 19 },
+      { id: "imprimeur", name: "Луи Прюдом", label: "Типограф", className: "citizen", file: playerPagePathForId("imprimeur"), x: 49, y: 57, mx: 72, my: 50 },
+      { id: "breteuil", name: "Барон де Бретёй", label: "Министр и полиция", className: "royalist", file: playerPagePathForId("breteuil"), x: 51, y: 35, mx: 72, my: 27 },
+      { id: "servante", name: "Мадлен Флёри", label: "Служанка", className: "citizen", file: playerPagePathForId("servante"), x: 83, y: 43, mx: 72, my: 34 },
+      { id: "brissot", name: "Жак Пьер Бриссо", label: "Памфлетист", className: "historical", file: playerPagePathForId("brissot"), x: 64, y: 52, mx: 72, my: 41 },
+      { id: "mirabeau", name: "Мирабо", label: "Жертва lettres de cachet", className: "historical", file: playerPagePathForId("mirabeau"), x: 83, y: 60, mx: 72, my: 64 },
+      { id: "danton", name: "Дантон", label: "Кордельеры", className: "historical", file: playerPagePathForId("danton"), x: 61, y: 70, mx: 72, my: 57 },
+      { id: "hebert", name: "Эбер", label: "Радикальная печать", className: "historical", file: playerPagePathForId("hebert"), x: 83, y: 75, mx: 72, my: 71 },
+      { id: "actrice", name: "Жюли Ренар", label: "Актриса", className: "citizen", file: playerPagePathForId("actrice"), x: 49, y: 84, mx: 72, my: 80 },
+      { id: "lavandiere", name: "Катрин Лебон", label: "Прачка", className: "citizen", file: playerPagePathForId("lavandiere"), x: 66, y: 86, mx: 72, my: 87 },
+      { id: "lamballe", name: "Принцесса Ламбаль", label: "Связь с Пентьевром", className: "royalist", file: playerPagePathForId("lamballe"), x: 83, y: 88, mx: 72, my: 94 }
     ];
 
     const edges = [
@@ -1409,6 +1480,7 @@
     const playerResources = [...new Set(allPlayers.flatMap((player) => player.resources || []))].sort((a, b) => a.localeCompare(b, "ru"));
 
     function init() {
+      initSiteNav();
       document.getElementById("storyCount").textContent = stories.length;
       document.getElementById("playerCount").textContent = allPlayers.length;
       document.getElementById("mechanicCount").textContent = mechanics.length;
@@ -1679,7 +1751,7 @@
           <h2>${escapeHtml(character.name)}</h2>
           <div class="tags">
             <span class="tag">${escapeHtml(classLabels[character.className])}</span>
-            <a class="tag primary" href="${character.file}">Открыть загруз</a>
+            <a class="tag primary" href="${character.file}">Страница игрока</a>
           </div>
           <p>${escapeHtml(character.label)}. Видимые сюжетные входы: ${related.length}. Важные общие связи: ${mechanicMembership.length}.</p>
           <div class="detail-section">
@@ -1797,11 +1869,11 @@
       renderPlayerDetails();
     }
 
-    function renderPlayerOpenLink(id, label = "open", className = "player-open-link") {
+    function renderPlayerOpenLink(id, label = "страница", className = "player-open-link") {
       const player = playerById[id];
       if (!player || !player.file || player.file === "#") return "";
       const href = escapeHtml(player.file);
-      const title = escapeHtml(`Open player file: ${player.name}`);
+      const title = escapeHtml(`Открыть страницу игрока: ${player.name}`);
       return `<a class="${className}" href="${href}" title="${title}" aria-label="${title}" onclick="event.stopPropagation()">${escapeHtml(label)}</a>`;
     }
 
@@ -1859,7 +1931,7 @@
             <small>${escapeHtml(player.label)}</small>
             <div class="card-title-row">
               <b>${escapeHtml(player.name)}</b>
-              ${renderPlayerOpenLink(id, "open", "player-open-link compact")}
+              ${renderPlayerOpenLink(id, "↗", "player-open-link compact")}
             </div>
             <span>${edgeCount} связей · ${(player.resources || []).slice(0, 2).map(escapeHtml).join(", ")}</span>
           </div>
@@ -1912,7 +1984,7 @@
         <h2>${escapeHtml(player.name)}</h2>
         <div class="tags">
           <span class="tag primary" style="border-color:${player.color}; color:${player.color}">${escapeHtml(player.label)}</span>
-          <a class="tag primary" href="${player.file}">Открыть загруз</a>
+          <a class="tag primary" href="${player.file}">Страница игрока</a>
         </div>
         <p>Граф: Власть ${formatScore(player.axis.power)} — ${escapeHtml(player.axis.powerLabel)}. Хлеб и цены ${formatScore(player.axis.bread)} — ${escapeHtml(player.axis.breadLabel)}. Строк в его загрузке: ${outgoing.length}. У других про него: ${incoming.length}. Общих механик: ${mechanics.length}.</p>
         <div class="detail-section">
@@ -2171,12 +2243,31 @@
       return value > 0 ? `+${value}` : String(value);
     }
 
+    function siteHref(path) {
+      const normalizedPath = String(window.location.pathname || "").replace(/\\/g, "/").toLowerCase();
+      if (normalizedPath.includes("/france-site/")) {
+        return `../${path}`;
+      }
+      return `https://ssaltovsk1.github.io/france-site/${path}`;
+    }
+
+    function initSiteNav() {
+      const brandLink = document.getElementById("siteBrandLink");
+      const toolsLink = document.getElementById("siteToolsLink");
+      const charactersLink = document.getElementById("siteCharactersLink");
+      const docsLink = document.getElementById("siteDocsLink");
+      if (brandLink) brandLink.href = siteHref("index.html");
+      if (toolsLink) toolsLink.href = siteHref("tools.html");
+      if (charactersLink) charactersLink.href = siteHref("characters.html");
+      if (docsLink) docsLink.href = siteHref("docs.html");
+    }
+
+    function playerPagePathForId(id) {
+      return siteHref(`kventas-html/${id}.html`);
+    }
+
     function kventaPathForPlayer(id) {
-      if (citizenPlayerIds.has(id)) return `../kventas/citizens/${id}_kventa.md`;
-      if (royalistPlayerIds.has(id)) return `../kventas/royalists/${id}_kventa.md`;
-      const group = historicalGroupByPlayer[id];
-      if (group) return `../kventas/historical/${group}/${id}_kventa.md`;
-      return "#";
+      return playerPagePathForId(id);
     }
 
     function clamp(value, min, max) {
