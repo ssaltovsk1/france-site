@@ -614,6 +614,48 @@
       line-height: 1.25;
     }
 
+    .card-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-title-row b {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+    }
+
+    .player-open-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 3px 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 760;
+      line-height: 1;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .player-open-link:hover {
+      border-color: rgba(39, 76, 119, .45);
+      color: var(--ink);
+      background: #f7fafc;
+    }
+
+    .player-open-link.compact {
+      min-height: 20px;
+      padding: 2px 6px;
+      font-size: 10px;
+    }
+
     .player-tools {
       display: grid;
       gap: 14px;
@@ -701,6 +743,11 @@
     .player-node.is-active {
       background: #fff;
       box-shadow: 0 16px 32px rgba(24, 31, 39, .16);
+    }
+
+    .player-node .card-title-row {
+      margin-top: 5px;
+      align-items: center;
     }
 
     .player-node small {
@@ -1750,18 +1797,41 @@
       renderPlayerDetails();
     }
 
+    function renderPlayerOpenLink(id, label = "open", className = "player-open-link") {
+      const player = playerById[id];
+      if (!player || !player.file || player.file === "#") return "";
+      const href = escapeHtml(player.file);
+      const title = escapeHtml(`Open player file: ${player.name}`);
+      return `<a class="${className}" href="${href}" title="${title}" aria-label="${title}" onclick="event.stopPropagation()">${escapeHtml(label)}</a>`;
+    }
+
+    function bindPlayerSelection(host) {
+      host.querySelectorAll("[data-player-id]").forEach((element) => {
+        element.addEventListener("click", () => selectPlayer(element.dataset.playerId));
+        if (element.tagName !== "BUTTON") {
+          element.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectPlayer(element.dataset.playerId);
+            }
+          });
+        }
+      });
+    }
+
     function renderPlayerList() {
       const host = document.getElementById("playerList");
       const players = filteredPlayers();
       host.innerHTML = players.length ? players.map((player) => `
-        <button class="player-button ${player.id === playerState.selected ? "is-active" : ""}" type="button" data-player-id="${player.id}" style="--tone:${player.color}">
-          <b>${escapeHtml(player.name)}</b>
+        <div class="player-button ${player.id === playerState.selected ? "is-active" : ""}" role="button" tabindex="0" data-player-id="${player.id}" style="--tone:${player.color}">
+          <div class="card-title-row">
+            <b>${escapeHtml(player.name)}</b>
+            ${renderPlayerOpenLink(player.id)}
+          </div>
           <span>${escapeHtml(player.label)} · ${(player.resources || []).map(escapeHtml).join(", ")}</span>
-        </button>
+        </div>
       `).join("") : `<p class="subtitle">Игроков по текущим фильтрам нет.</p>`;
-      host.querySelectorAll("[data-player-id]").forEach((button) => {
-        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
-      });
+      bindPlayerSelection(host);
     }
 
     function renderPlayerNetwork() {
@@ -1785,16 +1855,17 @@
         const active = id === playerState.selected;
         const edgeCount = playerRelationEdges.filter((edge) => edge.a === id || edge.b === id).length;
         return `
-          <button class="player-node ${active ? "is-active" : ""}" type="button" data-player-id="${id}" style="--x:${point.x}; --y:${point.y}; --tone:${player.color}">
+          <div class="player-node ${active ? "is-active" : ""}" role="button" tabindex="0" data-player-id="${id}" style="--x:${point.x}; --y:${point.y}; --tone:${player.color}">
             <small>${escapeHtml(player.label)}</small>
-            <b>${escapeHtml(player.name)}</b>
+            <div class="card-title-row">
+              <b>${escapeHtml(player.name)}</b>
+              ${renderPlayerOpenLink(id, "open", "player-open-link compact")}
+            </div>
             <span>${edgeCount} связей · ${(player.resources || []).slice(0, 2).map(escapeHtml).join(", ")}</span>
-          </button>
+          </div>
         `;
       }).join("");
-      nodeHost.querySelectorAll("[data-player-id]").forEach((button) => {
-        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
-      });
+      bindPlayerSelection(nodeHost);
     }
 
     function renderAxisPlot() {
@@ -1810,9 +1881,7 @@
           </button>
         `;
       }).join("");
-      host.querySelectorAll("[data-player-id]").forEach((button) => {
-        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
-      });
+      bindPlayerSelection(host);
     }
 
     function renderPlayerRows() {
@@ -1830,9 +1899,7 @@
           ${incoming.map((link) => renderKventaRelationButton(link, "incoming")).join("") || `<p class="subtitle">По текущим фильтрам входящих упоминаний нет.</p>`}
         </div>
       ` : `<p class="subtitle">У выбранного игрока нет связей из загрузов по текущим фильтрам.</p>`;
-      host.querySelectorAll("[data-player-id]").forEach((button) => {
-        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
-      });
+      bindPlayerSelection(host);
     }
 
     function renderPlayerDetails() {
@@ -1886,9 +1953,7 @@
           </div>
         </div>
       `;
-      host.querySelectorAll("[data-player-id]").forEach((button) => {
-        button.addEventListener("click", () => selectPlayer(button.dataset.playerId));
-      });
+      bindPlayerSelection(host);
     }
 
     function filteredPlayers() {
@@ -1942,11 +2007,14 @@
         ? "текст из загрузки выбранного игрока"
         : `текст из загрузки: ${sourceTitle}`;
       return `
-        <button class="relation-button kventa-text-row" type="button" data-player-id="${otherId}">
-          <b>${escapeHtml(sourceTitle)} → ${escapeHtml(targetTitle)}</b>
+        <div class="relation-button kventa-text-row" role="button" tabindex="0" data-player-id="${otherId}">
+          <div class="card-title-row">
+            <b>${escapeHtml(sourceTitle)} → ${escapeHtml(targetTitle)}</b>
+            ${renderPlayerOpenLink(otherId)}
+          </div>
           <small>${escapeHtml(note)}</small>
           <span>${escapeHtml(link.text)}</span>
-        </button>
+        </div>
       `;
     }
 
@@ -1961,10 +2029,13 @@
         ? "из загрузки игрока"
         : `из загрузки: ${source?.name || link.source}`;
       return `
-        <button class="link-card" type="button" data-player-id="${otherId}">
-          <b>${escapeHtml(title)}</b>
+        <div class="link-card" role="button" tabindex="0" data-player-id="${otherId}">
+          <div class="card-title-row">
+            <b>${escapeHtml(title)}</b>
+            ${renderPlayerOpenLink(otherId)}
+          </div>
           <span>${escapeHtml(note)}: ${escapeHtml(link.text)}</span>
-        </button>
+        </div>
       `;
     }
 
