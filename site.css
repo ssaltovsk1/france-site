@@ -645,6 +645,34 @@ main {
   font-style: italic;
 }
 
+.reader-related-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 18px;
+  max-width: 760px;
+  color: #544c44;
+  font-size: 15px;
+}
+
+.reader-related-links span {
+  color: #39322c;
+  font-weight: 800;
+}
+
+.reader-related-links a,
+.reader-content .relation-link {
+  color: var(--teal);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(31, 111, 120, .24);
+}
+
+.reader-related-links a:hover,
+.reader-content .relation-link:hover {
+  border-bottom-color: currentColor;
+}
+
 .reader-content {
   padding: clamp(24px, 5vw, 46px);
   font-family: Georgia, "Palatino Linotype", serif;
