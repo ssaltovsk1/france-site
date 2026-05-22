@@ -160,9 +160,9 @@
 
   function renderCommentPanel(role) {
     const comments = commentsFor(role.id);
-    const issueTitle = `Комментарий по роли: ${role.character} (${role.player})`;
+    const issueTitle = `Комментарий по загрузу: ${role.character} (${role.player})`;
     const issueBody = [
-      `Роль: ${role.character}`,
+      `Загруз: ${role.character}`,
       `Игрок: ${role.player}`,
       "",
       "Комментарий:",
@@ -211,7 +211,7 @@
 
   function fallbackRoleHtml(role) {
     return `
-      <h2>ТЗ роли</h2>
+      <h2>Загруз роли</h2>
       <p>${escapeHtml(role.summary)}</p>
       <ul>
         <li><strong>Игрок:</strong> ${escapeHtml(role.player)}</li>
@@ -219,7 +219,7 @@
         <li><strong>Источник дохода:</strong> ${escapeHtml(role.income)}</li>
         <li><strong>Источник/основа:</strong> ${escapeHtml(role.source)}</li>
       </ul>
-      <p>Полный файл роли еще не создан. Базовое ТЗ лежит в <a href="./roles_26_14/active_tz.md">active_tz.md</a>.</p>
+      <p>Файл загрузки не открылся. Проверь путь в <code>roles26-data.js</code> или открой Markdown напрямую из списка файлов.</p>
     `;
   }
 

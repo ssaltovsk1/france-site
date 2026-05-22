@@ -310,11 +310,24 @@
 }
 
 @media (max-width: 640px) {
+  .page-title h1 {
+    max-width: 100%;
+    font-size: 34px;
+    line-height: 1.08;
+    overflow-wrap: break-word;
+  }
+
   .role-comments-head {
     flex-direction: column;
   }
 
   .role-facts {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-title h1 {
+    font-size: 30px;
   }
 }
