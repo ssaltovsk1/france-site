@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Роли 26 + 14 - Revolution France</title>
+  <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./roles26.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a href="./tools.html">Расчеты</a>
+      <a href="./characters.html">Персонажи</a>
+      <a class="is-active" href="./roles26.html">Роли 26+14</a>
+      <a href="./history.html">История</a>
+      <a href="./finance.html">Финансы</a>
+      <a href="./docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title">
+      <p class="section-label">Новая раздача</p>
+      <h1>Роли 26 активных + 14 второстепенных</h1>
+      <p>Рабочая HTML-страница новой версии загрузов: поиск по игрокам, персонажам, доходам и сюжетным линиям; чтение готовых ролей; локальные комментарии и быстрый переход к GitHub Issue.</p>
+      <div class="action-row compact">
+        <a class="button primary" href="./roles_26_14/active_tz.md">ТЗ 26 активных</a>
+        <a class="button" href="./roles_26_14/secondary_tz.md">ТЗ 14 второстепенных</a>
+        <a class="button" href="./roles_26_14/README.md">README ролей</a>
+      </div>
+    </section>
+
+    <section class="toolbar-panel roles-toolbar" aria-label="Фильтры ролей">
+      <label>
+        Поиск
+        <input id="roleSearch" type="search" placeholder="Игрок, персонаж, доход, сюжет">
+      </label>
+      <label>
+        Тип
+        <select id="roleType">
+          <option value="all">Все типы</option>
+        </select>
+      </label>
+      <label>
+        Статус
+        <select id="roleStatus">
+          <option value="all">Все статусы</option>
+          <option value="Готов файл">Готов файл</option>
+          <option value="ТЗ">ТЗ</option>
+        </select>
+      </label>
+      <div class="counter" id="roleCounter"></div>
+    </section>
+
+    <section class="roles-layout">
+      <aside class="roles-list" id="roleList" aria-label="Список ролей"></aside>
+      <article class="role-detail" id="roleDetail" aria-live="polite"></article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="./index.html">На главную</a>
+    <a href="./characters.html">Старые 60 загрузов</a>
+    <a href="./roles_26_14/active_tz.md">ТЗ активных ролей</a>
+    <a href="./roles_26_14/secondary_tz.md">ТЗ второстепенных ролей</a>
+  </footer>
+
+  <script src="./roles26-data.js"></script>
+  <script src="./roles26.js"></script>
+</body>
+</html>
