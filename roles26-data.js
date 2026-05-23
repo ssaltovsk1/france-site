@@ -380,9 +380,9 @@ window.FRANCE_ROLES_26 = [
     ]
   },
   {
-    "id": "20_strakhov_egor_lafayette",
+    "id": "20_kolyushkin_lev_lafayette",
     "number": "20",
-    "player": "Страхов Егор",
+    "player": "Колюшкин Лев",
     "character": "Лафайет",
     "classLevel": "8",
     "status": "Активный загруз",
@@ -390,19 +390,19 @@ window.FRANCE_ROLES_26 = [
     "axes": "конституция, свобода церкви; первая ось не указана",
     "income": "дворянское имущество, военное жалованье, политический статус, доступ к гвардии",
     "source": "historical/group_1/lafayette_kventa.md",
-    "file": "roles_26_14/active/20_strakhov_egor_lafayette.md",
+    "file": "roles_26_14/active/20_kolyushkin_lev_lafayette.md",
     "summary": "Конституционный порядок и гвардия между королем и улицей.",
     "tags": [
       "Лафайет",
-      "Страхов Егор",
+      "Колюшкин Лев",
       "Политика",
       "Конституционный порядок и гвардия между королем и улицей."
     ]
   },
   {
-    "id": "21_kolyushkin_lev_bailly",
+    "id": "21_strakhov_egor_bailly",
     "number": "21",
-    "player": "Колюшкин Лев",
+    "player": "Страхов Егор",
     "character": "Байи",
     "classLevel": "8",
     "status": "Активный загруз",
@@ -410,11 +410,11 @@ window.FRANCE_ROLES_26 = [
     "axes": "равенство, контроль цен; монархия, независимая церковь",
     "income": "академическое положение, городская должность, муниципальное содержание",
     "source": "historical/group_1/bailly_kventa.md",
-    "file": "roles_26_14/active/21_kolyushkin_lev_bailly.md",
+    "file": "roles_26_14/active/21_strakhov_egor_bailly.md",
     "summary": "Городская власть, процедура и хлебный кризис.",
     "tags": [
       "Байи",
-      "Колюшкин Лев",
+      "Страхов Егор",
       "Политика",
       "Городская власть, процедура и хлебный кризис."
     ]
