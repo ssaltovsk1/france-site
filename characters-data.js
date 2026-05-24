@@ -377,7 +377,7 @@ window.FRANCE_CHARACTERS = [
     "name_fr": "Jacques Berthier, fermier d'octroi",
     "group": 5,
     "type": "citizen",
-    "brief": "Откупщик у заставы Сен-Мартен, человек Генерального откупа и налоговой стены. Защищает октруа как доход казны и получает тексты Манон для Бертье.",
+    "brief": "Откупщик у заставы Сен-Мартен и депутат Учредительного собрания. Защищает октруа как доход казны и получает политические тексты Манон.",
     "group_label": "Горожане",
     "file": "kventas/citizens/vinier_kventa.md",
     "html_file": "kventas-html/vinier.html"
