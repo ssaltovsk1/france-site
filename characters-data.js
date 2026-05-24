@@ -623,5 +623,16 @@ window.FRANCE_CHARACTERS = [
     "group_label": "Роялисты",
     "file": "kventas/royalists/fersen_kventa.md",
     "html_file": "kventas-html/fersen.html"
+  },
+  {
+    "id": "montmorin",
+    "name_ru": "Арман Марк де Монморен",
+    "name_fr": "Armand Marc, comte de Montmorin Saint-Hérem",
+    "group": 6,
+    "type": "royalist",
+    "brief": "Министр иностранных дел Людовика XVI в 1787-1791 годах, бывший посол в Мадриде и человек королевского доверия. К 1789 году пытается удержать европейское доверие к Франции на фоне финансового кризиса и Генеральных штатов. Родился в 1745.",
+    "group_label": "Роялисты",
+    "file": "roles_26_14/active/27_bulakhtina_natalia_montmorin.md",
+    "html_file": "kventas-html/montmorin.html"
   }
 ];
