@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Docs_ai - Revolution France</title>
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../tools.html">Расчеты</a>
+      <a href="../characters.html">Персонажи</a>
+      <a href="../history.html">История</a>
+      <a href="../finance.html">Финансы</a>
+      <a class="is-active" href="../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Правила и доки</span>
+        <span class="pill">docs/docs_ai_readme.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Главное сейчас</a><a href="#section-2">Активные блоки</a><a href="#section-3">Технические и старые блоки</a><a href="#section-4">Как читать</a><a href="#section-5">Что можно архивировать позже</a><a href="#section-6">Правило пополнения</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Правила и доки</p>
+        <h1>Docs_ai</h1>
+        <p>Рабочая папка проектных документов по игре <code>Revolution_France</code>.</p>
+      </header>
+      <div class="reader-content">
+<p>Здесь лежит не один монолитный диздок, а несколько слоёв: живые правила, база поиска, проектные заметки, генераторы квент и старые версии. Чтобы не заблудиться, ниже зафиксирован статус каждого блока.</p>
+<h2 id="section-1">Главное сейчас</h2>
+<p>Ближайший рабочий фокус — первый тест экономики:</p>
+<ul><li><code>DOCS_AUDIT_2026-05-11.md</code> — текущий аудит документации: что нужно, что справочное, что архивировать.</li><li><code>Economics/gm_first_test_rules_2026-05-11.md</code> — компактные правила теста: принципы, механики и порядок такта.</li><li><code>Economics/gm_temporary_answers_2026-05-11.md</code> — временные ответы мастеров, из которых собран тестовый пакет.</li><li><code>Economics/gm_questions_2026-05-11.md</code> — вопросы, которые ещё не стали утверждёнными правилами.</li><li><code>Economics/README.md</code> — полный вход в экономический блок.</li></ul>
+<h2 id="section-2">Активные блоки</h2>
+<div class="table-wrap"><table><thead><tr><th>Папка</th><th>Статус</th><th>Что внутри</th></tr></thead><tbody><tr><td><code>Economics/</code></td><td>активная разработка</td><td>экономика, зерно, хлеб, налоги, параметры, симулятор, решения и последствия</td></tr><tr><td><code>RevolutionDatabase/</code></td><td>активная навигация</td><td>короткие карточки, теги, поиск, открытые вопросы, ссылки на исходники</td></tr><tr><td><code>_docs/</code></td><td>активные проектные заметки</td><td>описание игры, встречи, причины революции, модели, материалы и большие заметки</td></tr><tr><td><code>_v4/</code></td><td>источник генерации квент</td><td>последняя большая генерация: 60 персонажей, биографии, связи, финальные квенты</td></tr><tr><td><code>_people/</code></td><td>сырьё по типажам</td><td>заметки по обычным и знатным людям</td></tr></tbody></table></div>
+<h2 id="section-3">Технические и старые блоки</h2>
+<div class="table-wrap"><table><thead><tr><th>Папка</th><th>Статус</th><th>Что с ней делать</th></tr></thead><tbody><tr><td><code>revolution_game/</code></td><td>старый генератор квент</td><td>не использовать как основной вход; полезен только для воспроизводимости старого пайплайна</td></tr><tr><td><code>_v3/</code></td><td>старая версия генерации</td><td>держать как исторический слой; не брать для актуальных загрузов</td></tr><tr><td><code>_archive/</code></td><td>архив дублей и старых технических пакетов</td><td>не читать по умолчанию</td></tr></tbody></table></div>
+<p>Актуальные загрузы для работы вынесены отдельно в <code>../kventa_repo/</code>. Если цель — редактировать или выдавать игрокам квенты, лучше начинать там, а не в <code>_v4/output/final</code>.</p>
+<h2 id="section-4">Как читать</h2>
+<ol><li>Для общего смысла игры: <code>_docs/Описание игры.md</code>.</li><li>Для рамки актов и тактов: <code>_docs/Механики 3 акта 4 такта.md</code>.</li><li>Для причинной карты: <code>_docs/Причины и рычаги революции/README.md</code>.</li><li>Для экономики ближайшего теста: <code>Economics/gm_first_test_rules_2026-05-11.md</code>.</li><li>Для поиска по материалам: <code>RevolutionDatabase/README.md</code>.</li><li>Для персонажей: <code>../kventa_repo/README.md</code>.</li></ol>
+<h2 id="section-5">Что можно архивировать позже</h2>
+<ul><li><code>_v3/</code> можно перенести в <code>_archive/_v3/</code>, когда станет ясно, что никто не сравнивает старую генерацию с новой.</li><li><code>revolution_game/</code> можно перенести в <code>_archive/revolution_game_legacy/</code>, если старый <code>orchestrator.sh</code> больше не нужен.</li><li>Сырые транскрипты встреч из корня проекта лучше собрать в отдельный <code>Archive/meetings/</code> или перенести в <code>_docs/Встречи/</code>, но только после проверки, что из них уже сделаны нормальные заметки.</li></ul>
+<h2 id="section-6">Правило пополнения</h2>
+<p>Новые рабочие решения пишем не в старые генераторные папки, а в один из активных слоёв:</p>
+<ul><li>экономика и правила теста — в <code>Economics/</code>;</li><li>причинные и проектные заметки — в <code>_docs/</code>;</li><li>короткие карточки и поисковые индексы — в <code>RevolutionDatabase/</code>;</li><li>актуальные загрузы — в <code>../kventa_repo/</code>.</li></ul>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

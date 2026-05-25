@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revolution_France Economy Mechanics - Revolution France</title>
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../tools.html">Расчеты</a>
+      <a href="../characters.html">Персонажи</a>
+      <a href="../history.html">История</a>
+      <a href="../finance.html">Финансы</a>
+      <a class="is-active" href="../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Правила и доки</span>
+        <span class="pill">docs/mechanics_economy.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Design Lens</a><a href="#section-2">1. Bread Crisis As Pressure Engine</a><a href="#section-3">2. Treasury, Debt, And Assignats Loop</a><a href="#section-4">3. Maximum Price Law And Black Market</a><a href="#section-5">4. Shared Survival Loop Plus Role Resource</a><a href="#section-6">5. Province-To-Paris Supply Routes</a><a href="#section-7">6. Work As Physical Contracts</a><a href="#section-8">7. Church Nationalization As Fiscal Gain And Legitimacy Wound</a><a href="#section-9">8. Payoff Matrix For Political-Economic Strategies</a><a href="#section-10">9. Public Tracks With Threshold Events</a><a href="#section-11">10. Weighted Scoring For Decrees, Events, And Character Actions</a><a href="#section-12">First Shortlist</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Правила и доки</p>
+        <h1>Revolution_France Economy Mechanics</h1>
+        <p>Status: first atlas pass.</p>
+      </header>
+      <div class="reader-content">
+<p>Purpose: keep a shortlist of economy mechanics that are already adapted to the French Revolution project. Each item is a candidate that can be turned into rules, cards, simulation variables, UI panels, or spreadsheet tabs.</p>
+<h2 id="section-1">Design Lens</h2>
+<p>The economy should not be a shop screen. It should be a pressure system where bread, money, war, status, legitimacy, and fear push people into political action.</p>
+<p>Core pressures:</p>
+<ul><li>bread and grain scarcity;</li><li>treasury, debt, payments, and assignats;</li><li>war and requisitions;</li><li>public trust and legitimacy;</li><li>estate and role asymmetry;</li><li>city/province split;</li><li>legal economy versus black market;</li><li>fatigue from emergency politics.</li></ul>
+<h2 id="section-2">1. Bread Crisis As Pressure Engine</h2>
+<p>Source pattern: RTS resource economy, city-builder production curves, project notes on bread and live action flow.</p>
+<p>Use when: the game needs an economic problem that becomes political without a scripted event.</p>
+<p>Variables:</p>
+<ul><li><code>grain_supply</code></li><li><code>bread_price</code></li><li><code>market_bread</code></li><li><code>hunger</code></li><li><code>urban_tension</code></li><li><code>black_market</code></li></ul>
+<p>Sources:</p>
+<ul><li>harvest;</li><li>provincial supply;</li><li>requisitions;</li><li>imports;</li><li>hidden stocks revealed by force or negotiation.</li></ul>
+<p>Sinks:</p>
+<ul><li>daily consumption;</li><li>army supply;</li><li>spoilage and logistics;</li><li>hoarding;</li><li>black-market diversion.</li></ul>
+<p>Player decisions:</p>
+<ul><li>subsidize bread;</li><li>set a maximum price;</li><li>requisition grain;</li><li>escort convoys;</li><li>open stores;</li><li>tolerate or suppress black-market sellers;</li><li>blame a faction or institution.</li></ul>
+<p>Balance risk: if bread is too easy to buy, it becomes bookkeeping. If it is too punishing, every path collapses into crisis management.</p>
+<p>Prototype test: run 6 turns with 40-60% of needed bread available and check whether players negotiate, trade, hide, accuse, and organize instead of only waiting for admin resolution.</p>
+<h2 id="section-3">2. Treasury, Debt, And Assignats Loop</h2>
+<p>Source pattern: game economy sources/sinks, virtual economy flow, project money notes.</p>
+<p>Use when: state action needs an economic price beyond a flat action cost.</p>
+<p>Variables:</p>
+<ul><li><code>treasury_coin</code></li><li><code>public_debt</code></li><li><code>assignat_supply</code></li><li><code>assignat_value</code></li><li><code>state_payments_due</code></li><li><code>trust</code></li></ul>
+<p>Sources:</p>
+<ul><li>taxes;</li><li>loans;</li><li>nationalized property;</li><li>forced contributions;</li><li>assignat printing.</li></ul>
+<p>Sinks:</p>
+<ul><li>army pay;</li><li>bread subsidies;</li><li>debt service;</li><li>administration;</li><li>compensation;</li><li>emergency policing.</li></ul>
+<p>Player decisions:</p>
+<ul><li>pay in coin or assignats;</li><li>delay wages;</li><li>issue a new series;</li><li>nationalize property;</li><li>tax estates;</li><li>borrow from financiers;</li><li>default quietly or publicly.</li></ul>
+<p>Balance risk: printing must solve a real short-term problem while creating visible long-term distrust. Otherwise it is either useless or dominant.</p>
+<p>Prototype test: make the government face three simultaneous payments and only enough coin for one. Check whether different political coalitions prefer different funding methods.</p>
+<h2 id="section-4">3. Maximum Price Law And Black Market</h2>
+<p>Source pattern: price caps, scarcity displacement, action mechanics for bread, suspicion, and enforcement.</p>
+<p>Use when: the player should feel that law can redirect pressure instead of deleting it.</p>
+<p>Variables:</p>
+<ul><li><code>legal_price</code></li><li><code>black_price</code></li><li><code>market_supply</code></li><li><code>enforcement</code></li><li><code>suspicion</code></li><li><code>crowd_anger</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>cap the legal price;</li><li>inspect shops;</li><li>punish hoarders;</li><li>protect traders;</li><li>move goods through legal or illegal channels;</li><li>denounce enemies as speculators.</li></ul>
+<p>Main loop:</p>
+<ol><li>Price cap lowers immediate visible pain.</li><li>Sellers hide or reroute supply if enforcement and trust are poor.</li><li>Black-market price rises.</li><li>Repression or negotiation becomes attractive.</li></ol>
+<p>Balance risk: if enforcement has no cost, Maximum becomes a free stabilizer. If it always backfires, players learn never to try it.</p>
+<p>Prototype test: compare two tables, with and without Maximum, over 4 turns. The capped table should have lower visible price but higher hidden friction.</p>
+<h2 id="section-5">4. Shared Survival Loop Plus Role Resource</h2>
+<p>Source pattern: one common economy plus one special resource per estate or role.</p>
+<p>Use when: multiple social roles must feel economically different without maintaining 17 separate economies.</p>
+<p>Common variables:</p>
+<ul><li>money;</li><li>bread;</li><li>debt;</li><li>hunger;</li><li>obligations.</li></ul>
+<p>Role resources:</p>
+<ul><li>clergy: parish trust or church fund;</li><li>nobility: rights, land, prestige;</li><li>urban workers: work, section influence;</li><li>craftsmen: workshop orders and materials;</li><li>traders: stock and suspicion;</li><li>bourgeoisie: capital, credit, biens nationaux;</li><li>peasants: grain, land, recruits.</li></ul>
+<p>Player decisions:</p>
+<ul><li>spend the common resource to survive;</li><li>spend the role resource to keep identity and leverage;</li><li>sacrifice status for liquidity;</li><li>radicalize when the survival loop breaks.</li></ul>
+<p>Balance risk: too many role resources turn the game into accounting. Keep one special resource per role for the first prototype.</p>
+<p>Prototype test: give each role the same bread crisis and one unique escape route. Check whether each role negotiates differently.</p>
+<h2 id="section-6">5. Province-To-Paris Supply Routes</h2>
+<p>Source pattern: RTS build orders, logistics, supply cards, province pressure.</p>
+<p>Use when: Paris should depend on things happening off-screen or outside the central board.</p>
+<p>Variables:</p>
+<ul><li><code>province_stability</code></li><li><code>route_risk</code></li><li><code>grain_in_transit</code></li><li><code>war_pressure</code></li><li><code>arrival_rate</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>escort convoy;</li><li>requisition grain;</li><li>pay tolls;</li><li>suppress local resistance;</li><li>negotiate with province actors;</li><li>redirect grain to army or city.</li></ul>
+<p>Main loop:</p>
+<ol><li>A province offers supply.</li><li>A route creates delay and risk.</li><li>War, revolt, taxes, or requisitions threaten arrival.</li><li>Arrival changes bread price and political mood.</li></ol>
+<p>Balance risk: if routes are invisible, players blame randomness. If routes are too detailed, economy becomes a logistics minigame.</p>
+<p>Prototype test: use 2-4 supply cards per turn with visible blockers. Players should be able to save at least one by coordinated action.</p>
+<h2 id="section-7">6. Work As Physical Contracts</h2>
+<p>Source pattern: workshop and job-card project notes.</p>
+<p>Use when: urban economy should create interaction between employers, workers, workshops, and institutions.</p>
+<p>Variables:</p>
+<ul><li><code>job_cards</code></li><li><code>materials</code></li><li><code>labor</code></li><li><code>wages</code></li><li><code>unpaid_debt</code></li><li><code>orders</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>hire workers;</li><li>accept wage in coin, bread, or assignats;</li><li>print pamphlets;</li><li>produce uniforms or weapons;</li><li>guard a warehouse;</li><li>refuse work and join a section.</li></ul>
+<p>Balance risk: passive income makes workers invisible. Every paid job should leave a card, token, signature, or debt.</p>
+<p>Prototype test: create 10 jobs and 14 workers. The shortage should force bargaining, underpayment, or political mobilization.</p>
+<h2 id="section-8">7. Church Nationalization As Fiscal Gain And Legitimacy Wound</h2>
+<p>Source pattern: decree effects, church economy, assignats, legitimacy and province risk.</p>
+<p>Use when: a fiscal solution should open a religious and provincial conflict.</p>
+<p>Variables:</p>
+<ul><li><code>church_land</code></li><li><code>treasury</code></li><li><code>assignat_backing</code></li><li><code>clergy_trust</code></li><li><code>parish_split</code></li><li><code>vendee_risk</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>nationalize land;</li><li>auction property;</li><li>require oath;</li><li>fund priests;</li><li>tolerate refractory clergy;</li><li>turn church assets into assignat backing.</li></ul>
+<p>Balance risk: nationalization cannot be just a money button. It must create local winners, losers, and legitimacy consequences.</p>
+<p>Prototype test: one decree should improve treasury and assignat credibility while splitting clergy and increasing province resistance.</p>
+<h2 id="section-9">8. Payoff Matrix For Political-Economic Strategies</h2>
+<p>Source pattern: RTS payoff matrices and balanced viable options.</p>
+<p>Use when: different paths like moderation, terror, army stabilization, and royalist rollback need to be viable but costly.</p>
+<p>Variables:</p>
+<ul><li><code>moderation_payoff</code></li><li><code>terror_payoff</code></li><li><code>army_payoff</code></li><li><code>royalist_payoff</code></li><li><code>counterpressure</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>stabilize through concessions;</li><li>escalate through coercion;</li><li>hand power to armed institutions;</li><li>restore old privileges;</li><li>combine partial strategies.</li></ul>
+<p>Balance risk: a historical outcome should not become the only correct path. The matrix should expose tradeoffs, not force a script.</p>
+<p>Prototype test: list 4 strategies against 4 crisis types. No strategy should dominate all crises.</p>
+<h2 id="section-10">9. Public Tracks With Threshold Events</h2>
+<p>Source pattern: curves, thresholds, pressure axes, crisis pacing.</p>
+<p>Use when: the world needs readable pressure without simulating every person.</p>
+<p>Tracks:</p>
+<ul><li>hunger;</li><li>fear;</li><li>war;</li><li>fatigue;</li><li>legitimacy;</li><li>radicalization;</li><li>province resistance.</li></ul>
+<p>Player decisions:</p>
+<ul><li>accept one pressure rising to lower another;</li><li>cool down a track before it crosses a threshold;</li><li>deliberately push a track to unlock emergency action.</li></ul>
+<p>Balance risk: tracks become abstract if no one can point to what caused movement. Every track change should cite a law, shortage, battle, rumor, or payment.</p>
+<p>Prototype test: run 8 turns and check whether players can predict which threshold they are approaching.</p>
+<h2 id="section-11">10. Weighted Scoring For Decrees, Events, And Character Actions</h2>
+<p>Source pattern: spreadsheet balancing, weighted factors, event scoring.</p>
+<p>Use when: the project has many laws, cards, characters, and events with mixed effects.</p>
+<p>Variables:</p>
+<ul><li><code>benefit_score</code></li><li><code>cost_score</code></li><li><code>risk_score</code></li><li><code>rarity</code></li><li><code>act</code></li><li><code>cooldown</code></li></ul>
+<p>Player decisions:</p>
+<ul><li>draft a decree;</li><li>choose an event;</li><li>compare a character action against a public policy;</li><li>tune card strength by act and rarity.</li></ul>
+<p>Balance risk: scoring is a design tool, not the final rule. Do not let one formula erase flavor or situational power.</p>
+<p>Prototype test: score 20 events, then manually inspect the top and bottom 5. If the list feels absurd, adjust weights before adding more content.</p>
+<h2 id="section-12">First Shortlist</h2>
+<p>For a first playable economic prototype, use only these:</p>
+<ol><li>Bread Crisis As Pressure Engine.</li><li>Treasury, Debt, And Assignats Loop.</li><li>Maximum Price Law And Black Market.</li><li>Shared Survival Loop Plus Role Resource.</li><li>Province-To-Paris Supply Routes.</li></ol>
+<p>These five are enough to create a live system: people need bread, the state needs money, law can move pressure into the shadows, social roles break differently, and Paris depends on provinces.</p>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

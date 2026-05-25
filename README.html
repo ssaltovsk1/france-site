@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revolution France site - Revolution France</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="tools.html">Расчеты</a>
+      <a href="characters.html">Персонажи</a>
+      <a href="history.html">История</a>
+      <a href="finance.html">Финансы</a>
+      <a class="is-active" href="docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="index.html">Назад на главную</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Сайт</span>
+        <span class="pill">README.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Что внутри</a><a href="#section-2">Как опубликовать через GitHub web</a><a href="#section-3">Как опубликовать через git</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Сайт</p>
+        <h1>Revolution France site</h1>
+        <p>Статическая сборка для GitHub Pages.</p>
+      </header>
+      <div class="reader-content">
+<h2 id="section-1">Что внутри</h2>
+<ul><li><code>index.html</code> - стартовая страница.</li><li><code>tools.html</code> - каталог HTML-инструментов, карт и расчетных выгрузок.</li><li><code>characters.html</code> - архив 60 персонажей с читаемыми HTML-загрузами и исходными Markdown-файлами.</li><li><code>roles26.html</code> - новая раздача 26 активных + 14 второстепенных ролей с поиском и локальными комментариями.</li><li><code>history.html</code> - историческая база революции с поиском по причинам, событиям, типам правления, группам и объяснениям.</li><li><code>docs.html</code> - основные правила и рабочие документы.</li><li><code>docs/k_igre_polny_spisok_i_pravila.md</code> - полный чеклист подготовки к ближайшей игре и проверенные правила.</li><li><code>tools/</code> - готовые HTML/JS/CSS-инструменты из рабочей папки.</li><li><code>kventas/</code> - актуальные загрузки персонажей.</li><li><code>kventas-html/</code> - HTML-версии загрузов для чтения на сайте.</li><li><code>roles_26_14/</code> - ТЗ и готовые Markdown-роли новой раздачи.</li><li><code>downloads/kventas_all.zip</code> - архив всех загрузов.</li><li><code>docs/</code> - отобранные документы для публикации.</li><li><code>.nojekyll</code> - GitHub Pages должен отдавать файлы как статические.</li></ul>
+<h2 id="section-2">Как опубликовать через GitHub web</h2>
+<ol><li>Открыть <code>https://github.com/ssaltovsk1/france-site/upload/main</code>.</li><li>Перетащить содержимое этой папки <code>france-site</code>, не саму папку.</li><li>Нажать <code>Commit changes</code>.</li><li>Открыть <code>Settings</code> -&gt; <code>Pages</code>.</li><li>Выбрать <code>Deploy from a branch</code>, ветка <code>main</code>, папка <code>/root</code>.</li></ol>
+<p>После сборки адрес будет таким:</p>
+<p><code>https://ssaltovsk1.github.io/france-site/</code></p>
+<h2 id="section-3">Как опубликовать через git</h2>
+<pre><code class="language-powershell">cd D:\_projects\_Mars\Games\Revolution_France\france-site
+git init
+git branch -M main
+git add .
+git commit -m &quot;Initial site&quot;
+git remote add origin https://github.com/ssaltovsk1/france-site.git
+git push -u origin main</code></pre>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

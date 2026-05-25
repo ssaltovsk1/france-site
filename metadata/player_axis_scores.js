@@ -43,7 +43,7 @@ window.REVOLUTION_PLAYER_AXIS_SCORES = {
     mercier: { power: -1, bread: 1, powerLabel: "король с Генеральными штатами", breadLabel: "разумный контроль хлеба" },
     poissarde: { power: -1, bread: 2, powerLabel: "король должен слушать рынок", breadLabel: "вмешательство ради еды" },
     servante: { power: 0, bread: 1, powerLabel: "власть как хозяева и защита", breadLabel: "цена хлеба как риск падения" },
-    vinier: { power: -1, bread: -1, powerLabel: "король возможен, если наведёт порядок", breadLabel: "свободная торговля без удушающих налогов" },
+    vinier: { power: -1, bread: -1, powerLabel: "налоговый порядок через закон и договор", breadLabel: "снижение произвола без обвала сборов" },
 
     bailly: { power: -1, bread: 1, powerLabel: "конституционная монархия и процедура", breadLabel: "умеренное вмешательство" },
     barnave: { power: -1, bread: 1, powerLabel: "конституционная монархия", breadLabel: "умеренное регулирование" },

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revolution France - Revolution France</title>
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../tools.html">Расчеты</a>
+      <a href="../characters.html">Персонажи</a>
+      <a href="../history.html">История</a>
+      <a href="../finance.html">Финансы</a>
+      <a class="is-active" href="../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Правила и доки</span>
+        <span class="pill">docs/project_readme.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Быстрый вход</a><a href="#section-2">Текущий фокус</a><a href="#section-3">Статусы крупных блоков</a><a href="#section-4">Правило навигации</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Правила и доки</p>
+        <h1>Revolution France</h1>
+        <p>Рабочая папка ролевой игры про Французскую революцию.</p>
+      </header>
+      <div class="reader-content">
+<h2 id="section-1">Быстрый вход</h2>
+<ul><li><code>Docs_ai/README.md</code> — карта рабочих проектных документов и статусов папок.</li><li><code>Docs_ai/DOCS_AUDIT_2026-05-11.md</code> — аудит документации: что нужно, что справочное, что можно архивировать.</li><li><code>Docs_ai/RevolutionDatabase/README.md</code> — короткая навигационная база: теги, карточки, поиск по материалам.</li><li><code>Docs_ai/_docs/Описание игры.md</code> — общий смысл и описание игры.</li><li><code>Docs_ai/_docs/Механики 3 акта 4 такта.md</code> — общая рамка актов и тактов.</li><li><code>Docs_ai/_docs/Причины и рычаги революции/README.md</code> — причинная карта революции.</li><li><code>Docs_ai/Economics/README.md</code> — вход в экономический блок.</li><li><code>Docs_ai/Economics/gm_first_test_rules_2026-05-11.md</code> — рабочие правила первого теста экономики: принципы, механики и порядок такта.</li><li><code>kventa_repo/README.md</code> — актуальные загрузы персонажей, вынесенные в отдельный git-репозиторий.</li><li><code>Docs/README.md</code> — карта справочных и дизайн-референсных материалов.</li><li><code>Docs/MechanicsAtlas/README.md</code> — компактный слой механик поверх сырого архива.</li><li><code>log.md</code> — общий журнал проектных решений.</li></ul>
+<h2 id="section-2">Текущий фокус</h2>
+<p>На 2026-05-11 главный рабочий пакет для ближайшего прогона — <code>Docs_ai/Economics/gm_first_test_rules_2026-05-11.md</code>.</p>
+<p>Он фиксирует:</p>
+<ul><li>что должно быть видно на карте;</li><li>как движутся зерно, хлеб, представители и войска;</li><li>как работает налоговое кольцо вокруг Парижа;</li><li>как государство покупает, запасает и выдает зерно;</li><li>как работает голод;</li><li>что происходит в ходе / такте;</li><li>как обрабатываются аресты, тюрьма и силовые конфликты через данж с орбизами.</li></ul>
+<p>Статус документа: рабочие правила первого теста, не финальная версия игры.</p>
+<h2 id="section-3">Статусы крупных блоков</h2>
+<div class="table-wrap"><table><thead><tr><th>Блок</th><th>Статус</th><th>Как использовать</th></tr></thead><tbody><tr><td><code>Docs_ai/Economics/</code></td><td>активный рабочий блок</td><td>экономика, карта, зерно, хлеб, налоги, войска, тюрьма, правила ближайшего теста</td></tr><tr><td><code>Docs_ai/RevolutionDatabase/</code></td><td>активный навигационный слой</td><td>быстрый поиск по историческим узлам, механикам, загрузам и открытым вопросам</td></tr><tr><td><code>Docs_ai/_docs/</code></td><td>активные проектные заметки и источники</td><td>описание игры, причины революции, встречи, материалы, большие заметки</td></tr><tr><td><code>kventa_repo/</code></td><td>активные загрузы</td><td>чистая рабочая папка для 60 актуальных квент персонажей</td></tr><tr><td><code>Docs/MechanicsAtlas/</code></td><td>активный дизайн-слой</td><td>выбирать и адаптировать механики из сырья под <code>Revolution_France</code></td></tr><tr><td><code>Docs/Ballance/</code>, <code>Docs/GameDesign/</code></td><td>справочная библиотека</td><td>источники и выжимки по гейм-дизайну и балансу, не текущие правила игры</td></tr><tr><td><code>Docs_ai/_v4/</code></td><td>источник генерации квент</td><td>хранить как генератор/сырьё; для выдачи игрокам лучше брать <code>kventa_repo/</code></td></tr><tr><td><code>Docs_ai/_v3/</code>, <code>Docs_ai/revolution_game/</code>, <code>Docs_ai/_archive/</code></td><td>старые или технические слои</td><td>не использовать как вход по умолчанию; держать для воспроизводимости и истории</td></tr></tbody></table></div>
+<h2 id="section-4">Правило навигации</h2>
+<p>Если нужен ответ &quot;что делать на ближайшей игре&quot; — начинать с <code>Docs_ai/Economics/gm_first_test_rules_2026-05-11.md</code>.</p>
+<p>Если нужен ответ &quot;где это в материалах и чем подтверждается&quot; — идти через <code>Docs_ai/RevolutionDatabase/README.md</code>.</p>
+<p>Если нужен ответ &quot;какой загруз отдавать игроку&quot; — идти в <code>kventa_repo/</code>.</p>
+<p>Если нужен ответ &quot;какую механику взять или доработать&quot; — идти в <code>Docs/MechanicsAtlas/</code>.</p>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

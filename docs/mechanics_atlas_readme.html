@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mechanics Atlas - Revolution France</title>
+  <link rel="stylesheet" href="../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../tools.html">Расчеты</a>
+      <a href="../characters.html">Персонажи</a>
+      <a href="../history.html">История</a>
+      <a href="../finance.html">Финансы</a>
+      <a class="is-active" href="../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Правила и доки</span>
+        <span class="pill">docs/mechanics_atlas_readme.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">How To Use</a><a href="#section-2">Files</a><a href="#section-3">Source Policy</a><a href="#section-4">Good Output Shape</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Правила и доки</p>
+        <h1>Mechanics Atlas</h1>
+        <p>This folder is a working layer above the raw design archive. It is not another dump of sources. It is a picker: a compact map of mechanics that can be selected, adapted, and turned into prototypes for <code>Revolution_France</code>.</p>
+      </header>
+      <div class="reader-content">
+<h2 id="section-1">How To Use</h2>
+<p>For a new design request, ask four questions:</p>
+<ol><li>What player fantasy or role is being designed?</li><li>What pressure should the mechanic create?</li><li>What resource or state changes?</li><li>What can go wrong if the player overuses it?</li></ol>
+<p>Then search <code>index.jsonl</code> by tags:</p>
+<ul><li><code>economy</code></li><li><code>scarcity</code></li><li><code>bread</code></li><li><code>treasury</code></li><li><code>assignats</code></li><li><code>war</code></li><li><code>faction</code></li><li><code>city</code></li><li><code>province</code></li><li><code>legitimacy</code></li><li><code>crowd</code></li><li><code>spreadsheet</code></li></ul>
+<p>Open the matching adaptation file and only then jump to the source material.</p>
+<h2 id="section-2">Files</h2>
+<ul><li><code>TASK.md</code> - current task, scope, and future Codex prompt.</li><li><code>index.jsonl</code> - compact machine-readable index of mechanics.</li><li><code>templates/mechanic_card.md</code> - reusable card format.</li><li><code>adaptations/Revolution_France/economy.md</code> - first economic adaptation set for the French Revolution project.</li></ul>
+<h2 id="section-3">Source Policy</h2>
+<p>Use <code>Docs</code> as the raw library and <code>Docs_ai</code> as project work-in-progress. Do not rewrite either archive while building the atlas. The atlas should cite source paths and extract design patterns, not copy entire articles.</p>
+<h2 id="section-4">Good Output Shape</h2>
+<p>When choosing mechanics for a game, return:</p>
+<ul><li>short list of recommended mechanics;</li><li>why each fits this game&#x27;s fantasy and format;</li><li>variables and sources/sinks;</li><li>player decisions;</li><li>likely balance risks;</li><li>simplest prototype test.</li></ul>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

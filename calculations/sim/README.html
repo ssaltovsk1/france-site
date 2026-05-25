@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Симулятор экономики - Revolution France</title>
+  <link rel="stylesheet" href="../../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="is-active" href="../../tools.html">Расчеты</a>
+      <a href="../../characters.html">Персонажи</a>
+      <a href="../../history.html">История</a>
+      <a href="../../finance.html">Финансы</a>
+      <a class="" href="../../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../../tools.html">Назад к расчетам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Расчеты</span>
+        <span class="pill">calculations/sim/README.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Запуск</a><a href="#section-2">Файлы</a><a href="#section-3">Параметры</a><a href="#section-4">Цикл такта</a><a href="#section-5">Калибровка</a><a href="#section-6">Добавить декрет</a><a href="#section-7">Добавить шок</a><a href="#section-8">Свой сценарий</a><a href="#section-9">Активные эффекты</a><a href="#section-10">Лог</a><a href="#section-11">Графики</a><a href="#section-12">CSV</a><a href="#section-13">Ограничения текущей версии</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Расчеты</p>
+        <h1>Симулятор экономики</h1>
+        <p>Расчётная модель параметров из <code>../parameters.md</code>. Такт = полугодие. Прогон детерминированный.</p>
+      </header>
+      <div class="reader-content">
+<p>Важно: «сценарий» в этой папке — технический калибровочный прогон для проверки формул. Это не сценарий живой игры и не обязательная последовательность событий для мастеров.</p>
+<h2 id="section-1">Запуск</h2>
+<pre><code class="language-bash">cd sim
+python run.py            # Акт I (7 тактов)
+python run.py full       # Акты I-IV (21 такт)
+python run.py act1 --no-plot</code></pre>
+<p>Зависимости: <code>matplotlib</code>. Без него — лог + CSV.</p>
+<pre><code class="language-bash">pip install matplotlib</code></pre>
+<h2 id="section-2">Файлы</h2>
+<div class="table-wrap"><table><thead><tr><th>Файл</th><th>Назначение</th></tr></thead><tbody><tr><td><code>state.py</code></td><td>Dataclass <code>State</code> — все параметры (читаемые имена), эффекты, история. <code>DISPLAY_NAMES</code> — соответствие имён в коде → русские лейблы для табло</td></tr><tr><td><code>engine.py</code></td><td>Цикл такта: фон → действия → эффекты → расход войны → формула ассигната → триггеры → клампы → cooldown&#x27;ы</td></tr><tr><td><code>library.py</code></td><td>Декреты и шоки как функции <code>(state) -&gt; None</code></td></tr><tr><td><code>scenarios.py</code></td><td>Расписания действий по тактам</td></tr><tr><td><code>run.py</code></td><td>Точка входа: лог в stdout, CSV, графики</td></tr></tbody></table></div>
+<h2 id="section-3">Параметры</h2>
+<p>10 публичных + 5 скрытых. Полный справочник — в <code>../parameters.md</code>.</p>
+<p><strong>Публичные:</strong></p>
+<ul><li><code>treasury</code> (казна), млн ливров</li><li><code>church_reserves</code>, <code>emigrant_reserves</code>, <code>biens_capital</code> (резервы — три шкалы)</li><li><code>bread_paris</code> (хлеб Париж, индекс)</li><li><code>assignat_rate</code> (курс ассигната, индекс)</li><li><code>war_intensity</code> (война)</li><li><code>city_unrest</code>, <code>rural_unrest</code> (народ — два, раскол)</li><li><code>provinces_loyalty</code> (провинции)</li></ul>
+<p><strong>Скрытые:</strong></p>
+<ul><li><code>black_market</code> (чёрный рынок)</li><li><code>army_funding</code>, <code>army_loyalty</code> (армия)</li><li><code>metal_supply</code>, <code>assignat_supply</code> (денежная масса)</li></ul>
+<h2 id="section-4">Цикл такта</h2>
+<ol><li><strong>Фон.</strong> Проценты по долгу, дрейф цены хлеба, sqrt-давление от P на город, тезаврация монеты, центробежная тенденция Pr, эмиграция.</li><li><strong>Действия такта.</strong> Декреты и шоки из калибровочного сценария.</li><li><strong>Активные эффекты.</strong> Максимум, реквизиции, Террор, Вандея, Федерализм, Гиперинфляция — каждый со своей per-tick дельтой; Вандея саморазрешается при условиях.</li><li><strong>Расход войны.</strong> При war ≥ 30: −150; ≥ 60: −300; ≥ 100: −500.</li><li><strong>Пересчёт ассигната.</strong> <code>assignat_rate = max(5, 100 × metal_supply / (metal_supply + 0.2 × assignat_supply))</code>.</li><li><strong>Триггеры.</strong> Бунт-город, бунт-деревня, банкротство, федерализм, гиперинфляция, коллапс ассигната, переворот.</li><li><strong>Кламп шкал.</strong> city/rural ≤ 110, prov ≤ 100, army_funding ≥ 0, и т.д.</li><li><strong>Cooldown&#x27;ы.</strong> −1 счётчику городского/деревенского cooldown&#x27;а.</li></ol>
+<h2 id="section-5">Калибровка</h2>
+<p>Коэффициенты в <code>engine.py</code> (вверху файла) — стартовые ориентиры под полугодовой такт.</p>
+<div class="table-wrap"><table><thead><tr><th>Константа</th><th>Значение</th><th>Что регулирует</th></tr></thead><tbody><tr><td><code>TREASURY_INTEREST_PER_TICK</code></td><td>−100</td><td>Проценты по долгу</td></tr><tr><td><code>BREAD_DRIFT_PER_TICK</code></td><td>+4</td><td>Базовый рост цены хлеба</td></tr><tr><td><code>CITY_PRESSURE_FROM_BREAD_K</code></td><td>1.5</td><td>Давление хлеба на город (множитель к sqrt)</td></tr><tr><td><code>ASSIGNAT_FORMULA_COEFFICIENT</code></td><td>0.2</td><td>Скорость падения курса ассигната</td></tr><tr><td><code>WAR_COST_LOW/HIGH/TOTAL</code></td><td>−150/−300/−500</td><td>Расход казны на войну</td></tr><tr><td><code>RIOT_COOLDOWN_DURATION</code></td><td>2 такта</td><td>Защёлка против цикличных бунтов</td></tr><tr><td><code>VENDEE_MIN_DURATION</code></td><td>3 такта</td><td>Минимум до подавления Вандеи</td></tr></tbody></table></div>
+<h2 id="section-6">Добавить декрет</h2>
+<p>В <code>library.py</code>:</p>
+<pre><code class="language-python">def my_decree(s: State) -&gt; None:
+    s.treasury -= 100
+    s.city_unrest += 5
+    s.events.append(&quot;Декрет: мой новый декрет&quot;)</code></pre>
+<p>В словарь <code>DECREES</code>:</p>
+<pre><code class="language-python">DECREES = {
+    ...,
+    &quot;my_decree&quot;: my_decree,
+}</code></pre>
+<p>В сценарий:</p>
+<pre><code class="language-python">SCENARIO_X = [
+    ...,
+    (5, &quot;my_decree&quot;),
+]</code></pre>
+<h2 id="section-7">Добавить шок</h2>
+<p>То же самое, но в <code>SHOCKS</code>.</p>
+<h2 id="section-8">Свой сценарий</h2>
+<p>В <code>scenarios.py</code>:</p>
+<pre><code class="language-python">SCENARIO_TEST = [
+    (1, &quot;abolish_privileges&quot;),
+    (2, &quot;first_assignat_emission&quot;),
+    ...
+]
+TEST_TICKS = 5</code></pre>
+<p>В <code>run.py</code> добавить ветку или вызвать из своего скрипта:</p>
+<pre><code class="language-python">from run import run
+from scenarios import SCENARIO_TEST, TEST_TICKS</code></pre>
+<h2 id="section-9">Активные эффекты</h2>
+<p>Эффект — модификатор с длительностью. Включается/снимается через <code>state.add_effect(name)</code> / <code>remove_effect(name)</code>. Каждый такт обрабатывается в <code>apply_active_effects()</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Имя</th><th>Включается</th><th>Снимается</th><th>Эффект</th></tr></thead><tbody><tr><td><code>maximum</code></td><td>декретом Максимум</td><td>декретом отмены</td><td><code>black_market</code> +5/такт; <code>rural_unrest</code> +5/такт; через 3 такта при B&gt;50 — «обман» (+10 city_unrest)</td></tr><tr><td><code>requisition</code></td><td>декретом реквизиции</td><td>декретом остановки</td><td><code>rural_unrest</code> +5/такт; <code>bread_paris</code> −3/такт</td></tr><tr><td><code>terror</code></td><td>декретом Террора</td><td>концом Террора / термидором</td><td>через 1 такт активности — +5 city/+3 rural откат</td></tr><tr><td><code>commissars</code></td><td>декретом комиссаров</td><td>(вручную)</td><td><code>provinces_loyalty</code> −5/такт</td></tr><tr><td><code>vendee</code></td><td>бунтом-деревней</td><td>автоматически (3+ такта, армия_финанс ≥ 20, нет реквизиции)</td><td><code>treasury</code> −50/такт; <code>army_funding</code> −3/такт</td></tr><tr><td><code>federalism</code></td><td>при <code>provinces_loyalty</code> ≤ 30</td><td>при <code>provinces_loyalty</code> &gt; 50</td><td><code>treasury</code> −100/такт; <code>army_loyalty</code> −2/такт</td></tr><tr><td><code>hyperinflation</code></td><td>при <code>assignat_rate</code> ≤ 10</td><td>(необратимо)</td><td><code>city_unrest</code> +2/такт; новые эмиссии = 5% от номинала</td></tr><tr><td><code>assignat_collapsed</code></td><td>при <code>assignat_rate</code> ≤ 5</td><td>(необратимо)</td><td>ассигнат отключён, <code>metal_supply</code> +5/такт восстановления</td></tr></tbody></table></div>
+<h2 id="section-10">Лог</h2>
+<p>Каждый такт выводит:</p>
+<ul><li>Заголовок <code>T&lt;tick&gt; | &lt;дата&gt; | Акт &lt;N&gt;</code></li><li>Две строки публичных параметров (имя=значение)</li><li>Строка скрытых параметров</li><li>Cooldown&#x27;ы (если активны)</li><li>Активные эффекты</li><li>События такта (декреты, шоки, триггеры)</li></ul>
+<h2 id="section-11">Графики</h2>
+<p><code>run.py</code> строит сетку 3×2:</p>
+<ol><li>Казна (с порогом банкротства)</li><li>Резервы (3 кривые)</li><li>Хлеб + Ассигнат + Чёрный рынок</li><li>Война + Армия (финанс + лояльность)</li><li>Напряжённость (город + деревня) + Провинции (с порогами бунта и федерализма)</li><li>Денежная масса (монета + ассигнаты, log-шкала)</li></ol>
+<h2 id="section-12">CSV</h2>
+<p>Все параметры по тактам, разделитель <code>;</code>, кодировка UTF-8 BOM (для Excel). Заголовки колонок — русские лейблы.</p>
+<h2 id="section-13">Ограничения текущей версии</h2>
+<ul><li>Параметры на уровне агрегата. Кассы 7 групп не считаются индивидуально.</li><li>Нет случайности. В калибровочных сценариях шоки заданы расписанием; в живой игре они должны зависеть от решений игроков и внешнего контура.</li><li>Нет идеологических осей (отдельный документ).</li><li>Нет UI — редактирование сценариев через код.</li></ul>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

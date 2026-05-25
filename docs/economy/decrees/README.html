@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Справочник решений и последствий - Revolution France</title>
+  <link rel="stylesheet" href="../../../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../../../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../../../tools.html">Расчеты</a>
+      <a href="../../../characters.html">Персонажи</a>
+      <a href="../../../history.html">История</a>
+      <a href="../../../finance.html">Финансы</a>
+      <a class="is-active" href="../../../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../../../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Декреты</span>
+        <span class="pill">docs/economy/decrees/README.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Структура папки</a><a href="#section-2">Связь с другими документами</a><a href="#section-3">Принципы</a><a href="#section-4">Текущий статус справочника</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Декреты</p>
+        <h1>Справочник решений и последствий</h1>
+        <p>Список возможных решений, декретов, шоков и их экономических эффектов.</p>
+      </header>
+      <div class="reader-content">
+<p>Это не набор карт и не расписание. Ничего не тянется вслепую, ничего не обязано выйти в заранее заданный момент. Игроки сами принимают решения; мастера используют этот справочник, чтобы быстро понять, какие последствия может иметь решение или событие, если оно действительно возникло в игре.</p>
+<p>Материалы разложены по исторической хронологии для удобства поиска. В живой игре на 1,5 дня есть 3 игровых акта, и исторические периоды могут пройти быстрее, медленнее или не наступить. <code>act4.md</code> — не четвёртый игровой акт, а поздний исторический материал на случай, если игра дошла до Директории, банкротства, контрибуций или военного переворота.</p>
+<h2 id="section-1">Структура папки</h2>
+<div class="table-wrap"><table><thead><tr><th>Файл</th><th>Что внутри</th></tr></thead><tbody><tr><td><code>act1.md</code></td><td>Акт I (1789–1791): реформы Учредительного собрания</td></tr><tr><td><code>act2.md</code></td><td>Акт II (1792–1793): война и Максимум</td></tr><tr><td><code>act3.md</code></td><td>Акт III (1794): Террор и термидор</td></tr><tr><td><code>act4.md</code></td><td>Поздний исторический блок (1795–1799): Директория и переворот</td></tr><tr><td><code>shocks.md</code></td><td>Шоки — события вне игроков (неурожай, поражение, бегство короля)</td></tr><tr><td><code>format.md</code></td><td>Формат записи каждого декрета (что в полях, как помечать)</td></tr></tbody></table></div>
+<h2 id="section-2">Связь с другими документами</h2>
+<div class="table-wrap"><table><thead><tr><th>Документ</th><th>Что берёт оттуда</th></tr></thead><tbody><tr><td><code>parameters.md</code></td><td>имена и шкалы параметров для эффектов</td></tr><tr><td><code>axes.md</code></td><td>8 идеологических осей для сдвигов</td></tr><tr><td><code>groups.md</code></td><td>какие подгруппы как реагируют на декрет</td></tr><tr><td><code>interaction.md</code></td><td>что физически происходит на полигоне</td></tr><tr><td><code>sim/library.py</code></td><td>функция-реализация декрета (имя в коде)</td></tr></tbody></table></div>
+<h2 id="section-3">Принципы</h2>
+<ol><li><strong>Каждый декрет двунаправлен</strong> (принцип №2): сдвигает одни параметры в плюс, другие в минус. Чисто хороших декретов нет.</li><li><strong>Каждый декрет занимает позиции на 1–4 идеологических осях</strong> из 8.</li><li><strong>Каждый декрет помечен</strong> историческим окном доступности, но это не обязательный момент выхода в игре.</li><li><strong>Эффекты в симуляторе зафиксированы.</strong> Любое изменение цифр здесь требует синхронизации с <code>sim/library.py</code>.</li></ol>
+<h2 id="section-4">Текущий статус справочника</h2>
+<div class="table-wrap"><table><thead><tr><th>Исторический блок</th><th>Записей</th><th>Статус</th></tr></thead><tbody><tr><td>Акт I</td><td>12</td><td>базовый набор; можно расширять</td></tr><tr><td>Акт II</td><td>14</td><td>базовый набор</td></tr><tr><td>Акт III</td><td>8</td><td>базовый набор</td></tr><tr><td>Поздний блок 1795–1799</td><td>9</td><td>базовый набор</td></tr><tr><td>Шоки</td><td>12</td><td>основные; можно добавить редкие</td></tr></tbody></table></div>
+<p><strong>Всего:</strong> ~55 решений и шоков. Полный справочник Французской революции содержал бы сотни значимых решений; здесь — игровая выборка по принципу «одно решение = один политический выбор со значимыми последствиями».</p>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

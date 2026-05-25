@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Персональные активы и доходы игроков</title>
+  <style>
+    :root {
+      --bg: #f4f6f4;
+      --surface: #ffffff;
+      --surface-soft: #eef3ef;
+      --surface-warm: #fbfaf5;
+      --text: #202421;
+      --muted: #66716a;
+      --line: #d7ded8;
+      --strong: #172018;
+      --red: #b64f43;
+      --amber: #b5842d;
+      --green: #2f7857;
+      --blue: #426aa8;
+      --violet: #7659a6;
+      --teal: #2c7f7b;
+      --ink: #35443a;
+      --shadow: 0 16px 40px rgba(27, 43, 31, 0.08);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.45;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1500px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      color: var(--strong);
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(31px, 4vw, 58px);
+      line-height: 0.98;
+    }
+
+    .summary {
+      margin: 14px 0 0;
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .source-stack {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .rule {
+      min-height: 112px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .rule b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--strong);
+      font-size: 14px;
+    }
+
+    .rule span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .model-panel {
+      margin: 18px 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .scenario-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 14px 16px 0;
+    }
+
+    .scenario-btn {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f9faf9;
+      color: var(--text);
+      padding: 0 10px;
+      font-size: 13px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .scenario-btn[aria-pressed="true"] {
+      border-color: var(--strong);
+      background: var(--strong);
+      color: #fff;
+    }
+
+    .model-controls {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px 16px;
+    }
+
+    .model-control {
+      display: grid;
+      gap: 8px;
+      min-height: 96px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfb;
+    }
+
+    .model-control label {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .model-control b {
+      color: var(--strong);
+      white-space: nowrap;
+    }
+
+    .model-control input {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .model-explain {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .model-note {
+      min-height: 78px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-warm);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .model-note b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--strong);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1.1fr minmax(220px, 0.5fr) minmax(220px, 0.5fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .control-card {
+      display: grid;
+      gap: 7px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .control-card label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .control-card input,
+    .control-card select {
+      min-height: 38px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfb;
+      color: var(--text);
+      padding: 0 10px;
+    }
+
+    .group-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .filter-btn {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0 10px;
+      font-size: 13px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      border-color: var(--strong);
+      background: var(--strong);
+      color: #fff;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      min-height: 112px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .value {
+      margin-top: 7px;
+      color: var(--strong);
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .panel-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .group-bars {
+      display: grid;
+      gap: 11px;
+      padding: 16px;
+    }
+
+    .group-row {
+      display: grid;
+      grid-template-columns: 170px 1fr 130px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .group-name {
+      color: var(--strong);
+      font-weight: 900;
+    }
+
+    .track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--surface-soft);
+    }
+
+    .fill {
+      height: 100%;
+      width: var(--w);
+      border-radius: 999px;
+      background: var(--c);
+    }
+
+    .group-sum {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-align: right;
+    }
+
+    .scatter-wrap {
+      padding: 0 16px 16px;
+    }
+
+    .scatter {
+      width: 100%;
+      height: 360px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfaf5 100%);
+    }
+
+    .scatter text {
+      fill: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .point {
+      cursor: pointer;
+      opacity: 0.86;
+      stroke: #fff;
+      stroke-width: 2;
+      transition: opacity 0.15s ease, r 0.15s ease;
+    }
+
+    .point:hover,
+    .point.active {
+      opacity: 1;
+      stroke: var(--strong);
+      stroke-width: 2.5;
+    }
+
+    .detail-card {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      background: var(--surface-warm);
+    }
+
+    .detail-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .detail-title h3 {
+      font-size: 22px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .detail-stat {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .detail-stat b {
+      display: block;
+      color: var(--strong);
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .detail-stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .detail-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--surface-soft);
+      color: var(--strong);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+
+    tr:hover td {
+      background: #fbfcfb;
+    }
+
+    td.name-cell {
+      min-width: 190px;
+      color: var(--strong);
+      font-weight: 900;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .model-cell {
+      min-width: 150px;
+      font-weight: 900;
+    }
+
+    .risk-high {
+      color: var(--red);
+    }
+
+    .risk-mid {
+      color: var(--amber);
+    }
+
+    .risk-ok {
+      color: var(--green);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1120px) {
+      .topbar,
+      .rule-grid,
+      .controls,
+      .model-controls,
+      .model-explain,
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .source-stack {
+        justify-content: flex-start;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(100vw - 20px, 1500px);
+        padding-top: 18px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .metrics,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .group-row {
+        grid-template-columns: 1fr;
+      }
+
+      .group-sum {
+        text-align: left;
+      }
+
+      .scatter {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="topbar">
+      <div>
+        <h1>Персональные активы и доходы игроков</h1>
+        <p class="summary">Карта для мастера: что есть у каждого персонажа, сколько ливров можно дать на старт, какой годовой доход разрешать и через какую сцену деньги входят в игру.</p>
+      </div>
+      <div class="source-stack" aria-label="Ссылки">
+        <a class="source-link" href="player_assets_income_by_character.md">Таблица markdown</a>
+        <a class="source-link" href="player_income_sources_visualization.html">Источники доходов</a>
+        <a class="source-link" href="characters_estates_economy_model.md">Активы из квент</a>
+        <a class="source-link" href="private_income.md">Исторические доходы</a>
+      </div>
+    </section>
+
+    <section class="rule-grid" aria-label="Правила выдачи">
+      <div class="rule">
+        <b>Не зарплата по списку</b>
+        <span>Доход появляется только через работающий источник: должность, лавку, ренту, заказ, долг, покровителя, декрет или конфискацию.</span>
+      </div>
+      <div class="rule">
+        <b>Наличность отдельно</b>
+        <span>Имущество, право и казенная касса не превращаются в личные ливры без продажи, залога, подписи или политического следа.</span>
+      </div>
+      <div class="rule">
+        <b>Сверх потолка дает след</b>
+        <span>Если игрок просит больше годового лимита, он создает новый риск: долг, подозрение, обыск, налог, реквизицию или скандал.</span>
+      </div>
+    </section>
+
+    <section class="model-panel" aria-label="Варианты моделирования">
+      <div class="panel-head">
+        <div>
+          <h2>Варианты моделирования года</h2>
+          <p>Выбери фон такта или подвигай параметры вручную. Страница пересчитает, сколько реально можно выдать игрокам из их годового потолка.</p>
+        </div>
+      </div>
+      <div class="scenario-buttons" id="scenarioButtons"></div>
+      <div class="model-controls">
+        <div class="model-control">
+          <label for="breadPressure">Хлебное давление <b id="breadPressureValue">100%</b></label>
+          <input id="breadPressure" type="range" min="60" max="220" step="5" value="100">
+        </div>
+        <div class="model-control">
+          <label for="marketDemand">Спрос рынка <b id="marketDemandValue">100%</b></label>
+          <input id="marketDemand" type="range" min="35" max="140" step="5" value="100">
+        </div>
+        <div class="model-control">
+          <label for="stateReliability">Надежность казны <b id="stateReliabilityValue">100%</b></label>
+          <input id="stateReliability" type="range" min="20" max="120" step="5" value="100">
+        </div>
+        <div class="model-control">
+          <label for="moneyTrust">Доверие к деньгам <b id="moneyTrustValue">100%</b></label>
+          <input id="moneyTrust" type="range" min="20" max="110" step="5" value="100">
+        </div>
+        <div class="model-control">
+          <label for="coercionRisk">Риск принуждения <b id="coercionRiskValue">0%</b></label>
+          <input id="coercionRisk" type="range" min="0" max="100" step="5" value="0">
+        </div>
+      </div>
+      <div class="model-explain">
+        <div class="model-note" id="scenarioExplain"></div>
+        <div class="model-note" id="modelFormula"></div>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Фильтры">
+      <div class="control-card">
+        <label for="searchInput">Поиск игрока или источника</label>
+        <input id="searchInput" type="search" placeholder="например: Неккер, булочник, армия, лавка">
+      </div>
+      <div class="control-card">
+        <label for="sortSelect">Сортировка</label>
+        <select id="sortSelect">
+          <option value="modeledMax">Самая большая выдача по модели</option>
+          <option value="incomeMax">Самый высокий базовый потолок</option>
+          <option value="start">Самая большая стартовая наличность</option>
+          <option value="incomeMin">Самый устойчивый минимум</option>
+          <option value="name">По имени</option>
+        </select>
+      </div>
+      <div class="control-card">
+        <label for="viewSelect">Показывать</label>
+        <select id="viewSelect">
+          <option value="all">Всех игроков</option>
+          <option value="state">Касса/государство/армия</option>
+          <option value="market">Рынок и мастерские</option>
+          <option value="fragile">Хрупкие доходы</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="group-filters" id="groupFilters" aria-label="Группы"></section>
+
+    <section class="metrics" aria-label="Итоги">
+      <div class="metric">
+        <div class="label">Игроков</div>
+        <div class="value" id="metricCount">60</div>
+        <div class="note">в текущем фильтре</div>
+      </div>
+      <div class="metric">
+        <div class="label">Стартовая наличность</div>
+        <div class="value" id="metricStart">0</div>
+        <div class="note">сумма видимых стартовых ливров</div>
+      </div>
+      <div class="metric">
+        <div class="label">Базовый потолок</div>
+        <div class="value" id="metricIncome">0</div>
+        <div class="note">верхняя граница выплат за год</div>
+      </div>
+      <div class="metric">
+        <div class="label">Выдать по модели</div>
+        <div class="value" id="metricModeled">0</div>
+        <div class="note">реалистичная выдача в выбранном такте</div>
+      </div>
+      <div class="metric">
+        <div class="label">Сильный риск</div>
+        <div class="value" id="metricFragile">0</div>
+        <div class="note">выплата просела на 50%+</div>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Карта выдачи</h2>
+            <p>Сравнение групп по модельной выдаче. Точки ниже: стартовая наличность по горизонтали, сколько можно выдать в выбранном сценарии по вертикали.</p>
+          </div>
+        </div>
+        <div class="group-bars" id="groupBars"></div>
+        <div class="scatter-wrap">
+          <svg class="scatter" id="scatter" viewBox="0 0 620 360" role="img" aria-label="Карта стартовой наличности и годового дохода"></svg>
+        </div>
+        <div class="detail-card" id="detailCard"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Кому сколько давать</h2>
+            <p>Нажми строку или точку на карте: снизу откроется объяснение, через какую механику платить и где резать доход.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Игрок</th>
+                <th>Группа</th>
+                <th>Старт</th>
+                <th>База</th>
+                <th>Модель</th>
+                <th>Что есть</th>
+                <th>Как платить</th>
+              </tr>
+            </thead>
+            <tbody id="playerRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Читать числа как мастерские лимиты, а не как автоматическую зарплату. Если источник дохода не сыгран, выплату режут до нуля, задерживают, заменяют распиской или ассигнатами.</p>
+  </main>
+
+  <script>
+    const groupMeta = {
+      "Духовенство": { color: "#7659a6" },
+      "Корона и роялисты": { color: "#b64f43" },
+      "Дворяне и офицеры": { color: "#426aa8" },
+      "Финансы и администрация": { color: "#2f7857" },
+      "Печать и клубы": { color: "#2c7f7b" },
+      "Рынок и мастерские": { color: "#b5842d" },
+      "Городские бедные": { color: "#35443a" }
+    };
+
+    const scenarios = {
+      normal: {
+        name: "Обычный 1789",
+        bread: 100,
+        market: 100,
+        state: 100,
+        money: 100,
+        coercion: 0,
+        note: "Старые источники еще в основном работают: рента, лавка, жалованье, гонорар и двор дают близко к базовому потолку.",
+        effect: "Это контрольная точка: если игрок предъявил источник дохода, мастер может выдавать верхнюю часть диапазона."
+      },
+      badHarvest: {
+        name: "Неурожай и дорогой хлеб",
+        bread: 170,
+        market: 70,
+        state: 85,
+        money: 95,
+        coercion: 10,
+        note: "Хлеб съедает покупательную силу бедных и режет рынок. Торговец может держаться, если у него есть запас, но спрос беднеет.",
+        effect: "Бедные и рынок проседают; богатые не голодают, но их сеть начинает требовать больше содержания."
+      },
+      assignatFall: {
+        name: "Ассигнаты падают",
+        bread: 140,
+        market: 75,
+        state: 55,
+        money: 45,
+        coercion: 20,
+        note: "Казна платит номинально, но рынок не верит бумаге. Государственные выплаты выглядят большими, а покупают меньше.",
+        effect: "Чиновники, армия, кюре на жалованье и бедные получатели выплат теряют реальную выдачу."
+      },
+      war: {
+        name: "Война и снабжение",
+        bread: 135,
+        market: 105,
+        state: 70,
+        money: 70,
+        coercion: 35,
+        note: "Война раздувает государственные расходы, дает карьеру военным и заказы снабжению, но казна платит хуже.",
+        effect: "Армейские и комиссарские роли получают бонус, обычные госвыплаты и бедные кошельки проседают."
+      },
+      maximum: {
+        name: "Максимум цен",
+        bread: 110,
+        market: 55,
+        state: 70,
+        money: 65,
+        coercion: 45,
+        note: "Официальная цена сдержана, но маржа торговли и булочных ломается. Часть товара уходит в тень.",
+        effect: "Покупателю чуть легче, но лавочник, булочник, торговка и кафетир получают меньше легальной прибыли."
+      },
+      terror: {
+        name: "Террор и конфискации",
+        bread: 125,
+        market: 60,
+        state: 75,
+        money: 60,
+        coercion: 85,
+        note: "Принуждение перераспределяет ресурсы: комиссары и аппарат могут двигать имущество, но собственники и роялисты под ударом.",
+        effect: "Доходы двора, церкви, подозрительных и торговцев режутся; комитетские и комиссарские роли временно усиливаются."
+      },
+      thermidor: {
+        name: "Термидор и сделки",
+        bread: 145,
+        market: 115,
+        state: 55,
+        money: 45,
+        coercion: 30,
+        note: "Торговля оживает, но бедные теряют рычаг Максимума, а бумажные выплаты остаются слабыми.",
+        effect: "Буржуазия, рынок и операторы безопасности выигрывают; городские бедные и получатели жалованья снова проседают."
+      }
+    };
+
+    const armyIds = new Set(["lafayette", "bouille", "dumouriez", "napoleon", "pichegru", "moreau", "jourdan", "carnot"]);
+    const apparatusIds = new Set(["carrier", "fouche", "fouquier_tinville", "saint_just", "couthon", "barere", "carnot"]);
+    const thermidorIds = new Set(["barras", "tallien", "fouche", "danton", "mercier", "cafetier", "vinier"]);
+    const maximumMarketIds = new Set(["boulanger", "poissarde", "vinier", "mercier", "cafetier"]);
+
+    const rawPlayers = `
+sieyes|Эмманюэль Жозеф Сийес|Духовенство|богатый аббат и публицист|1500|6000|12000|аббатский доход, церковная сеть, перо, мандат|церковный доход до национализации; после мандат, тексты, должность|без должности потолок 3 000-6 000|fragile,state
+talleyrand|Шарль Морис де Талейран|Духовенство|епископ и дипломат|10000|20000|30000|епископство, резиденция, аристократическая сеть|епископский доход до конфискации; после присяга, жалованье, сделки|после конфискации только новая должность или конвертация статуса|state
+maury|Аббат Мори|Духовенство|богатый аббат и роялистский оратор|3000|8000|15000|бенефиций, проповедь, роялистская сеть|церковь и покровители|после отмены десятины почти ноль без эмиграции или роялистской кассы|fragile
+cure|Отец Жером Тиссо|Духовенство|бедный приходской кюре|80|700|1200|приход, дом, доверие бедных, выбор присяги|приход, требы, после присяги государственное жалованье|не присягнул - 0-300 пожертвованиями|fragile
+louis_xvi|Людовик XVI|Корона и роялисты|король|20000|50000|50000|корона, цивильный лист, двор, государственный долг|личная операционная касса; казна отдельно|казна не личный кошелек, сверх лимита только через решение и скандал|state
+marie_antoinette|Мария-Антуанетта|Корона и роялисты|королева|15000|50000|150000|двор, драгоценности, патронаж, доступ к фаворитам|двор, подарки, придворные расходы|крупные выплаты усиливают слухи и образ дорогого режима|fragile
+artois|Граф д'Артуа|Корона и роялисты|принц крови|12000|30000|80000|имения, придворная партия, эмиграционная касса|пенсии и имения до падения двора|при эмиграции можно вывезти до 20 000, имущество во Франции под конфискацией|fragile
+provence|Граф Прованский|Корона и роялисты|принц крови и осторожный политик|12000|30000|70000|имения, отдельная сеть, династический статус|двор и имения|при радикализации доход становится риском конфискации|fragile
+polignac|Герцогиня де Полиньяк|Корона и роялисты|фаворитская сеть двора|20000|60000|120000|придворные пенсии, должность, близость к королеве|пенсии и подарки двора|не выдавать весь исторический номинал; каждая крупная выплата дает скандал|fragile
+lamballe|Принцесса де Ламбаль|Корона и роялисты|подруга королевы и суперинтендант двора|10000|30000|80000|должность, личное состояние, доступ к королеве|двор и личное состояние|после падения двора доход превращается в риск и расходы на защиту|fragile
+fersen|Аксель фон Ферзен|Корона и роялисты|иностранный офицер и придворный союзник|10000|15000|40000|внешняя аристократическая сеть, служба, двор|внешняя сеть и королевские поручения|крупные суммы только как курьерская или побеговая касса|state
+breteuil|Барон де Бретёй|Корона и роялисты|министр королевского дома|10000|20000|60000|министерская должность, дипломатические связи|должность и королевский дом|после отставки 0-20 000 из роялистской сети|fragile,state
+bouille|Маркиз де Буйе|Корона и роялисты|генерал старой школы|6000|12000|30000|командование, пограничные войска, военная сеть|жалованье и командная касса|армейский бюджет не личный; хищение дает измену|state
+cazales|Жак Антуан Мари де Казалес|Корона и роялисты|дворянин и офицер-роялист|2000|4000|10000|дворянский статус, офицерство, сеньориальные права|рента и статусные платежи|отмена привилегий резко режет доход|fragile
+lafayette|Маркиз де Лафайет|Дворяне и офицеры|либеральный аристократ и командир|8000|20000|50000|имения, состояние семьи, офицерство, гвардия|рента и командование|бюджет гвардии считать отдельно от личной кассы|state
+mirabeau|Оноре Габриэль де Мирабо|Дворяне и офицеры|дворянин, оратор, должник|1000|3000|8000|род, талант речи, долги, тайные сделки|речь, мандат, сделки|тайно до 60 000, но с репутационной ловушкой|fragile
+charlotte_corday|Шарлотта Корде|Дворяне и офицеры|малая провинциальная дворянка|250|600|1200|малый род, провинциальные связи, монастырское воспитание|семейное содержание и мелкая рента|экономика слабая, политическое действие важнее денег|fragile
+barras|Поль Баррас|Дворяне и офицеры|дворянин, офицер, политический выживальщик|2500|4000|10000|род, военный опыт, старые связи, долги|рента, связи, затем безопасность и покровительство|после Термидора сверхдоход выглядит как коррупция|market
+dumouriez|Шарль Франсуа Дюмурье|Дворяне и офицеры|офицер и дипломат|3000|6000|15000|офицерство, поручения, тайные миссии|жалованье, поручения, военная победа|поражение переводит доход в риск бегства|state
+napoleon|Наполеон Бонапарт|Дворяне и офицеры|младший артиллерийский офицер|300|1200|12000|офицерская служба, артиллерийская компетенция, бедная семья|жалованье, повышение, война|в мирное время мало денег; рост только через войну и должность|state
+buonarroti|Филиппо Буонарроти|Дворяне и офицеры|малый дворянин и радикал|800|1500|3000|статус, перо, радикальная сеть|тексты, поручения, политические связи|большие суммы подозрительны|fragile
+pichegru|Жан-Шарль Пишегрю|Дворяне и офицеры|офицер и преподаватель математики|400|1000|15000|офицерство, преподавание, армейская карьера|служба, повышение, война|роялистские деньги дают подозрение|state
+moreau|Жан Виктор Моро|Дворяне и офицеры|юрист и будущий генерал|800|1200|15000|юридическая база, провинциальная сеть, армейский шанс|юрист до войны; армия при мобилизации|армейский доход требует лояльности режиму|state
+jourdan|Жан-Батист Журдан|Дворяне и офицеры|ветеран и будущий генерал|250|500|10000|ветеранский опыт, ремесло, связь с армией|ремесло и служба; война дает рост|рост связан с набором и деревенской злостью|state,fragile
+necker|Жак Неккер|Финансы и администрация|банкир и министр финансов|50000|50000|150000|кредитная сеть, репутация, долги государства|проценты, кредит, государственные сделки|кредитная линия до 200 000 только как расписка, не личные расходы|state
+bailly|Жан Сильвен Байи|Финансы и администрация|ученый и муниципальный политик|1000|3000|8000|академическая репутация, мандат, городская должность|наука, мандат, муниципалитет|городская касса не личная|state
+barnave|Антуан Барнав|Финансы и администрация|адвокат и оратор|800|2500|6000|адвокатская практика, провинциальная сеть|гонорары и мандат|радикализация режет клиентов и безопасность|fragile
+robespierre|Максимилиан Робеспьер|Финансы и администрация|адвокат и клубный политик|300|1200|6000|адвокатура, мандат, клубная репутация|гонорар, мандат, клуб|сверхдоход компрометирует политическую чистоту|fragile
+roland|Жан Мари Ролан де ла Платьер|Финансы и администрация|чиновник и инспектор мануфактур|1500|4000|8000|должность, бумаги, административная сеть|жалованье и должность|после эмиссии часть выплат идет ассигнатами|state
+vergniaud|Пьер Виктюрньен Верньо|Финансы и администрация|адвокат и оратор|1000|3000|7000|адвокатская практика, парламентская культура|гонорары, речь, мандат|фракционный кризис может обнулить доход|fragile
+danton|Жорж Жак Дантон|Финансы и администрация|адвокат и переговорщик|1500|4000|20000|адвокатура, клубная сеть, клиенты|клиенты, поручения, сделки|сделки сверх лимита дают обвинение в продажности|market
+couthon|Жорж Кутон|Финансы и администрация|юрист и депутат|600|2000|8000|юридическая практика, мандат, репутация законника|жалованье, мандат, комитет|власть через декреты, не через личную кассу|state
+carnot|Лазар Карно|Финансы и администрация|военный инженер и администратор|1500|3000|8000|инженерная служба, военная компетенция|жалованье и должность|военные миллионы идут через государственный стол|state
+barere|Бертран Барер|Финансы и администрация|юрист, литератор, докладчик|1000|3000|7000|репутация, мандат, способность быть докладчиком|мандат и поручения|устойчив, пока нужен текущему большинству|state
+fouquier_tinville|Антуан Фукье-Тенвиль|Финансы и администрация|юрист аппарата и будущий обвинитель|500|1500|10000|судебный опыт, канцелярия, нужда в должности|аппарат, трибунал, жалованье|после отката источник становится обвинением|state,fragile
+carrier|Жан-Батист Каррье|Финансы и администрация|адвокат и комиссар|500|1500|12000|адвокатура, комиссарский потенциал, реквизиции|жалованье, комиссарство, реквизиции|сверх жалованья оставляет след насилия|state
+fouche|Жозеф Фуше|Финансы и администрация|преподаватель, комиссар, будущая полиция|500|1000|12000|образование, школьная сеть, информация|школа, поручения, аппарат|деньги вторичны к контролю списков|state
+tallien|Жан-Ламбер Тальен|Финансы и администрация|печатник и политический оператор|200|600|12000|печатная среда, газеты, молодая сеть|печать, мандат, представительство|монетизация защиты после Термидора коррупционна|state,market
+larevelliere|Луи-Мари де Ларевельер-Лепо|Финансы и администрация|юрист и директорский политик|800|2000|5000|юридическая практика, провинциальная политика|администрация и должность|религиозная политика создает сопротивление|state
+avocat|Шарль Меренвиль, адвокат|Финансы и администрация|парижский адвокат|800|2000|6000|практика, клиенты, знание законов|гонорары и политические поручения|если клиенты беднеют, доход падает|fragile
+chirurgien|Никола Гранже, хирург|Финансы и администрация|больничный хирург|400|800|2000|больничная практика, медицинский навык|город, больница, платные пациенты|голод повышает нужность, но не богатство|fragile
+marat|Жан Поль Марат|Печать и клубы|врач, публицист, газетчик|150|600|4000|врачебная практика, рукописи, будущая газета|лечение, подписка, тираж, пожертвования|рост влияния не равен росту наличности|fragile
+brissot|Жак Пьер Бриссо|Печать и клубы|журналист и сетевой политик|300|1000|3000|газетная сеть, перо, клубы|тексты, поручения, клубные деньги|война может усилить, поражение и Террор обнуляют|fragile
+manon_roland|Манон Ролан|Печать и клубы|салон и политическая переписка|800|1000|3000|дом, салон, переписка, сеть мужа|салон, покровители, общий дом Роланов|не выдавать как отдельную зарплату|fragile
+saint_just|Луи Антуан Сен-Жюст|Печать и клубы|молодой политик и будущий комитетчик|250|600|6000|семейная база, рукописи, мандат|мандат и комитеты|до мандата беден, после сила в комитетах|state,fragile
+hebert|Жак-Рене Эбер|Печать и клубы|сатирик и уличный журналист|100|500|5000|театр, бедность, сатирический голос|тираж, клуб, уличная аудитория|бумага, цензура и откат режут доход|fragile
+desmoulins|Камиль Демулен|Печать и клубы|адвокат и памфлетист|200|500|2500|образование, памфлет, клубные связи|памфлет, заказ, покровитель|слово может дать хлеб или арест|fragile
+babeuf|Гракх Бабёф|Печать и клубы|земельный писарь и радикальный журналист|80|300|1500|земельные бумаги, бедность, знание прав|земельные бумаги и печать|богатство противоречит роли без сильного объяснения|fragile
+boulanger|Пьер Моро, булочник|Рынок и мастерские|булочник|500|1000|3000|печь, мука, очередь, риск толпы|прибыль после закупки муки и продажи хлеба|оборот хлеба уходит на зерно, работников и аренду|market,fragile
+poissarde|Мари-Жанна Дюваль, торговка|Рынок и мастерские|рыночная торговка|120|300|800|рыночное место, товарная сеть, голос толпы|дневная торговля|черный рынок дает больше, но ведет к обыску|market,fragile
+vinier|Жак Бертье, откупщик|Финансы и налоги|откупщик у заставы|4000|10000|30000|доля в откупе, книга сборов, право штрафа|октруа, штрафы и контракт с казной|рост сборов повышает ненависть к стене|state
+menuisier|Антуан Ревельон, мастер-столяр|Рынок и мастерские|мастер-столяр|700|700|2200|мастерская, инструменты, подмастерья|заказ, материал, оплата|нет заказов - нет полного года|market,fragile
+imprimeur|Луи Прюдом, типограф|Рынок и мастерские|типограф|800|1000|3000|типография, шрифт, бумага, заказчики|заказ, бумага, оплата|политический тираж дает риск цензуры и ареста|market
+cafetier|Франсуа Прокоп, хозяин кафе|Рынок и мастерские|кафетир|1500|1000|3000|кафе, помещение, клиентский трафик, новости|посетители, аренда зала, встречи|закрытие или обыск режут доход до нуля|market,fragile
+mercier|Этьен Дюпон, лавочник|Рынок и мастерские|лавочник|800|600|1500|лавка, товарный запас, долги клиентов|маржа после закупки|долги клиентов не деньги, пока не взысканы|market,fragile
+actrice|Жюли Ренар, актриса|Рынок и мастерские|актриса|300|800|2500|театр, репутация, публика, патроны|афиши, сезон, подарки патронов|политический репертуар дает влияние, но не гарантирует деньги|fragile
+lavandiere|Катрин Лебон, прачка|Городские бедные|прачка, вдова с детьми|30|150|300|работа на стирке, долги, двое детей|работа, мелкие услуги, помощь|дорогой хлеб съедает весь доход|fragile
+invalide|Жан-Батист Лакруа, солдат-инвалид|Городские бедные|ветеран-инвалид|40|150|300|пенсия, Дом инвалидов, ветеранская память|пенсия, жилье, пайки|задержка выплат делает его политическим узлом|fragile,state
+journalier|Пьер Ламбер, поденщик|Городские бедные|поденщик|20|250|375|руки, случайный найм, семья под давлением|1-1,5 ливра за рабочий день или годовой итог при найме|нет найма - нет дохода|fragile
+servante|Мадлен Флёри, служанка|Городские бедные|служанка в дворянском доме|15|30|60|место в доме, еда, жилье, слухи|жалованье плюс содержание|если дом закрыт, исчезают еда, крыша и доход|fragile
+`.trim();
+
+    const players = rawPlayers.split("\n").map((line) => {
+      const [id, name, group, role, start, incomeMin, incomeMax, assets, mechanic, limit, tags] = line.split("|");
+      return {
+        id,
+        name,
+        group,
+        role,
+        start: Number(start),
+        incomeMin: Number(incomeMin),
+        incomeMax: Number(incomeMax),
+        assets,
+        mechanic,
+        limit,
+        tags: tags.split(",")
+      };
+    });
+
+    let activeGroup = "Все";
+    let selectedId = "necker";
+    let activeScenario = "normal";
+
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+    const viewSelect = document.getElementById("viewSelect");
+    const modelControls = {
+      bread: document.getElementById("breadPressure"),
+      market: document.getElementById("marketDemand"),
+      state: document.getElementById("stateReliability"),
+      money: document.getElementById("moneyTrust"),
+      coercion: document.getElementById("coercionRisk")
+    };
+    const modelValueLabels = {
+      bread: document.getElementById("breadPressureValue"),
+      market: document.getElementById("marketDemandValue"),
+      state: document.getElementById("stateReliabilityValue"),
+      money: document.getElementById("moneyTrustValue"),
+      coercion: document.getElementById("coercionRiskValue")
+    };
+
+    function money(value) {
+      return Math.round(value).toLocaleString("ru-RU");
+    }
+
+    function range(min, max) {
+      if (min === max) return `${money(min)} ливров`;
+      return `${money(min)}-${money(max)} ливров`;
+    }
+
+    function colorFor(group) {
+      return groupMeta[group]?.color || "#35443a";
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function modelParams() {
+      return {
+        bread: Number(modelControls.bread.value) / 100,
+        market: Number(modelControls.market.value) / 100,
+        state: Number(modelControls.state.value) / 100,
+        money: Number(modelControls.money.value) / 100,
+        coercion: Number(modelControls.coercion.value) / 100
+      };
+    }
+
+    function setScenario(id) {
+      const scenario = scenarios[id];
+      activeScenario = id;
+      modelControls.bread.value = scenario.bread;
+      modelControls.market.value = scenario.market;
+      modelControls.state.value = scenario.state;
+      modelControls.money.value = scenario.money;
+      modelControls.coercion.value = scenario.coercion;
+      render();
+    }
+
+    function renderScenarios() {
+      document.getElementById("scenarioButtons").innerHTML = Object.entries(scenarios).map(([id, scenario]) => `
+        <button class="scenario-btn" type="button" data-scenario="${id}" aria-pressed="${id === activeScenario ? "true" : "false"}">${scenario.name}</button>
+      `).join("");
+
+      document.querySelectorAll(".scenario-btn").forEach((button) => {
+        button.addEventListener("click", () => setScenario(button.dataset.scenario));
+      });
+    }
+
+    function syncModelLabels() {
+      modelValueLabels.bread.textContent = `${modelControls.bread.value}%`;
+      modelValueLabels.market.textContent = `${modelControls.market.value}%`;
+      modelValueLabels.state.textContent = `${modelControls.state.value}%`;
+      modelValueLabels.money.textContent = `${modelControls.money.value}%`;
+      modelValueLabels.coercion.textContent = `${modelControls.coercion.value}%`;
+
+      const scenario = scenarios[activeScenario];
+      document.getElementById("scenarioExplain").innerHTML = `<b>${scenario.name}</b>${scenario.note}`;
+      document.getElementById("modelFormula").innerHTML = `<b>Как считать выдачу</b>Базовый годовой потолок умножается на доступность источника: рынок, казна, доверие к деньгам, хлебное давление и риск принуждения. ${scenario.effect}`;
+    }
+
+    function exposures(player) {
+      const state = player.tags.includes("state") ? 0.72 : player.group === "Корона и роялисты" ? 0.38 : 0;
+      const market = player.tags.includes("market") ? 0.76 : player.group === "Печать и клубы" ? 0.34 : player.group === "Городские бедные" ? 0.48 : 0.08;
+      const bread = player.group === "Городские бедные" ? 0.52 : player.group === "Рынок и мастерские" ? 0.26 : player.group === "Печать и клубы" ? 0.2 : 0.1;
+      const coercion =
+        player.group === "Корона и роялисты" ? 0.66 :
+        player.group === "Духовенство" ? 0.52 :
+        player.group === "Рынок и мастерские" ? 0.28 :
+        player.group === "Финансы и администрация" ? 0.24 :
+        player.group === "Печать и клубы" ? 0.32 :
+        0.12;
+      return { state, market, bread, coercion };
+    }
+
+    function scenarioBoost(player) {
+      let boost = 1;
+      if (activeScenario === "war" && armyIds.has(player.id)) boost *= 1.3;
+      if (activeScenario === "war" && player.tags.includes("market")) boost *= 1.08;
+      if (activeScenario === "maximum" && maximumMarketIds.has(player.id)) boost *= 0.62;
+      if (activeScenario === "terror" && apparatusIds.has(player.id)) boost *= 1.22;
+      if (activeScenario === "terror" && (player.group === "Корона и роялисты" || player.group === "Духовенство")) boost *= 0.48;
+      if (activeScenario === "thermidor" && thermidorIds.has(player.id)) boost *= 1.22;
+      if (activeScenario === "thermidor" && player.group === "Городские бедные") boost *= 0.68;
+      if (activeScenario === "assignatFall" && player.tags.includes("state")) boost *= 0.82;
+      return boost;
+    }
+
+    function modelFor(player) {
+      const params = modelParams();
+      const exposure = exposures(player);
+      let factor = 1;
+
+      factor *= 1 - exposure.state + exposure.state * params.state;
+      factor *= 1 - exposure.market + exposure.market * params.market;
+      factor *= 1 - 0.55 * exposure.state + 0.55 * exposure.state * params.money;
+      factor *= 1 - Math.max(0, params.bread - 1) * exposure.bread;
+      factor *= 1 - params.coercion * exposure.coercion;
+      factor *= scenarioBoost(player);
+
+      factor = clamp(factor, 0.05, 1.45);
+      const min = Math.round(player.incomeMin * factor);
+      const max = Math.round(player.incomeMax * factor);
+      const loss = player.incomeMax === 0 ? 0 : clamp(1 - max / player.incomeMax, -0.45, 0.95);
+      const risk = loss >= 0.5 ? "high" : loss >= 0.25 ? "mid" : "ok";
+      return { factor, min, max, loss, risk };
+    }
+
+    function riskLabel(model) {
+      if (model.risk === "high") return "сильная просадка";
+      if (model.risk === "mid") return "просадка";
+      return model.loss < -0.05 ? "выигрыш" : "держится";
+    }
+
+    function riskClass(model) {
+      if (model.risk === "high") return "risk-high";
+      if (model.risk === "mid") return "risk-mid";
+      return "risk-ok";
+    }
+
+    function currentPlayers() {
+      const query = searchInput.value.trim().toLowerCase();
+      const view = viewSelect.value;
+      let list = players.filter((player) => {
+        const groupOk = activeGroup === "Все" || player.group === activeGroup;
+        const queryText = `${player.id} ${player.name} ${player.group} ${player.role} ${player.assets} ${player.mechanic} ${player.limit}`.toLowerCase();
+        const queryOk = !query || queryText.includes(query);
+        const viewOk =
+          view === "all" ||
+          (view === "state" && player.tags.includes("state")) ||
+          (view === "market" && player.tags.includes("market")) ||
+          (view === "fragile" && player.tags.includes("fragile"));
+        return groupOk && queryOk && viewOk;
+      });
+
+      const sort = sortSelect.value;
+      list = list.slice().sort((a, b) => {
+        if (sort === "name") return a.name.localeCompare(b.name, "ru");
+        if (sort === "modeledMax") return modelFor(b).max - modelFor(a).max;
+        return b[sort] - a[sort];
+      });
+      return list;
+    }
+
+    function renderFilters() {
+      const groups = ["Все", ...Object.keys(groupMeta)];
+      document.getElementById("groupFilters").innerHTML = groups.map((group) => {
+        const pressed = group === activeGroup ? "true" : "false";
+        return `<button class="filter-btn" type="button" data-group="${group}" aria-pressed="${pressed}">${group}</button>`;
+      }).join("");
+
+      document.querySelectorAll(".filter-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeGroup = button.dataset.group;
+          render();
+        });
+      });
+    }
+
+    function renderMetrics(list) {
+      const totalStart = list.reduce((sum, player) => sum + player.start, 0);
+      const totalIncome = list.reduce((sum, player) => sum + player.incomeMax, 0);
+      const totalModeled = list.reduce((sum, player) => sum + modelFor(player).max, 0);
+      const fragile = list.filter((player) => modelFor(player).risk === "high").length;
+      document.getElementById("metricCount").textContent = list.length;
+      document.getElementById("metricStart").textContent = money(totalStart);
+      document.getElementById("metricIncome").textContent = money(totalIncome);
+      document.getElementById("metricModeled").textContent = money(totalModeled);
+      document.getElementById("metricFragile").textContent = fragile;
+    }
+
+    function renderBars(list) {
+      const byGroup = Object.keys(groupMeta).map((group) => {
+        const groupPlayers = list.filter((player) => player.group === group);
+        return {
+          group,
+          count: groupPlayers.length,
+          income: groupPlayers.reduce((sum, player) => sum + modelFor(player).max, 0),
+          base: groupPlayers.reduce((sum, player) => sum + player.incomeMax, 0)
+        };
+      }).filter((item) => item.count > 0);
+      const maxIncome = Math.max(1, ...byGroup.map((item) => item.income));
+      document.getElementById("groupBars").innerHTML = byGroup.map((item) => {
+        const width = Math.max(4, (item.income / maxIncome) * 100);
+        return `
+          <div class="group-row">
+            <div class="group-name">${item.group} <span class="small">(${item.count})</span></div>
+            <div class="track"><div class="fill" style="--w:${width}%; --c:${colorFor(item.group)}"></div></div>
+            <div class="group-sum">${money(item.income)} из ${money(item.base)}</div>
+          </div>
+        `;
+      }).join("") || `<p class="empty-note">Нет игроков в выбранном фильтре.</p>`;
+    }
+
+    function logScale(value, minValue, maxValue) {
+      const min = Math.log10(minValue + 1);
+      const max = Math.log10(maxValue + 1);
+      return (Math.log10(value + 1) - min) / Math.max(0.001, max - min);
+    }
+
+    function renderScatter(list) {
+      const svg = document.getElementById("scatter");
+      const width = 620;
+      const height = 360;
+      const pad = 48;
+      const maxStart = Math.max(1, ...players.map((player) => player.start));
+      const maxIncome = Math.max(1, ...players.map((player) => modelFor(player).max));
+      const lines = [
+        `<line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#d7ded8" />`,
+        `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#d7ded8" />`,
+        `<text x="${pad}" y="${height - 12}">стартовая наличность</text>`,
+        `<text x="12" y="${pad - 18}">выдать по модели</text>`,
+        `<text x="${width - pad - 70}" y="${height - 12}">${money(maxStart)}</text>`,
+        `<text x="12" y="${pad + 8}">${money(maxIncome)}</text>`
+      ];
+
+      const points = list.map((player) => {
+        const model = modelFor(player);
+        const x = pad + logScale(player.start, 0, maxStart) * (width - pad * 2);
+        const y = height - pad - logScale(model.max, 0, maxIncome) * (height - pad * 2);
+        const radius = model.risk === "high" ? 4.5 : player.start >= 10000 ? 8 : model.max >= 20000 ? 7 : 5;
+        const active = player.id === selectedId ? " active" : "";
+        return `<circle class="point${active}" data-id="${player.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius}" fill="${colorFor(player.group)}"><title>${player.name}: модель ${range(model.min, model.max)}, база ${range(player.incomeMin, player.incomeMax)}</title></circle>`;
+      });
+
+      svg.innerHTML = [...lines, ...points].join("");
+      svg.querySelectorAll(".point").forEach((point) => {
+        point.addEventListener("click", () => {
+          selectedId = point.dataset.id;
+          render();
+        });
+      });
+    }
+
+    function renderRows(list) {
+      document.getElementById("playerRows").innerHTML = list.map((player) => `
+        <tr data-id="${player.id}">
+          ${(() => {
+            const model = modelFor(player);
+            return `
+          <td class="name-cell">${player.name}<div class="small">${player.role}</div></td>
+          <td><span class="pill" style="border: 1px solid ${colorFor(player.group)}">${player.group}</span></td>
+          <td>${money(player.start)} ливров</td>
+          <td>${range(player.incomeMin, player.incomeMax)}</td>
+          <td class="model-cell ${riskClass(model)}">${range(model.min, model.max)}<div class="small">${riskLabel(model)}</div></td>
+          <td>${player.assets}</td>
+          <td>${player.mechanic}</td>
+            `;
+          })()}
+        </tr>
+      `).join("");
+
+      document.querySelectorAll("#playerRows tr").forEach((row) => {
+        row.addEventListener("click", () => {
+          selectedId = row.dataset.id;
+          render();
+        });
+      });
+    }
+
+    function renderDetail() {
+      const player = players.find((item) => item.id === selectedId) || players[0];
+      const model = modelFor(player);
+      const delta = model.max - player.incomeMax;
+      const deltaText = delta >= 0 ? `+${money(delta)}` : `-${money(Math.abs(delta))}`;
+      document.getElementById("detailCard").innerHTML = `
+        <div class="detail-title">
+          <h3>${player.name}</h3>
+          <span class="pill">${player.group}</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-stat"><b>${money(player.start)}</b><span>дать на старт</span></div>
+          <div class="detail-stat"><b>${range(player.incomeMin, player.incomeMax)}</b><span>базовый лимит</span></div>
+          <div class="detail-stat"><b class="${riskClass(model)}">${range(model.min, model.max)}</b><span>выдать по модели</span></div>
+        </div>
+        <p class="detail-text"><b>Сценарный сдвиг:</b> ${deltaText} ливров к верхнему потолку; ${riskLabel(model)}.</p>
+        <p class="detail-text"><b>Что есть:</b> ${player.assets}.</p>
+        <p class="detail-text"><b>Как платить:</b> ${player.mechanic}.</p>
+        <p class="detail-text"><b>Где резать:</b> ${player.limit}.</p>
+      `;
+    }
+
+    function render() {
+      syncModelLabels();
+      renderScenarios();
+      renderFilters();
+      const list = currentPlayers();
+      if (!list.some((player) => player.id === selectedId) && list[0]) {
+        selectedId = list[0].id;
+      }
+      renderMetrics(list);
+      renderBars(list);
+      renderScatter(list);
+      renderRows(list);
+      renderDetail();
+    }
+
+    [searchInput, sortSelect, viewSelect].forEach((control) => {
+      control.addEventListener("input", render);
+      control.addEventListener("change", render);
+    });
+
+    Object.values(modelControls).forEach((control) => {
+      control.addEventListener("input", () => {
+        activeScenario = "custom";
+        render();
+      });
+    });
+
+    scenarios.custom = {
+      name: "Ручная модель",
+      bread: 100,
+      market: 100,
+      state: 100,
+      money: 100,
+      coercion: 0,
+      note: "Параметры выставлены вручную. Этот режим нужен, чтобы мастер мог собрать свой год без привязки к готовому сценарию.",
+      effect: "Смотри на столбец «Модель»: он показывает, что реально можно выдать после выбранных сдвигов."
+    };
+
+    render();
+  </script>
+</body>
+</html>

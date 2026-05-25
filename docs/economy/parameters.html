@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Параметры экономики - Revolution France</title>
+  <link rel="stylesheet" href="../../site.css">
+</head>
+<body class="reader-body">
+  <header class="site-header">
+    <a class="brand" href="../../index.html">Revolution France</a>
+    <nav class="site-nav" aria-label="Главная навигация">
+      <a class="" href="../../tools.html">Расчеты</a>
+      <a href="../../characters.html">Персонажи</a>
+      <a href="../../history.html">История</a>
+      <a href="../../finance.html">Финансы</a>
+      <a class="is-active" href="../../docs.html">Правила и доки</a>
+    </nav>
+  </header>
+
+  <main class="reader-shell">
+    <aside class="reader-side" aria-label="Навигация документа">
+      <a class="back-link" href="../../docs.html">Назад к правилам и докам</a>
+      <div class="reader-meta-card reader-doc-meta">
+        <span class="pill">Экономика</span>
+        <span class="pill">docs/economy/parameters.html</span>
+        <p>HTML-версия документа для чтения на сайте.</p>
+      </div>
+      <nav class="reader-toc" aria-label="Оглавление"><a href="#section-1">Соответствие старых кодов и новых имён</a><a href="#section-2">1. КАЗНА (`treasury`)</a><a href="#section-3">2. РЕЗЕРВЫ — три раздельных шкалы</a><a href="#section-4">2.1 `church_reserves` — церковь</a><a href="#section-5">2.2 `emigrant_reserves` — эмигранты</a><a href="#section-6">2.3 `biens_capital` — биены в обороте</a><a href="#section-7">3. ХЛЕБ ПАРИЖ (`bread_paris`)</a><a href="#section-8">4. КУРС АССИГНАТА (`assignat_rate`)</a><a href="#section-9">5. ВОЙНА (`war_intensity`)</a><a href="#section-10">6. НАРОД — две шкалы (раскол)</a><a href="#section-11">6.1 `city_unrest` — народ-город</a><a href="#section-12">6.2 `rural_unrest` — народ-деревня</a><a href="#section-13">7. ПРОВИНЦИИ (`provinces_loyalty`)</a><a href="#section-14">Скрытые параметры (на листе GM)</a><a href="#section-15">`black_market` — чёрный рынок</a><a href="#section-16">`army_funding` — финансирование армии</a><a href="#section-17">`army_loyalty` — лояльность армии</a><a href="#section-18">`metal_supply`, `assignat_supply` — денежная масса</a><a href="#section-19">Триггеры событий — сводка</a><a href="#section-20">Стартовые значения (Акт I, лето 1789)</a><a href="#section-21">Различия по актам</a><a href="#section-22">Связь с 8 идеологическими осями</a><a href="#section-23">Открытые вопросы</a></nav>
+    </aside>
+
+    <article class="reader-article">
+      <header class="reader-title">
+        <p class="section-label">Экономика</p>
+        <h1>Параметры экономики</h1>
+        <p>10 публичных параметров на табло (в 7 «зонах») + скрытые на листе GM. Каждый имеет: старт, фоновое давление, реакции на шоки и декреты.</p>
+      </header>
+      <div class="reader-content">
+<p>Цель документа: основа для расчётного скрипта (<code>sim/</code>). Каноничные формулы и калибровка коэффициентов — здесь; код в <code>sim/engine.py</code> следует этим определениям.</p>
+<hr>
+<h2 id="section-1">Соответствие старых кодов и новых имён</h2>
+<p>В коде (<code>sim/state.py</code>) — английские читаемые имена. На табло/в логе/CSV/графиках — русские лейблы. Таблица для перехода с черновика:</p>
+<div class="table-wrap"><table><thead><tr><th>Старый код</th><th>Имя в коде</th><th>Лейбл на табло</th></tr></thead><tbody><tr><td>G</td><td><code>treasury</code></td><td>казна</td></tr><tr><td>R_c</td><td><code>church_reserves</code></td><td>церковь</td></tr><tr><td>R_e</td><td><code>emigrant_reserves</code></td><td>эмигранты</td></tr><tr><td>R_b</td><td><code>biens_capital</code></td><td>биены</td></tr><tr><td>P</td><td><code>bread_paris</code></td><td>хлеб</td></tr><tr><td>A</td><td><code>assignat_rate</code></td><td>ассигнат</td></tr><tr><td>W</td><td><code>war_intensity</code></td><td>война</td></tr><tr><td>T_v</td><td><code>city_unrest</code></td><td>город</td></tr><tr><td>T_d</td><td><code>rural_unrest</code></td><td>деревня</td></tr><tr><td>Pr</td><td><code>provinces_loyalty</code></td><td>провинции</td></tr><tr><td>B</td><td><code>black_market</code></td><td>чёрн_рынок</td></tr><tr><td>A_f</td><td><code>army_funding</code></td><td>армия_финанс</td></tr><tr><td>A_l</td><td><code>army_loyalty</code></td><td>армия_лоял</td></tr><tr><td>M_m</td><td><code>metal_supply</code></td><td>монета</td></tr><tr><td>M_a</td><td><code>assignat_supply</code></td><td>ассигн_масса</td></tr></tbody></table></div>
+<p>Дальше в документе используются имена в коде.</p>
+<hr>
+<h2 id="section-2">1. КАЗНА (<code>treasury</code>)</h2>
+<p>Чистый остаток. Минус = долг.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>−4000</strong> (млн ливров; долг к 1788)</td></tr><tr><td>Шкала</td><td>−∞ … +∞</td></tr><tr><td>Калибровка</td><td>−4000 = состояние Акта I (банкротство близко) · −6000 = коллапс кредита (триггер 1797) · 0 = паритет</td></tr><tr><td>Фон</td><td><strong>−100/такт</strong> (проценты по долгу)</td></tr></tbody></table></div>
+<p><strong>Расход на войну</strong> (ступенчато, каждый такт):</p>
+<ul><li><code>war_intensity</code> ≥ 30 → −150</li><li><code>war_intensity</code> ≥ 60 → −300</li><li><code>war_intensity</code> ≥ 100 → −500</li></ul>
+<p><strong>Шоки:</strong></p>
+<ul><li>Эмиссия 1 млрд ассигнат: +1000 (или +50 в режиме гиперинфляции)</li><li>Контрибуции (Акт IV, war ≥ 30): +50…+200 в зависимости от интенсивности</li></ul>
+<p><strong>Декреты-конверторы:</strong></p>
+<ul><li>Конфискация церкви: см. <code>church_reserves</code></li><li>Банкротство 2/3: +4000 (одноразово; сопровождается <code>metal_supply −200</code>, <code>army_loyalty −20</code>)</li></ul>
+<hr>
+<h2 id="section-3">2. РЕЗЕРВЫ — три раздельных шкалы</h2>
+<p>Принцип №8: резервы съедаются однократно, не восстанавливаются. Разделение показывает разные жизненные циклы.</p>
+<h3 id="section-4">2.1 <code>church_reserves</code> — церковь</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>100</strong></td></tr><tr><td>Шкала</td><td>0 = всё конфисковано · 100 = всё на месте</td></tr><tr><td>Фон</td><td>0 (только от декретов)</td></tr></tbody></table></div>
+<p>Декреты переводят из <code>church_reserves</code> в <code>biens_capital</code> и казну. Историческая дуга: к концу Акта II уходит к 0.</p>
+<h3 id="section-5">2.2 <code>emigrant_reserves</code> — эмигранты</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>0</strong> (эмиграция начинается)</td></tr><tr><td>Шкала</td><td>0 … 80 (~150 тыс. эмигрантов, исторический потолок)</td></tr><tr><td>Фон</td><td><strong>+1/такт</strong> (волны эмиграции)</td></tr></tbody></table></div>
+<p><strong>Шоки:</strong></p>
+<ul><li>Бегство в Варенн: +5</li><li>Казнь короля: +10</li><li>Закон о подозрительных: +5</li></ul>
+<p>Декреты конфискации переводят в <code>biens_capital</code>. Уникально: растёт ИЗ событий, потом съедается.</p>
+<h3 id="section-6">2.3 <code>biens_capital</code> — биены в обороте</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>0</strong></td></tr><tr><td>Шкала</td><td>0 … ∞ (стоимость в обороте, млн ливров)</td></tr><tr><td>Фон</td><td>0</td></tr></tbody></table></div>
+<p>Питается от <code>church_reserves</code> и <code>emigrant_reserves</code> через конфискации. Продажа на аукционе: эффективность зависит от <code>assignat_rate</code> (при низком курсе государство получает за биены номинал, обесцененный курсом).</p>
+<hr>
+<h2 id="section-7">3. ХЛЕБ ПАРИЖ (<code>bread_paris</code>)</h2>
+<p>Индекс цены 4-фунтовой буханки.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>100</strong> (= 14.5 су, лето 1789, голодный год)</td></tr><tr><td>Шкала</td><td>50 = норма хорошего года · 100 = голод 1789 · 150 = тревога · 200 = бунт-критика · 500+ = хаос</td></tr><tr><td>Фон</td><td><strong>+4/такт</strong> (сезонность, военные закупки, дороги; +5 если война ≥ 30)</td></tr><tr><td>Минимум</td><td>30 (даже в лучший год)</td></tr></tbody></table></div>
+<p><strong>Шоки:</strong></p>
+<ul><li>Неурожай: +30</li><li>Реквизиция в провинциях: −10 в Париж (компенсация)</li></ul>
+<p><strong>Декреты:</strong></p>
+<ul><li>Максимум цен: <code>bread_paris</code> → 100 (фикс), но <code>black_market</code> +30, плюс «обманный сигнал» через 3 такта если разрыв велик</li><li>Реквизиция: эффект «реквизиция активна» (см. эффекты): <code>bread_paris</code> −3/такт, <code>rural_unrest</code> +5/такт</li></ul>
+<hr>
+<h2 id="section-8">4. КУРС АССИГНАТА (<code>assignat_rate</code>)</h2>
+<p>Стоимость бумаги относительно монеты.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>100</strong> (паритет; до первой эмиссии параметр спит)</td></tr><tr><td>Шкала</td><td>100 = паритет · 50 = бумага вдвое · 5 = коллапс</td></tr><tr><td>Фон</td><td>по формуле (см. ниже)</td></tr></tbody></table></div>
+<p><strong>Формула пересчёта</strong> (используется скриптом, не показывается на табло):</p>
+<pre><code>assignat_rate = max(5, 100 × metal_supply / (metal_supply + 0.2 × assignat_supply))</code></pre>
+<p>После каждого такта (если <code>assignat_active = True</code>) параметр пересчитывается из денежной массы. Шоки на курс конвертируются в шоки на <code>metal_supply</code> или <code>assignat_supply</code> через декреты/события.</p>
+<p><strong>Триггеры производные:</strong></p>
+<ul><li><code>assignat_rate</code> ≤ 10 → включается эффект <code>hyperinflation</code> (новые эмиссии дают 5% от номинала)</li><li><code>assignat_rate</code> ≤ 5 → эффект <code>assignat_collapsed</code>, <code>assignat_supply</code> → 0, ассигнат отключён</li></ul>
+<hr>
+<h2 id="section-9">5. ВОЙНА (<code>war_intensity</code>)</h2>
+<p>Интенсивность внешнего конфликта.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>0</strong> (мир, 1788)</td></tr><tr><td>Шкала</td><td>0 = мир · 30 = ограниченная (1 фронт) · 60 = большая · 100 = тотальная (1793–94) · 200 = пик мобилизации</td></tr><tr><td>Фон</td><td>0</td></tr></tbody></table></div>
+<p><strong>Шоки:</strong></p>
+<ul><li>Объявление войны Австрии (Акт II — апрель 1792): +30</li><li>Военное поражение: +10</li><li>Военная победа: 0 (бойня продолжается, противник не сдаётся)</li><li>Казнь короля: +10 (коалиция расширяется)</li><li>Бунт в Париже: +5 (часть пара ушла во внутреннюю смуту)</li><li>Вандейский мятеж: +20 (внутренний фронт)</li></ul>
+<p><strong>Декреты:</strong></p>
+<ul><li>Объявление войны: +30</li><li>Levée en masse (1793): +20, <code>army_funding</code> +30, <code>rural_unrest</code> +10</li></ul>
+<hr>
+<h2 id="section-10">6. НАРОД — две шкалы (раскол)</h2>
+<p>Принцип №5: раскол внутри третьего сословия — главный конфликт. Хлебные декреты бьют две шкалы в противоположные стороны.</p>
+<h3 id="section-11">6.1 <code>city_unrest</code> — народ-город</h3>
+<p>Подёнщики, ремесленники, мелкие лавочники. <strong>Покупатели</strong> хлеба.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>70</strong></td></tr><tr><td>Шкала</td><td>30 = спокойно · 60 = тревога · 80 = марши · 95 = бунт-критика · 100 = восстание · 110 = жёсткий потолок</td></tr><tr><td>Фон</td><td><strong>+1/такт</strong> (если нет cooldown&#x27;а после бунта) + давление от хлеба + давление от ассигната</td></tr></tbody></table></div>
+<p><strong>Давление от хлеба</strong> (нелинейное, с насыщением):</p>
+<pre><code>+ sqrt(max(0, bread_paris − 100)) × 1.5</code></pre>
+<ul><li>bread_paris=120: +6.7</li><li>bread_paris=200: +15</li><li>bread_paris=300: +24</li></ul>
+<p><strong>Давление от ассигната:</strong> +5/такт если <code>assignat_rate</code> &lt; 50.</p>
+<p><strong>Декреты:</strong></p>
+<ul><li>Максимум цен: <code>city_unrest</code> −20 разово</li><li>Если фактическая цена выше Максимума 3 такта подряд (<code>black_market</code> &gt; 50) → <code>city_unrest</code> +10</li><li>Террор: <code>city_unrest</code> −15 разово, +5/такт откат пока активен</li><li>Раздача биенов мелкими лотами: <code>city_unrest</code> −10</li></ul>
+<p><strong>Триггер бунта-город:</strong> <code>city_unrest</code> ≥ 95 + (упоминание эмиссии/максимума/террора/репрессий/Ле Шапелье в событиях такта ИЛИ <code>bread_paris</code> &gt; 200)</p>
+<p>При срабатывании:</p>
+<ul><li><code>war_intensity</code> += 5 (внутренняя смута)</li><li><code>city_unrest</code> += −30 (выпустили пар)</li><li>cooldown 2 такта (фон не накапливается)</li><li>При 3-м и далее бунте: <code>army_loyalty</code> −5, <code>treasury</code> −50</li></ul>
+<h3 id="section-12">6.2 <code>rural_unrest</code> — народ-деревня</h3>
+<p>Крестьяне-собственники + издольщики. <strong>Продавцы</strong> зерна.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>60</strong></td></tr><tr><td>Шкала</td><td>та же · 110 = жёсткий потолок</td></tr><tr><td>Фон</td><td><strong>+1/такт</strong> (если нет cooldown&#x27;а после Вандеи)</td></tr></tbody></table></div>
+<p><strong>Шоки:</strong></p>
+<ul><li>Реквизиции активны: <code>rural_unrest</code> +5/такт (в активных эффектах)</li><li>Levée en masse: +10 (рекруты из деревни)</li><li>Безусловная отмена сеньориальных прав: −20 разово (деревня привязывается к революции)</li></ul>
+<p><strong>Декреты:</strong></p>
+<ul><li>Максимум на хлеб: <code>rural_unrest</code> +5/такт пока активен (бьёт по продавцам)</li><li>Реквизиция: +20 разово + +5/такт пока активна</li><li>Гражданская конституция духовенства: +10 разово</li><li>Антиклерикальный декрет: +10</li></ul>
+<p><strong>Триггер бунта-деревня (Вандея):</strong> <code>rural_unrest</code> ≥ 95 + (упоминание гражданской конституции / реквизиции / levée / набора в такте, ИЛИ эффект «реквизиция» активен)</p>
+<p>При срабатывании:</p>
+<ul><li><code>war_intensity</code> += 20</li><li><code>provinces_loyalty</code> −20</li><li><code>rural_unrest</code> += −20</li><li>cooldown 2 такта</li><li>Включается эффект <code>vendee</code> (см. ниже)</li></ul>
+<p><strong>Раскол в действии:</strong> Максимум на хлеб даёт <code>city_unrest</code> −20 и <code>rural_unrest</code> +5/такт. Реквизиция даёт <code>bread_paris</code> −10 (хорошо для города) и <code>rural_unrest</code> +20 (плохо для деревни).</p>
+<hr>
+<h2 id="section-13">7. ПРОВИНЦИИ (<code>provinces_loyalty</code>)</h2>
+<p>Лояльность Парижу как центру.</p>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td><strong>80</strong></td></tr><tr><td>Шкала</td><td>0 = массовое отделение (Вандея + федералистский кризис 1793) · 100 = полная лояльность</td></tr><tr><td>Фон</td><td><strong>−2/такт</strong> (центробежная тенденция)</td></tr></tbody></table></div>
+<p><strong>Шоки:</strong></p>
+<ul><li>Парижские эксцессы (массовые казни): −5</li><li>Антиклерикальный декрет: −5…−10 (католические провинции)</li><li>Бегство в Варенн: −10</li><li>Казнь короля: −15</li></ul>
+<p><strong>Декреты:</strong></p>
+<ul><li>Назначение комиссаров (représentants en mission): +10 разово, −5/такт пока активен (через эффект <code>commissars</code>)</li><li>Военное подавление мятежной провинции: +20</li></ul>
+<p><strong>Триггер <code>federalism</code>:</strong> <code>provinces_loyalty</code> ≤ 30 → включается эффект:</p>
+<ul><li><code>treasury</code> −100/такт пока активен</li><li><code>army_loyalty</code> −2/такт</li></ul>
+<p><strong>Снятие <code>federalism</code>:</strong> <code>provinces_loyalty</code> &gt; 50.</p>
+<hr>
+<h2 id="section-14">Скрытые параметры (на листе GM)</h2>
+<h3 id="section-15"><code>black_market</code> — чёрный рынок</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td>0</td></tr><tr><td>Растёт</td><td>+30 при включении Максимума, +5/такт пока активен · +30 при запрете монеты</td></tr><tr><td>Падает</td><td>−20 при отмене Максимума</td></tr></tbody></table></div>
+<p><strong>Эффект:</strong> <code>black_market</code> &gt; 50 при активном Максимуме → реальная цена хлеба = <code>bread_paris</code> × (1 + <code>black_market</code>/100). Ощущение, что Максимум держит цену, но в зале хлеба нет.</p>
+<h3 id="section-16"><code>army_funding</code> — финансирование армии</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td>100</td></tr><tr><td>Падает</td><td>−10/такт при <code>treasury</code> ≤ 0 (без банкротства) · −5/такт при <code>war_intensity</code> ≥ 60 без поставок</td></tr><tr><td>Растёт</td><td>+30 при levée en masse · +10…+20 при контрибуциях в Акте IV</td></tr></tbody></table></div>
+<h3 id="section-17"><code>army_loyalty</code> — лояльность армии</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>Старт</td><td>80</td></tr><tr><td>Падает</td><td>−20 при банкротстве · −5/такт при контрибуциях с 1796 (генералы держат деньги) · −2/такт при федерализме · −5 за каждый бунт после 3-го</td></tr><tr><td>Растёт</td><td>+5 при подавлении вандемьерского восстания</td></tr></tbody></table></div>
+<p><strong>Триггер переворота:</strong> <code>army_loyalty</code> ≤ 20 + <code>war_intensity</code> ≥ 60 + Акт ≥ 4 → переворот (Бонапарт берёт власть).</p>
+<h3 id="section-18"><code>metal_supply</code>, <code>assignat_supply</code> — денежная масса</h3>
+<div class="table-wrap"><table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td><code>metal_supply</code> старт</td><td>1000. Падает: −10/такт после первой эмиссии (тезаврация), −30 при военном поражении (страх), −200 при банкротстве</td></tr><tr><td><code>assignat_supply</code> старт</td><td>0. +1000 на каждый млрд эмиссии</td></tr></tbody></table></div>
+<p>Используются формулой пересчёта <code>assignat_rate</code> (см. §4).</p>
+<hr>
+<h2 id="section-19">Триггеры событий — сводка</h2>
+<div class="table-wrap"><table><thead><tr><th>Триггер</th><th>Условие</th><th>Эффект</th></tr></thead><tbody><tr><td>Бунт-город</td><td><code>city_unrest</code> ≥ 95 + катализатор + нет cooldown</td><td>Восстание; <code>war_intensity</code> +5; <code>city_unrest</code> −30; cooldown 2 такта</td></tr><tr><td>Бунт-деревня (Вандея)</td><td><code>rural_unrest</code> ≥ 95 + катализатор + нет cooldown</td><td>Мятеж; <code>war_intensity</code> +20; <code>provinces_loyalty</code> −20; включается <code>vendee</code></td></tr><tr><td>Подавление Вандеи</td><td>эффект <code>vendee</code> ≥ 3 такта + <code>army_funding</code> ≥ 20 + нет реквизиции</td><td>Эффект снят; <code>rural_unrest</code> −15; <code>provinces_loyalty</code> +10</td></tr><tr><td>Банкротство</td><td><code>treasury</code> ≤ −6000 (один раз за прогон)</td><td><code>treasury</code> += 4000; <code>metal_supply</code> −200; <code>army_loyalty</code> −20</td></tr><tr><td>Федерализм</td><td><code>provinces_loyalty</code> ≤ 30</td><td>Эффект включён: <code>treasury</code> −100/такт; <code>army_loyalty</code> −2/такт</td></tr><tr><td>Преодоление федерализма</td><td><code>provinces_loyalty</code> &gt; 50</td><td>Эффект снят</td></tr><tr><td>Гиперинфляция</td><td><code>assignat_rate</code> ≤ 10</td><td>Эффект включён: новые эмиссии дают 5% от номинала</td></tr><tr><td>Коллапс ассигната</td><td><code>assignat_rate</code> ≤ 5</td><td><code>assignat_supply</code> → 0; ассигнат отключён</td></tr><tr><td>Переворот</td><td><code>army_loyalty</code> ≤ 20 + <code>war_intensity</code> ≥ 60 + Акт ≥ 4</td><td>Переворот (флаг <code>coup</code>)</td></tr></tbody></table></div>
+<hr>
+<h2 id="section-20">Стартовые значения (Акт I, лето 1789)</h2>
+<div class="table-wrap"><table><thead><tr><th>Параметр</th><th>Значение</th><th>Тип</th></tr></thead><tbody><tr><td><code>treasury</code></td><td><strong>−4000</strong></td><td>публичный</td></tr><tr><td><code>church_reserves</code></td><td><strong>100</strong></td><td>публичный</td></tr><tr><td><code>emigrant_reserves</code></td><td><strong>0</strong></td><td>публичный</td></tr><tr><td><code>biens_capital</code></td><td><strong>0</strong></td><td>публичный</td></tr><tr><td><code>bread_paris</code></td><td><strong>100</strong></td><td>публичный</td></tr><tr><td><code>assignat_rate</code></td><td><strong>100</strong></td><td>публичный (спит до эмиссии)</td></tr><tr><td><code>war_intensity</code></td><td><strong>0</strong></td><td>публичный</td></tr><tr><td><code>city_unrest</code></td><td><strong>70</strong></td><td>публичный</td></tr><tr><td><code>rural_unrest</code></td><td><strong>60</strong></td><td>публичный</td></tr><tr><td><code>provinces_loyalty</code></td><td><strong>80</strong></td><td>публичный</td></tr><tr><td><code>black_market</code></td><td>0</td><td>скрытый</td></tr><tr><td><code>army_funding</code></td><td>100</td><td>скрытый</td></tr><tr><td><code>army_loyalty</code></td><td>80</td><td>скрытый</td></tr><tr><td><code>metal_supply</code></td><td>1000</td><td>скрытый</td></tr><tr><td><code>assignat_supply</code></td><td>0</td><td>скрытый</td></tr></tbody></table></div>
+<hr>
+<h2 id="section-21">Различия по актам</h2>
+<p>Правила переписываются между актами (<code>principles.md</code>: «структура расходов переписывается между актами»). Скрипт распознаёт акт по такту:</p>
+<div class="table-wrap"><table><thead><tr><th>Акт</th><th>Тактовый диапазон</th><th>Календарь</th></tr></thead><tbody><tr><td>I</td><td>T0–T5</td><td>1789 H1 — 1791 H2</td></tr><tr><td>II</td><td>T6–T9</td><td>1792 H1 — 1793 H2</td></tr><tr><td>III</td><td>T10–T11</td><td>1794 H1 — 1794 H2</td></tr><tr><td>IV</td><td>T12+</td><td>1795 H1 — 1799 H2</td></tr></tbody></table></div>
+<p><strong>Акт I:</strong> <code>war_intensity</code> = 0, ассигнат спит до первой эмиссии (декабрь 1789). <strong>Акт II:</strong> война включается шоково, эмиссия — главный канал казны, Максимум как ключевой декрет. <strong>Акт III:</strong> Максимум отменён → <code>bread_paris</code> взрывается; биены продаются за обесценивающуюся бумагу. <strong>Акт IV:</strong> контрибуции включаются как доход (<code>war_intensity</code> ≥ 30 → +50…+200/такт + пополнение <code>army_funding</code>); банкротство 2/3 как событие 1797; переворот возможен.</p>
+<hr>
+<h2 id="section-22">Связь с 8 идеологическими осями</h2>
+<p>Декреты пишутся как пары: эффект на параметры + сдвиг по идеологическим осям (отдельный документ, ещё не создан).</p>
+<div class="table-wrap"><table><thead><tr><th>Ось</th><th>Связанные параметры</th></tr></thead><tbody><tr><td>Власть</td><td><code>treasury</code>, <code>provinces_loyalty</code>, <code>army_loyalty</code></td></tr><tr><td>Насилие</td><td><code>city_unrest</code>, <code>rural_unrest</code>, <code>provinces_loyalty</code>, <code>army_loyalty</code></td></tr><tr><td>Война</td><td><code>war_intensity</code>, <code>treasury</code>, <code>army_funding</code></td></tr><tr><td>Хлеб</td><td><code>bread_paris</code>, <code>city_unrest</code>, <code>rural_unrest</code> (всегда противоположно)</td></tr><tr><td>Церковь</td><td><code>church_reserves</code>, <code>rural_unrest</code>, <code>provinces_loyalty</code></td></tr><tr><td>Центр / провинция</td><td><code>provinces_loyalty</code>, <code>treasury</code>, <code>rural_unrest</code></td></tr><tr><td>Собственность</td><td><code>church_reserves</code>, <code>emigrant_reserves</code>, <code>biens_capital</code>, <code>assignat_rate</code></td></tr><tr><td>Закон / необходимость</td><td><code>city_unrest</code>, <code>army_loyalty</code></td></tr></tbody></table></div>
+<hr>
+<h2 id="section-23">Открытые вопросы</h2>
+<ul><li>Финальная калибровка коэффициентов (нелинейная sqrt-формула давления хлеба, ASSIGNAT<em>FORMULA</em>COEFFICIENT=0.2 и т.д.) — после 3–5 прогонов в разных сценариях</li><li>Карты декретов как файл с числовыми эффектами (<code>decrees.md</code>)</li><li>Идеологические оси с числовыми сдвигами (отдельный документ)</li><li>Шоки: в симуляторе могут быть расписаны для калибровки, но в живой игре должны срабатывать по условиям, решениям игроков и внешнему контуру</li><li>Кассы 7 групп — детальная индивидуализация финансов сословий (сейчас агрегат)</li></ul>
+      </div>
+    </article>
+  </main>
+</body>
+</html>
