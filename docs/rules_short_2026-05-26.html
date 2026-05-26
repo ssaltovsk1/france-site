@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Короткие правила 2026-05-26 - Revolution France</title>
+<style>
+:root { --bg:#f7f3ec; --paper:#fffdf8; --ink:#211b16; --muted:#6f6258; --line:#d9cfc2; --accent:#9b2f2f; --soft:#efe5d6; --xref:#1c6f73; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.58 system-ui, -apple-system, Segoe UI, sans-serif; }
+a { color: var(--accent); text-underline-offset: .18em; }
+a.xref { color: var(--xref); text-decoration-style: dotted; }
+.shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 28px; max-width: 1180px; margin: 0 auto; padding: 24px; }
+.side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow: auto; padding: 12px 0; }
+.brand { display: block; font-weight: 750; color: var(--ink); text-decoration: none; margin-bottom: 14px; }
+.nav, .toc { display: grid; gap: 7px; margin: 0 0 16px; }
+.nav a, .toc a { display: block; padding: 7px 10px; border-radius: 6px; color: var(--ink); text-decoration: none; font-size: 13px; line-height: 1.25; }
+.nav a { background: var(--soft); }
+.nav a.active { background: var(--accent); color: white; }
+.toc { border-top: 1px solid var(--line); padding-top: 14px; }
+.toc a { color: var(--muted); }
+article { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 34px clamp(20px, 5vw, 56px); box-shadow: 0 12px 35px rgba(52,36,22,.08); }
+h1, h2, h3 { line-height: 1.18; letter-spacing: 0; }
+h1 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 18px; }
+h2 { font-size: clamp(22px, 3vw, 29px); margin-top: 38px; padding-top: 14px; border-top: 1px solid var(--line); }
+p, ul, ol, table, pre { margin-top: 0; margin-bottom: 16px; }
+li { margin: 3px 0; }
+code { background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+pre { overflow: auto; background: #211b16; color: #fff8ef; border-radius: 8px; padding: 14px; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.table-wrap { overflow-x: auto; margin-bottom: 20px; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; }
+th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+th { background: var(--soft); text-align: left; }
+:target { scroll-margin-top: 18px; }
+@media (max-width: 860px) { .shell { display: block; padding: 14px; } .side { position: relative; max-height: none; padding-bottom: 16px; } article { padding: 22px 16px; } table { min-width: 440px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+<a class="brand" href="#top">Короткие правила</a>
+<nav class="nav"><a href="../../README.md">Проект</a><a href="./README.html">Правила</a><a class="active" href="#top">Короткая версия</a></nav>
+<nav class="toc" aria-label="Оглавление"><a class="l2" href="#main-frame">1. Главная рамка</a><a class="l2" href="#turn">2. Такт</a><a class="l2" href="#government">3. Правительство и власть</a><a class="l2" href="#support">4. Поддержка, репутация и мягкая сила</a><a class="l2" href="#print">5. Печать и типография</a><a class="l2" href="#bread">6. Деньги, хлеб и голод</a><a class="l2" href="#baker">7. Булочник</a><a class="l2" href="#city">8. Городские события</a><a class="l2" href="#rumors">9. Слухи и новости</a><a class="l2" href="#church">10. Церковь</a><a class="l2" href="#prison">11. Аресты, тюрьма и полиция</a><a class="l2" href="#crowd">12. Толпа, бунт и силовое действие</a><a class="l2" href="#death">13. Убийства и казни</a><a class="l2" href="#dungeon">14. Данж</a><a class="l2" href="#questions">15. Открытые вопросы</a></nav>
+</aside>
+<article>
+<h1 id="top">Короткие правила 2026-05-26</h1>
+<p>Статус: короткая версия. Писать и объяснять по ней. Подробности и спорные места держать в полной версии.</p>
+<h2 id="main-frame">1. Главная рамка</h2>
+<p>Игра про Францию, где старый порядок уже не справляется, а новый еще не собран.</p>
+<p>На старте есть <a class="xref" href="#government">король</a>, министры и Генеральные штаты. Казна пуста. Новой конституции нет.</p>
+<p>История не идет автоматически. Бастилию, смену власти, падение короля и новый порядок делают игроки.</p>
+<h2 id="turn">2. Такт</h2>
+<p>Такт - один игровой ход.</p>
+<p>Не объявляем игрокам &quot;акт и номер такта&quot;. Это внутренний счет мастеров.</p>
+<p>В начале такта через игровые каналы появляются:</p>
+<ul>
+<li>цена хлеба;</li>
+<li>видимые запасы хлеба;</li>
+<li><a class="xref" href="#rumors">слухи</a>;</li>
+<li>указы и публичные решения;</li>
+<li>письма и <a class="xref" href="#rumors">новости</a>, если они дошли до адресатов.</li>
+</ul>
+<p>В течение такта идут:</p>
+<ul>
+<li>заседания правительства;</li>
+<li>городская жизнь;</li>
+<li>покупка и сдача хлеба;</li>
+<li>налоги и долги;</li>
+<li><a class="xref" href="#print">печать</a> текстов;</li>
+<li><a class="xref" href="#city">службы</a> в <a class="xref" href="#church">церкви</a>;</li>
+<li><a class="xref" href="#city">балы</a>;</li>
+<li><a class="xref" href="#city">салоны</a> и встречи;</li>
+<li><a class="xref" href="#city">театр</a>;</li>
+<li>аресты, <a class="xref" href="#prison">тюрьма</a> и силовые сцены;</li>
+<li><a class="xref" href="#dungeon">данж</a>, если конфликт стал физическим.</li>
+</ul>
+<p>В конце такта мастера фиксируют:</p>
+<ul>
+<li>кто поел;</li>
+<li>кто голоден или болен;</li>
+<li>какие указы реально исполнились;</li>
+<li>что напечатано;</li>
+<li>кто арестован;</li>
+<li>какие <a class="xref" href="#rumors">слухи</a> и последствия идут дальше.</li>
+</ul>
+<h2 id="government">3. Правительство и власть</h2>
+<p>Правительство не получает правду автоматически. Оно узнает мир через людей, письма, карты, отчеты и проверки.</p>
+<p>Декрет работает только если есть:</p>
+<ul>
+<li>кто исполняет;</li>
+<li>чем исполняет;</li>
+<li>где исполняет;</li>
+<li>какой видимый след остался.</li>
+</ul>
+<p>Пока старый порядок не сломан, юридическая власть у короля. Генеральные штаты спорят, давят, собирают поддержку и могут попытаться стать новой властью.</p>
+<p>Просто сказать &quot;мы теперь власть&quot; нельзя. Нужны процедура, <a class="xref" href="#support">поддержка</a>, <a class="xref" href="#crowd">бунт</a>, <a class="xref" href="#prison">арест</a>, отказ признавать короля или другой видимый перелом.</p>
+<h2 id="support">4. Поддержка, репутация и мягкая сила</h2>
+<p>Поддержка собирается только при скоплении людей в городе или общественном месте.</p>
+<p>Подходить по одному и собирать карточки нельзя.</p>
+<p>В <a class="xref" href="#government">правительстве</a> так делать нельзя. В правительстве работают процедура, голосование, должность и декреты.</p>
+<p>Где можно собирать поддержку:</p>
+<ul>
+<li><a class="xref" href="#city">салон</a>;</li>
+<li>рынок;</li>
+<li>очередь за хлебом;</li>
+<li>площадь;</li>
+<li>кафе;</li>
+<li><a class="xref" href="#city">театр</a>;</li>
+<li><a class="xref" href="#city">бал</a>;</li>
+<li><a class="xref" href="#church">церковь</a> после <a class="xref" href="#city">службы</a>;</li>
+<li>манифестация.</li>
+</ul>
+<p>Как это работает:</p>
+<ol>
+<li>Персонаж произносит речь или формулирует требование.</li>
+<li>Люди слушают.</li>
+<li>Те, кто согласны, дают карточку поддержки.</li>
+<li>4 карточки поддержки можно обменять у мастера на ленточку влияния.</li>
+</ol>
+<p>Ленточка влияния дает политический вес. Она помогает в выборах, переговорах, публичном давлении и может защищать от тихого убийства, если это правило утверждено мастерами.</p>
+<p>Женские персонажи могут влиять через <a class="xref" href="#city">салоны</a>, <a class="xref" href="#print">печать</a>, поручения делегатам, <a class="xref" href="#rumors">слухи</a>, <a class="xref" href="#bread">хлеб</a>, балы, театр и публичное давление.</p>
+<h2 id="print">5. Печать и типография</h2>
+<p>В игре одна типография.</p>
+<p>Она печатает и частные тексты, и государственные бумаги.</p>
+<div class="table-wrap"><table><thead><tr><th>Заказ</th><th>Условие</th><th>Риск</th></tr></thead><tbody><tr><td>Частный текст</td><td>типограф согласен и ему платят</td><td>обыск, долг, донос, подозрение</td></tr><tr><td>Государственная бумага</td><td>есть приказ, <a class="xref" href="#government">декрет</a> или печать власти</td><td>зависимость от текущей власти</td></tr></tbody></table></div>
+<p>Печать делает идею предметом. Напечатанный текст можно повесить, раздать, подписать, обвинить, спрятать или конфисковать.</p>
+<p>Текст должен иметь автора или понятный источник. Если написано &quot;народ поддерживает&quot;, рядом должно быть видно, кто поддержал.</p>
+<h2 id="bread">6. Деньги, хлеб и голод</h2>
+<p>Каждый <a class="xref" href="#turn">такт</a> персонаж должен поесть.</p>
+<p>Как закрыть еду:</p>
+<ol>
+<li>Получить или купить хлеб.</li>
+<li>Получить хлебный чек.</li>
+<li>Сдать чек мастеру питания.</li>
+<li>Мастер отмечает персонажа в таблице.</li>
+</ol>
+<p>Если нет чека к концу <a class="xref" href="#turn">такта</a>:</p>
+<pre><code>1-й пропуск еды -&gt; голод
+2-й пропуск подряд -&gt; болезнь
+3-й пропуск подряд -&gt; смерть персонажа</code></pre>
+<p>Голод виден. Болезнь видна. <a class="xref" href="#death">Смерть</a> фиксирует мастер.</p>
+<p>Хлеб - главный показатель кризиса. Если люди не едят, это политическая проблема.</p>
+<h2 id="baker">7. Булочник</h2>
+<p>Булочник не касса. Это игрок под давлением.</p>
+<p>Булочник может:</p>
+<ul>
+<li>печь <a class="xref" href="#bread">хлеб</a>;</li>
+<li>продавать <a class="xref" href="#bread">хлеб</a>;</li>
+<li>просить поднять цену;</li>
+<li>требовать компенсацию;</li>
+<li>снижать вес или качество;</li>
+<li>продавать на черном рынке;</li>
+<li>закрыться;</li>
+<li>стать целью толпы.</li>
+</ul>
+<p>Если <a class="xref" href="#government">власть</a> требует дешевый <a class="xref" href="#bread">хлеб</a>, она должна дать дешевую муку, деньги или силовое решение.</p>
+<h2 id="city">8. Городские события</h2>
+<p>Город не ждет правительства.</p>
+<p>В городе идут:</p>
+<ul>
+<li>службы в <a class="xref" href="#church">церкви</a>;</li>
+<li>салоны;</li>
+<li>встречи;</li>
+<li>балы;</li>
+<li>театр;</li>
+<li>рынок;</li>
+<li>очередь за хлебом;</li>
+<li><a class="xref" href="#print">печать</a>;</li>
+<li><a class="xref" href="#rumors">слухи</a>;</li>
+<li>аресты;</li>
+<li>манифестации.</li>
+</ul>
+<p>Сцена полезна, если после нее что-то изменилось: появилась <a class="xref" href="#support">поддержка</a>, <a class="xref" href="#rumors">слух</a>, текст, союз, долг, приказ, <a class="xref" href="#prison">арест</a> или конфликт.</p>
+<h2 id="rumors">9. Слухи и новости</h2>
+<p>Слух должен толкать к действию.</p>
+<p>Темы слухов:</p>
+<ul>
+<li><a class="xref" href="#bread">хлеб</a>;</li>
+<li>деньги;</li>
+<li><a class="xref" href="#government">король</a>;</li>
+<li>измена;</li>
+<li>война;</li>
+<li><a class="xref" href="#church">церковь</a>;</li>
+<li>аресты;</li>
+<li>цены;</li>
+<li>черный рынок.</li>
+</ul>
+<p>Слух можно передать запиской, сказать на рынке, в салоне, театре, <a class="xref" href="#church">церкви</a>, очереди или кафе.</p>
+<h2 id="church">10. Церковь</h2>
+<p>Церковь - это вера, имущество, помощь бедным, легитимность и конфликт с новой властью.</p>
+<p>Через церковь можно:</p>
+<ul>
+<li>служить службу;</li>
+<li>выдавать помощь хлебом;</li>
+<li>собирать пожертвования;</li>
+<li>прятать человека или вещь;</li>
+<li>спорить о присяге;</li>
+<li>поддерживать или обвинять <a class="xref" href="#government">власть</a>.</li>
+</ul>
+<p>Служба в церкви - нормальная городская сцена <a class="xref" href="#turn">такта</a>.</p>
+<h2 id="prison">11. Аресты, тюрьма и полиция</h2>
+<p>Арест делают люди. Нельзя просто сказать &quot;его арестовали&quot;.</p>
+<p>Для ареста нужны:</p>
+<ul>
+<li>повод;</li>
+<li>исполнитель;</li>
+<li>видимая сцена;</li>
+<li>куда ведут.</li>
+</ul>
+<p>В тюрьме игрок продолжает играть: пишет письма, торгуется, дает показания, зовет защитников или ждет суда.</p>
+<p>Тюрьма может быть Бастилией. На нее можно идти бунтом.</p>
+<h2 id="crowd">12. Толпа, бунт и силовое действие</h2>
+<p>Толпа становится силой, когда есть люди, лидер и понятное требование.</p>
+<p>Минимумы:</p>
+<ul>
+<li>марш - от 3 человек;</li>
+<li>силовое действие - от 6 человек и с мастером;</li>
+<li>большой политический бунт - около 10 человек, лидер, требование и общий лозунг.</li>
+</ul>
+<p>Бунт должен идти вместе и кричать общее требование. Если люди не организовались, это шумная сцена, а не бунт.</p>
+<p>Толпа может:</p>
+<ul>
+<li>прийти с требованием;</li>
+<li>ворваться;</li>
+<li>открыть склад;</li>
+<li>освободить заключенных;</li>
+<li>напасть на тюрьму;</li>
+<li>захватить <a class="xref" href="#print">печать</a> или реестр;</li>
+<li><a class="xref" href="#death">убить</a> или казнить только через мастера.</li>
+</ul>
+<h2 id="death">13. Убийства и казни</h2>
+<p>Убийство не делается фразой &quot;я тебя убил&quot;.</p>
+<p>Всегда нужен мастер.</p>
+<p>Возможные каналы:</p>
+<ul>
+<li><a class="xref" href="#crowd">толпа</a> или бунт;</li>
+<li>индивидуальное убийство в отдельном месте;</li>
+<li>казнь через <a class="xref" href="#government">власть</a>, тюрьму и процедуру;</li>
+<li>смерть в <a class="xref" href="#dungeon">данже</a>.</li>
+</ul>
+<p>Точные кубики и защита влиянием утверждаются мастерами до игры.</p>
+<h2 id="dungeon">14. Данж</h2>
+<p>Данж нужен для физического столкновения:</p>
+<ul>
+<li>война;</li>
+<li>восстание;</li>
+<li>подавление;</li>
+<li>прорыв;</li>
+<li>удержание точки;</li>
+<li>нападение на тюрьму.</li>
+</ul>
+<p>Обязательно:</p>
+<ul>
+<li>мастер в зоне;</li>
+<li>защита глаз;</li>
+<li>плотная одежда;</li>
+<li>понятная цель сцены;</li>
+<li>стоп-слово;</li>
+<li>запрет стрельбы в лицо.</li>
+</ul>
+<p>Полный лабиринт строить не обязательно. Можно начать с укрытий и достраивать по ходу игры.</p>
+<h2 id="questions">15. Открытые вопросы</h2>
+<p>Решить до игры:</p>
+<ol>
+<li>Дает ли <a class="xref" href="#support">ленточка влияния</a> защиту от убийства.</li>
+<li>Как точно работает индивидуальное <a class="xref" href="#death">убийство</a>.</li>
+<li>Как работает <a class="xref" href="#death">убийство</a> толпой.</li>
+<li>Кто держит тюрьму и полицию.</li>
+<li>Сколько салонов нужно.</li>
+<li>Где будет <a class="xref" href="#dungeon">данж</a> при плохой погоде.</li>
+<li>Кто из взрослых играет, а кто держит модели.</li>
+</ol>
+</article>
+</div>
+</body>
+</html>
